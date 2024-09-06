@@ -1,2 +1,2 @@
-# SMINT-
+# SMINT
 Spatial Multi-Omics Integration
