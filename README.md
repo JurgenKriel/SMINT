@@ -141,7 +141,13 @@ np.savetxt('/path/to/tiles.csv',mosaic, delimiter=',', fmt='%s')
 
 ### 1. Setup STalign
 
+```
+pip install --upgrade "git+https://github.com/JEFworks-Lab/STalign.git"
+```
+
 ### 2. Align ST to SM
+See alignment script under alignment/ST_align_xenium.py
+
 
 ## Integration 
 
