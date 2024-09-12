@@ -68,7 +68,7 @@ For label creation, we started with the pre-trained CP model, and mannually corr
 logger = io.logger_setup()
 
 # DEFINE CELLPOSE MODEL (without size model)
-CP2='/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700'
+CP2='path/to/pretrained/model/CP'
 model=models.CellposeModel(gpu=use_GPU,pretrained_model=CP2)
 train_dir='/path/to/images/and/masks/'
 test_dir='/path/to/test/images'
