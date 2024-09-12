@@ -17,18 +17,18 @@ Spatial Multi-Omics Integration
 
 5. Export tile coordinates
 
- ## Transcriptomics workflow  
+## Transcriptomics workflow  
 
-7. Stitch Polygons
+1. Stitch Polygons
 
-8. Align Transcripts to polygons
+2. Align Transcripts to polygons
 
-##Alignment Workflow
+## Alignment Workflow
 
 1. Setup STalign
 
 2. Align ST to SM
 
-##Integration 
+## Integration 
 
 1. Metabolomics Cluster Analysis 
