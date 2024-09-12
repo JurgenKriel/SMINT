@@ -1,0 +1,19 @@
+
+   name: smint_env
+   channels:
+     - conda-forge
+     - defaults
+   dependencies:
+     - python=3.11  # or any other version you prefer
+     - cellpose
+     - numpy
+     - matplotlib
+     - os
+     - glob2
+     - czifile
+     - pillow
+     - aicsimageio
+     - pandas
+     - dask
+     - tifffile
+     - STalign
