@@ -120,7 +120,9 @@ io.masks_flows_to_seg(imgs, masks, flows, diams, train_files, channels=channels)
 io.save_masks(imgs, masks, flows, train_files, save_txt=True)
 ```
 
-6. Export tile coordinates
+5. Export tile coordinates
+
+
 
 ## Transcriptomics workflow  
 
