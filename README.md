@@ -9,7 +9,7 @@
 ### 1. Setup conda environment
 
 ```
-   conda env create -f environment.yml
+   conda env create -f conda_env_setup.yml
 ```
 ### 2. Export images for training
 
