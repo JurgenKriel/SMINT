@@ -16,7 +16,7 @@
 If using a Zeiss Confocal Instrument, tiles can be exported direclty from the Zen Blue software using 'export selected tiles' option. 
 If you already have a stiched tile scan, you can chunk it up with specified tile sizes using the following: 
 
-```
+```python
 
 # Read the TIFF image file
 image = aicsimageio.AICSImage(image_path)
