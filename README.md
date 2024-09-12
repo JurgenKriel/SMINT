@@ -99,7 +99,28 @@ diam_labels = model.diam_labels.copy()
 
 4. Run segmentation on all tiles
 
-5. Export tile coordinates
+```python
+image_files = glob('/path/to/images/*.tif')
+
+#sort images as list
+imgs=[]
+for file in image_files:
+    img=io.imread(file)
+    imgs.append(img)
+
+nimg=len(imgs)
+nimg
+
+#Run segmentation with CP2 model
+
+channels = [1,2]
+masks, flows, diams = model.eval(imgs, diameter=100.53, flow_threshold=3,cellprob_threshold=-3, channels=channels, min_size=99, normalize=True)
+io.masks_flows_to_seg(imgs, masks, flows, diams, train_files, channels=channels)
+
+io.save_masks(imgs, masks, flows, train_files, save_txt=True)
+```
+
+6. Export tile coordinates
 
 ## Transcriptomics workflow  
 
