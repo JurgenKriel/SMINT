@@ -3,16 +3,32 @@ Spatial Multi-Omics Integration
 
 ![Workflow Image](https://github.com/JurgenKriel/SMINT/raw/main/SpatialSegPaper_v2.png)
 
-# Workflow 
+# Workflows
 
-1. Export tiles/Chunk Tiles
+## Cell Segmentation workflow
 
-2. Train Cell Pose Model 
+1. Setup conda environment
 
-3. Run segmentation on all tiles 
+2. Export images for training 
 
-4. Stitch Polygons
+3. Train Cell Pose Model 
 
-5. Align Transcripts to polygons
+4. Run segmentation on all tiles
 
-6. Align ST to SM data 
+5. Export tile coordinates
+
+ ## Transcriptomics workflow  
+
+7. Stitch Polygons
+
+8. Align Transcripts to polygons
+
+##Alignment Workflow
+
+1. Setup STalign
+
+2. Align ST to SM
+
+##Integration 
+
+1. Metabolomics Cluster Analysis 
