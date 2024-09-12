@@ -8,13 +8,15 @@
 
 1. Setup conda environment
 
-2. Export images for training 
 
-3. Train Cell Pose Model 
 
-4. Run segmentation on all tiles
+3. Export images for training 
 
-5. Export tile coordinates
+4. Train Cell Pose Model 
+
+5. Run segmentation on all tiles
+
+6. Export tile coordinates
 
 ## Transcriptomics workflow  
 
