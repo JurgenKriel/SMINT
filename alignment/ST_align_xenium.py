@@ -188,4 +188,4 @@ headers_df1 = z.columns.tolist()
 new_headers= headers_df1 + ['x_new','y_new']
 results= np.hstack((z, aligned))
 results_df = pd.DataFrame(results, columns=new_headers)
-results_df.to_csv('/stornext/Bioinf/data/lab_brain_cancer/projects/tme_spatial/venture_multi_omics/venture_pt2/aligned_coordinates/z2_coordinates.csv', index=False)
+results_df.to_csv('/path/to/coordinates.csv', index=False)
