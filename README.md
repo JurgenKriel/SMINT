@@ -11,7 +11,7 @@
 ```
    conda env create -f environment.yml
 ```
-3. Export images for training
+2. Export images for training
 
 If using a Zeiss Confocal Instrument, tiles can be exported direclty from the Zen Blue software using 'export selected tiles' option. 
 If you already have a stiched tile scan, you can chunk it up with specified tile sizes using the following: 
@@ -55,11 +55,51 @@ for y in range(0, height, tile_size):
 ```
 
 
-5. Train Cell Pose Model 
+3. Train Cellpose Model 
 
-6. Run segmentation on all tiles
+For coherent guidelines on training a Cellpose Model from scratch, please see: https://cellpose.readthedocs.io/en/latest/train.html
 
-7. Export tile coordinates
+For label creation, we started with the pre-trained CP model, and mannually corrected segmentations, then used the seg.npy files for training:
+
+```python
+#train models on image tiles 
+
+#start logger (to see training across epochs)
+logger = io.logger_setup()
+
+# DEFINE CELLPOSE MODEL (without size model)
+CP2='/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700'
+model=models.CellposeModel(gpu=use_GPU,pretrained_model=CP2)
+train_dir='/path/to/images/and/masks/'
+test_dir='/path/to/test/images'
+#model = models.CellposeModel(gpu=use_GPU, model_type=initial_model)
+
+# set channels
+channels = [1,2]
+
+# get files
+output = io.load_train_test_data(train_dir, test_dir, mask_filter='_seg.npy')
+train_files, train_seg, _, test_data, test_labels, _ = output
+
+new_model_path = model.train(train_files, train_seg, 
+                              test_data=test_data,
+                              test_labels=test_labels,
+                              channels=channels, 
+                              save_path=train_dir, 
+                              n_epochs=1000,
+                              learning_rate=0.01, 
+                              weight_decay=0.00001, 
+                              nimg_per_epoch=1,
+                              model_name=CP2)
+
+# diameter of labels in training images
+diam_labels = model.diam_labels.copy()
+
+```
+
+4. Run segmentation on all tiles
+
+5. Export tile coordinates
 
 ## Transcriptomics workflow  
 
