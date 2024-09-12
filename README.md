@@ -6,12 +6,12 @@
 
 ## Cell Segmentation workflow
 
-1. Setup conda environment
+### 1. Setup conda environment
 
 ```
    conda env create -f environment.yml
 ```
-2. Export images for training
+### 2. Export images for training
 
 If using a Zeiss Confocal Instrument, tiles can be exported direclty from the Zen Blue software using 'export selected tiles' option. 
 If you already have a stiched tile scan, you can chunk it up with specified tile sizes using the following: 
@@ -55,7 +55,7 @@ for y in range(0, height, tile_size):
 ```
 
 
-3. Train Cellpose Model 
+### 3. Train Cellpose Model 
 
 For coherent guidelines on training a Cellpose Model from scratch, please see: https://cellpose.readthedocs.io/en/latest/train.html
 
@@ -98,7 +98,7 @@ diam_labels = model.diam_labels.copy()
 
 ```
 
-4. Run segmentation on all tiles
+### 4. Run segmentation on all tiles
 
 ```python
 image_files = glob('/path/to/images/*.tif')
@@ -121,7 +121,7 @@ io.masks_flows_to_seg(imgs, masks, flows, diams, train_files, channels=channels)
 io.save_masks(imgs, masks, flows, train_files, save_txt=True)
 ```
 
-5. Export tile coordinates
+### 5. Export tile coordinates
 The aicsimageio module provides a handy get_mosaic_tile_positions function to export tile positions:
 ```python
 z8="/path/to/czi/image.czi/"
@@ -133,16 +133,16 @@ np.savetxt('/path/to/tiles.csv',mosaic, delimiter=',', fmt='%s')
 
 ## Transcriptomics workflow  
 
-1. Stitch Polygons
+### 1. Stitch Polygons
 
-2. Align Transcripts to polygons
+### 2. Align Transcripts to polygons
 
 ## Alignment Workflow
 
-1. Setup STalign
+### 1. Setup STalign
 
-2. Align ST to SM
+### 2. Align ST to SM
 
 ## Integration 
 
-1. Metabolomics Cluster Analysis 
+### 1. Metabolomics Cluster Analysis 
