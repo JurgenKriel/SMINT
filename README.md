@@ -32,7 +32,7 @@ num_tiles_horizontal = (width + tile_size - 1) // tile_size
 num_tiles_vertical = (height + tile_size - 1) // tile_size
 
 # Create a directory to save the new images
-output_dir = "/stornext/Bioinf/data/lab_brain_cancer/users/j_kriel/Confocal/Venture_2_1/output_tiles/"
+output_dir = "/path/to/output/directory/"
 os.makedirs(output_dir, exist_ok=True)
 
 # Chunk up the image into tiles
