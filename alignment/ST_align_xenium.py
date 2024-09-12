@@ -12,8 +12,8 @@ from tifffile import imread
 #=============================================================================================================#
 #import xenium data
 
-xen_path1='/stornext/Bioinf/data/lab_brain_cancer/data_raw/ST/ST_231121/G000451_Sarah_Best_FreshFrozen/20231114__050038__20231114_GOOO451_Saskia/20231114__050038__20231114_GOOO451_Saskia/output-XETG00068__0006901__Region_1__20231114__050056/cells.parquet'
-xen_path2='/stornext/Bioinf/data/lab_brain_cancer/data_raw/ST/ST_231121/G000451_Sarah_Best_FreshFrozen/20231114__050038__20231114_GOOO451_Saskia/20231114__050038__20231114_GOOO451_Saskia/output-XETG00068__0006901__Region_2__20231114__050056/cells.parquet'
+xen_path1='/path/to/xenium/folder/cells.parquet'
+xen_path2='/path/to/metabolomics/coordinates.csv'
 
 z1=pd.read_csv('xen_path1')
 z2=pd.read_csv('xen_path2')
