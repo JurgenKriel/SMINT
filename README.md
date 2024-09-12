@@ -59,7 +59,8 @@ for y in range(0, height, tile_size):
 
 For coherent guidelines on training a Cellpose Model from scratch, please see: https://cellpose.readthedocs.io/en/latest/train.html
 
-For label creation, we started with the pre-trained CP model, and mannually corrected segmentations, then used the seg.npy files for training:
+For label creation, we started with the pre-trained CP model, mannually corrected segmentations, then exported the seg.npy files for training.
+Full ipython notebook available under segmentation/Cellpose_Train_and_Seg.ipynb
 
 ```python
 #train models on image tiles 
@@ -121,7 +122,13 @@ io.save_masks(imgs, masks, flows, train_files, save_txt=True)
 ```
 
 5. Export tile coordinates
-
+The aicsimageio module provides a handy get_mosaic_tile_positions function to export tile positions:
+```python
+z8="/path/to/czi/image.czi/"
+z8_img=aicsimageio.AICSImage(z8)
+mosaic=z8_img.get_mosaic_tile_positions(C=0)
+np.savetxt('/path/to/tiles.csv',mosaic, delimiter=',', fmt='%s')
+```
 
 
 ## Transcriptomics workflow  
