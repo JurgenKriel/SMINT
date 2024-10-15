@@ -134,8 +134,11 @@ np.savetxt('/path/to/tiles.csv',mosaic, delimiter=',', fmt='%s')
 ## Transcriptomics workflow  
 
 ### 1. Stitch Polygons
+See stitching script under stitching/stitching.Rmd
 
-### 2. Align Transcripts to polygons
+### 2. Align and Assign Transcripts to polygons
+See alignment of polygons and transcripts under
+See transcript assignment script under assignment/transcript_assignment.R
 
 ## Alignment Workflow
 
@@ -152,3 +155,4 @@ See alignment script under alignment/ST_align_xenium.py
 ## Integration 
 
 ### 1. Metabolomics Cluster Analysis 
+See metabolite assignment script under 
