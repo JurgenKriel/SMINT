@@ -155,4 +155,4 @@ See alignment script under alignment/ST_align_xenium.py
 ## Integration 
 
 ### 1. Metabolomics Cluster Analysis 
-See metabolite assignment script under 
+See metabolite assignment script under integration/metabolomics_integration.R
