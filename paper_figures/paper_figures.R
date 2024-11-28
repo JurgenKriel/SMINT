@@ -10,6 +10,8 @@ library(RColorBrewer)
 library(edgeR)
 library(plyr)
 
+source('plot_annotation.R')
+
 unified <- readRDS('unified_spe.rds')
 nuc_spe <- readRDS('nucleus_spe.rds')
 cell_spe <- readRDS('cell_spe.rds')
