@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMINT - Spatial Multi-Omics Integration Package</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">SMINT</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/krielj/smint">GitHub</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Documentation</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2>Spatial Multi-Omics Integration (SMINT)</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">A Python package for streamlined spatial multi-omics data analysis with enhanced segmentation capabilities.</p>
+                        
+                        {% if smint_available %}
+                        <div class="alert alert-success" role="alert">
+                            <h4 class="alert-heading">SMINT is installed!</h4>
+                            <p>Version: {{ smint_version }}</p>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            <h4 class="alert-heading">SMINT is not installed</h4>
+                            <p>Please install the SMINT package to access all functionality.</p>
+                        </div>
+                        {% endif %}
+                        
+                        <h4 class="mt-4">Key Features</h4>
+                        <ul>
+                            <li>Multi-GPU cell segmentation for whole slide images</li>
+                            <li>Alignment of spatial transcriptomics data</li>
+                            <li>Distributed computing support for large images</li>
+                            <li>Interactive visualization tools</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                {% if smint_available %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Available Modules</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for module in smint_modules %}
+                            <div class="col-md-4 mb-2">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>{{ module }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Dependencies Status</h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% for dep_name, is_available in dependencies.items() %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ dep_name }}
+                                {% if is_available %}
+                                <span class="badge rounded-pill bg-success">Available</span>
+                                {% else %}
+                                <span class="badge rounded-pill bg-warning text-dark">Missing</span>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Quick Links</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action">Installation Guide</a>
+                            <a href="#" class="list-group-item list-group-item-action">API Reference</a>
+                            <a href="#" class="list-group-item list-group-item-action">Examples</a>
+                            <a href="#" class="list-group-item list-group-item-action">Tutorials</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-light mt-5 py-3">
+        <div class="container text-center">
+            <p>SMINT - Spatial Multi-Omics Integration Package &copy; 2025</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
