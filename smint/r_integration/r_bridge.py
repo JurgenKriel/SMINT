@@ -19,9 +19,14 @@ try:
     from rpy2.robjects import pandas2ri
     from rpy2.robjects.conversion import localconverter
     import rpy2.robjects.packages as rpackages
-    HAS_RPY2 = True
+    RPY2_AVAILABLE = True
 except ImportError:
-    HAS_RPY2 = False
+    RPY2_AVAILABLE = False
+    ro = None
+    pandas2ri = None
+    localconverter = None
+    rpackages = None
+    logging.warning("rpy2 package not available. R integration functionality will be limited.")
 
 def initialize_r(packages=None):
     """
@@ -248,9 +253,12 @@ def r_function_to_python(r_function_name, *args, **kwargs):
             if isinstance(value, pd.DataFrame):
                 r_kwargs[key] = pandas_to_r(value)
             elif isinstance(value, (list, tuple)):
-                r_kwargs[key] = ro.vectors.StrVector(value) if all(isinstance(x, str) for x in value) else 
-                               ro.vectors.FloatVector(value) if all(isinstance(x, (int, float)) for x in value) else
-                               value
+                if all(isinstance(x, str) for x in value):
+                    r_kwargs[key] = ro.vectors.StrVector(value)
+                elif all(isinstance(x, (int, float)) for x in value):
+                    r_kwargs[key] = ro.vectors.FloatVector(value)
+                else:
+                    r_kwargs[key] = value
             else:
                 r_kwargs[key] = value
         

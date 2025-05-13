@@ -10,10 +10,17 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from skimage import measure
 from skimage.exposure import rescale_intensity
-import cv2
 import logging
 from pathlib import Path
 import os
+
+# Optional dependencies
+try:
+    import cv2
+    CV2_AVAILABLE = True
+except ImportError:
+    CV2_AVAILABLE = False
+    logging.warning("OpenCV (cv2) package not available. Some visualization functionality will be limited.")
 
 def create_rgb_composite(channels, red_channel=None, green_channel=None, blue_channel=None, 
                         percentile_min=1, percentile_max=99):
