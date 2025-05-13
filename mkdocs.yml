@@ -48,6 +48,7 @@ nav:
   - Home: index.md
   - Getting Started:
     - Installation: installation.md
+    - Dependency Handling: dependency_handling.md
     - Configuration: configuration.md
   - User Guide:
     - Segmentation: segmentation.md
