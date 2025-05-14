@@ -70,19 +70,14 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          setup_commands:
-            - import sys
-            - from unittest.mock import MagicMock
-            - sys.modules["rpy2"] = MagicMock()
-          selection:
-            inherited_members: false
+          options:
             docstring_style: numpy
-          rendering:
             show_root_heading: true
             show_root_full_path: false
             show_if_no_docstring: false
             show_source: true
             show_signature_annotations: true
+            inherited_members: false
 
 extra:
   social:
