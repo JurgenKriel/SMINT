@@ -130,15 +130,6 @@ run_spatialomics_analysis(
     spatial_methods=["Ripley", "Morans"]
 )
 ```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## Transcriptomics workflow  
 
 ### 1. Stitch Polygons
@@ -164,4 +155,13 @@ See alignment script under alignment/ST_align_xenium.py
 
 ### 1. Metabolomics Cluster Analysis 
 See metabolite assignment script under integration/metabolomics_integration.R
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+
 >>>>>>> e9fadf4d662d283dafd59ae756781bbe1e40863c
