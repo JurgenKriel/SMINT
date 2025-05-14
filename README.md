@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # SMINT - Spatial Multi-Omics Integration Toolkit
 
 SMINT is a Python package for Spatial Multi-Omics Integration with enhanced segmentation capabilities and streamlined workflow. It provides a comprehensive toolkit for processing, analyzing, and visualizing spatial multi-omics data.
