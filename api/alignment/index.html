@@ -1164,6 +1164,122 @@
 <span class="sd">        Dictionary of quality metrics</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span>
+
+<span class="c1"># Xenium-Metabolomics Alignment</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">align_xenium_to_metabolomics</span><span class="p">(</span><span class="n">xenium_file</span><span class="p">,</span> <span class="n">metabolomics_file</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;alignment_results&quot;</span><span class="p">,</span> 
+                                <span class="n">pixel_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">xenium_x_col</span><span class="o">=</span><span class="s2">&quot;x_centroid&quot;</span><span class="p">,</span> <span class="n">xenium_y_col</span><span class="o">=</span><span class="s2">&quot;y_centroid&quot;</span><span class="p">,</span> 
+                                <span class="n">met_x_col</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">met_y_col</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">lddmm_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                                <span class="n">visualize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_intermediate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Align Xenium spatial transcriptomics data to spatial metabolomics data using LDDMM.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    xenium_file : str</span>
+<span class="sd">        Path to the Xenium coordinate file</span>
+<span class="sd">    metabolomics_file : str</span>
+<span class="sd">        Path to the metabolomics matrix file</span>
+<span class="sd">    output_dir : str, optional</span>
+<span class="sd">        Directory to save alignment results</span>
+<span class="sd">    pixel_size : float, optional</span>
+<span class="sd">        Size of pixels for rasterization</span>
+<span class="sd">    xenium_x_col : str, optional</span>
+<span class="sd">        Column name for Xenium x coordinates</span>
+<span class="sd">    xenium_y_col : str, optional</span>
+<span class="sd">        Column name for Xenium y coordinates</span>
+<span class="sd">    met_x_col : str, optional</span>
+<span class="sd">        Column name for metabolomics x coordinates</span>
+<span class="sd">    met_y_col : str, optional</span>
+<span class="sd">        Column name for metabolomics y coordinates</span>
+<span class="sd">    lddmm_params : dict, optional</span>
+<span class="sd">        Parameters for LDDMM algorithm</span>
+<span class="sd">    visualize : bool, optional</span>
+<span class="sd">        Whether to generate visualization plots</span>
+<span class="sd">    save_intermediate : bool, optional</span>
+<span class="sd">        Whether to save intermediate results</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Metabolomics data with transformed coordinates added</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">read_xenium_data</span><span class="p">(</span><span class="n">xenium_file</span><span class="p">,</span> <span class="n">x_col</span><span class="o">=</span><span class="s1">&#39;x_centroid&#39;</span><span class="p">,</span> <span class="n">y_col</span><span class="o">=</span><span class="s1">&#39;y_centroid&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read 10X Xenium data and extract cell coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    xenium_file : str</span>
+<span class="sd">        Path to the Xenium coordinate file</span>
+<span class="sd">    x_col : str, optional</span>
+<span class="sd">        Column name for x coordinates</span>
+<span class="sd">    y_col : str, optional</span>
+<span class="sd">        Column name for y coordinates</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Whether to print progress information</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        (coordinates, data)</span>
+<span class="sd">        coordinates: numpy.ndarray with shape (n, 2)</span>
+<span class="sd">        data: pandas.DataFrame with all data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">read_sm_matrix</span><span class="p">(</span><span class="n">mtx_file</span><span class="p">,</span> <span class="n">x_col</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">y_col</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a Spatial Metabolomics matrix file and extract coordinates and data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mtx_file : str</span>
+<span class="sd">        Path to the metabolomics matrix file</span>
+<span class="sd">    x_col : str, optional</span>
+<span class="sd">        Column name for x coordinates</span>
+<span class="sd">    y_col : str, optional</span>
+<span class="sd">        Column name for y coordinates</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Whether to print progress information</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        (coordinates, data, numeric_columns)</span>
+<span class="sd">        coordinates: numpy.ndarray with shape (n, 2)</span>
+<span class="sd">        data: pandas.DataFrame with all data</span>
+<span class="sd">        numeric_columns: list of numeric column names (m/z values)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">visualize_alignment</span><span class="p">(</span><span class="n">xenium_coords</span><span class="p">,</span> <span class="n">transformed_met_coords</span><span class="p">,</span> 
+                       <span class="n">xenium_label</span><span class="o">=</span><span class="s2">&quot;Xenium&quot;</span><span class="p">,</span> <span class="n">met_label</span><span class="o">=</span><span class="s2">&quot;Metabolomics&quot;</span><span class="p">,</span> 
+                       <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Visualize the alignment between Xenium and transformed metabolomics data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    xenium_coords : numpy.ndarray</span>
+<span class="sd">        Xenium cell coordinates (shape: n x 2)</span>
+<span class="sd">    transformed_met_coords : numpy.ndarray</span>
+<span class="sd">        Transformed metabolomics coordinates (shape: m x 2)</span>
+<span class="sd">    xenium_label : str, optional</span>
+<span class="sd">        Label for Xenium data in legend</span>
+<span class="sd">    met_label : str, optional</span>
+<span class="sd">        Label for metabolomics data in legend</span>
+<span class="sd">    output_path : str, optional</span>
+<span class="sd">        Path to save the visualization</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    matplotlib.figure.Figure</span>
+<span class="sd">        The created figure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
 </code></pre></div>
 <h2 id="dependency-handling">Dependency Handling<a class="headerlink" href="#dependency-handling" title="Permanent link">&para;</a></h2>
 <p>The alignment module has several optional dependencies:</p>
@@ -1196,9 +1312,19 @@
 <td>Visualization</td>
 <td>Limited visualization capabilities</td>
 </tr>
+<tr>
+<td>torch</td>
+<td>GPU acceleration for LDDMM</td>
+<td>CPU-only operations (slower)</td>
+</tr>
+<tr>
+<td>STalign</td>
+<td>Xenium-Metabolomics alignment</td>
+<td>Functionality unavailable with informative error messages</td>
+</tr>
 </tbody>
 </table>
-<p>When a dependency is missing, SMINT will log a warning but continue to operate with limited functionality.</p>
+<p>When a dependency is missing, SMINT will log a warning but continue to operate with limited functionality. In the case of the Xenium-Metabolomics alignment, the <code>torch</code> and <code>STalign</code> packages are required, but their absence is gracefully handled so that other parts of the SMINT package can still function.</p>
 
 
 
