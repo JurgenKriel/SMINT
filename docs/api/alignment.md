@@ -2,35 +2,95 @@
 
 The alignment module provides functions for aligning spatial omics data using ST Align.
 
-## ST Align Wrapper
+## Overview
 
-::: smint.alignment.st_align_wrapper.run_alignment
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+The alignment module includes the following key functionalities:
 
-::: smint.alignment.st_align_wrapper.transform_coordinates
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+- **run_alignment**: Run the ST Align algorithm to align spatial omics data
+- **transform_coordinates**: Apply transformation to coordinates based on alignment results
+- **create_config**: Create a configuration file for the ST Align algorithm
+- **validate_alignment**: Validate alignment results using quality metrics
+- **align_xenium_to_metabolomics**: Align 10X Xenium data to spatial metabolomics data using LDDMM
 
-## Configuration
+## Function Reference
 
-::: smint.alignment.st_align_wrapper.create_config
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+```python
+def run_alignment(source_data, target_data, config=None, method="similarity"):
+    """
+    Run ST Align to align source data to target data.
+    
+    Parameters
+    ----------
+    source_data : str or DataFrame
+        Path to source data CSV or DataFrame
+    target_data : str or DataFrame
+        Path to target data CSV or DataFrame
+    config : dict, optional
+        Configuration parameters for ST Align
+    method : str, optional
+        Transformation method, one of "rigid", "similarity", "affine", "projective"
+        
+    Returns
+    -------
+    dict
+        Dictionary containing transformation matrix and alignment metrics
+    """
+    pass
 
-## Validation
+def transform_coordinates(coordinates, transformation_matrix):
+    """
+    Transform coordinates using a transformation matrix.
+    
+    Parameters
+    ----------
+    coordinates : DataFrame or array-like
+        Coordinates to transform
+    transformation_matrix : array-like
+        Transformation matrix from alignment
+        
+    Returns
+    -------
+    DataFrame or array-like
+        Transformed coordinates
+    """
+    pass
 
-::: smint.alignment.st_align_wrapper.validate_alignment
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+def create_config(parameters=None):
+    """
+    Create a configuration dictionary for ST Align.
+    
+    Parameters
+    ----------
+    parameters : dict, optional
+        Custom parameters to override defaults
+        
+    Returns
+    -------
+    dict
+        Configuration dictionary
+    """
+    pass
+
+def validate_alignment(source_transformed, target, metrics=None):
+    """
+    Validate alignment results using quality metrics.
+    
+    Parameters
+    ----------
+    source_transformed : DataFrame
+        Transformed source coordinates
+    target : DataFrame
+        Target coordinates
+    metrics : list, optional
+        Metrics to calculate
+        
+    Returns
+    -------
+    dict
+        Dictionary of quality metrics
+    """
+    pass
+```
 
 ## Dependency Handling
 
