@@ -917,27 +917,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#st-align-wrapper" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
-      ST Align Wrapper
+      Overview
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuration" class="md-nav__link">
+  <a href="#function-reference" class="md-nav__link">
     <span class="md-ellipsis">
-      Configuration
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#validation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Validation
+      Function Reference
     </span>
   </a>
   
@@ -1041,27 +1032,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#st-align-wrapper" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
-      ST Align Wrapper
+      Overview
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuration" class="md-nav__link">
+  <a href="#function-reference" class="md-nav__link">
     <span class="md-ellipsis">
-      Configuration
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#validation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Validation
+      Function Reference
     </span>
   </a>
   
@@ -1097,29 +1079,92 @@
 
 <h1 id="alignment-api">Alignment API<a class="headerlink" href="#alignment-api" title="Permanent link">&para;</a></h1>
 <p>The alignment module provides functions for aligning spatial omics data using ST Align.</p>
-<h2 id="st-align-wrapper">ST Align Wrapper<a class="headerlink" href="#st-align-wrapper" title="Permanent link">&para;</a></h2>
-<p>::: smint.alignment.st_align_wrapper.run_alignment
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true</p>
-<p>::: smint.alignment.st_align_wrapper.transform_coordinates
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true</p>
-<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
-<p>::: smint.alignment.st_align_wrapper.create_config
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true</p>
-<h2 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">&para;</a></h2>
-<p>::: smint.alignment.st_align_wrapper.validate_alignment
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The alignment module includes the following key functionalities:</p>
+<ul>
+<li><strong>run_alignment</strong>: Run the ST Align algorithm to align spatial omics data</li>
+<li><strong>transform_coordinates</strong>: Apply transformation to coordinates based on alignment results</li>
+<li><strong>create_config</strong>: Create a configuration file for the ST Align algorithm</li>
+<li><strong>validate_alignment</strong>: Validate alignment results using quality metrics</li>
+<li><strong>align_xenium_to_metabolomics</strong>: Align 10X Xenium data to spatial metabolomics data using LDDMM</li>
+</ul>
+<h2 id="function-reference">Function Reference<a class="headerlink" href="#function-reference" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_alignment</span><span class="p">(</span><span class="n">source_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;similarity&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run ST Align to align source data to target data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_data : str or DataFrame</span>
+<span class="sd">        Path to source data CSV or DataFrame</span>
+<span class="sd">    target_data : str or DataFrame</span>
+<span class="sd">        Path to target data CSV or DataFrame</span>
+<span class="sd">    config : dict, optional</span>
+<span class="sd">        Configuration parameters for ST Align</span>
+<span class="sd">    method : str, optional</span>
+<span class="sd">        Transformation method, one of &quot;rigid&quot;, &quot;similarity&quot;, &quot;affine&quot;, &quot;projective&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary containing transformation matrix and alignment metrics</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">transform_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">transformation_matrix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform coordinates using a transformation matrix.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coordinates : DataFrame or array-like</span>
+<span class="sd">        Coordinates to transform</span>
+<span class="sd">    transformation_matrix : array-like</span>
+<span class="sd">        Transformation matrix from alignment</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame or array-like</span>
+<span class="sd">        Transformed coordinates</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_config</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a configuration dictionary for ST Align.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    parameters : dict, optional</span>
+<span class="sd">        Custom parameters to override defaults</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Configuration dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_alignment</span><span class="p">(</span><span class="n">source_transformed</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate alignment results using quality metrics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_transformed : DataFrame</span>
+<span class="sd">        Transformed source coordinates</span>
+<span class="sd">    target : DataFrame</span>
+<span class="sd">        Target coordinates</span>
+<span class="sd">    metrics : list, optional</span>
+<span class="sd">        Metrics to calculate</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary of quality metrics</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div>
 <h2 id="dependency-handling">Dependency Handling<a class="headerlink" href="#dependency-handling" title="Permanent link">&para;</a></h2>
 <p>The alignment module has several optional dependencies:</p>
 <table>
