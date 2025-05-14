@@ -20,7 +20,7 @@ SMINT's alignment module supports the following data formats:
 - **CSV files** (preferred) - Simple tabular format with spatial coordinates
 - **AnnData objects** - Python objects with spatial omics data
 - **Pandas DataFrames** - In-memory tabular data
-- **10X Visium data** - Spatial transcriptomics from 10X Genomics
+- **10X Xenium data** - Spatial transcriptomics from 10X Genomics
 
 ### Required Data Columns
 
