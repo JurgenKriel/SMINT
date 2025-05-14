@@ -14,7 +14,7 @@ SMINT provides a comprehensive toolkit for processing and analyzing spatial omic
 - Comprehensive documentation with step-by-step guides
 - HPC deployment scripts for SLURM-based clusters
 
-![SMINT Workflow](images/workflow.png)
+![SMINT Workflow](SpatialSegPaper_v2.png)
 
 ## Key Features
 
