@@ -2,53 +2,156 @@
 
 The utilities module provides helper functions for file operations, logging, and other common tasks.
 
-## File Operations
+## Overview
 
-::: smint.utils.file_utils.list_files
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+The utilities module includes the following key functionalities:
 
-::: smint.utils.file_utils.create_directory
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+- **list_files**: List files in a directory with optional filtering
+- **create_directory**: Create a directory if it doesn't exist
+- **get_file_info**: Get information about a file
+- **setup_logger**: Set up a logger for consistent logging
+- **log_parameters**: Log parameters for reproducibility
+- **load_config**: Load configuration from a file
+- **save_config**: Save configuration to a file
 
-::: smint.utils.file_utils.get_file_info
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+## Function Reference
 
-## Logging Utilities
+```python
+def list_files(directory, pattern=None, recursive=False):
+    """
+    List files in a directory with optional filtering.
+    
+    Parameters
+    ----------
+    directory : str
+        Directory to list files from
+    pattern : str, optional
+        Glob pattern to filter files
+    recursive : bool, optional
+        Whether to search recursively
+        
+    Returns
+    -------
+    list
+        List of file paths
+    """
+    pass
 
-::: smint.utils.logging_utils.setup_logger
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+def create_directory(directory, parents=True, exist_ok=True):
+    """
+    Create a directory if it doesn't exist.
+    
+    Parameters
+    ----------
+    directory : str
+        Directory to create
+    parents : bool, optional
+        Whether to create parent directories
+    exist_ok : bool, optional
+        Whether to ignore if directory exists
+        
+    Returns
+    -------
+    str
+        Path to created directory
+    """
+    pass
 
-::: smint.utils.logging_utils.log_parameters
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+def get_file_info(file_path):
+    """
+    Get information about a file.
+    
+    Parameters
+    ----------
+    file_path : str
+        Path to the file
+        
+    Returns
+    -------
+    dict
+        Dictionary with file information
+    """
+    pass
 
-## Configuration Utilities
+def setup_logger(name, log_file=None, level=logging.INFO, format=None):
+    """
+    Set up a logger for consistent logging.
+    
+    Parameters
+    ----------
+    name : str
+        Name of the logger
+    log_file : str, optional
+        Path to log file
+    level : int, optional
+        Logging level
+    format : str, optional
+        Log message format
+        
+    Returns
+    -------
+    logging.Logger
+        Configured logger
+    """
+    pass
 
-::: smint.utils.config_utils.load_config
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+def log_parameters(logger, parameters, prefix=''):
+    """
+    Log parameters for reproducibility.
+    
+    Parameters
+    ----------
+    logger : logging.Logger
+        Logger to use
+    parameters : dict
+        Parameters to log
+    prefix : str, optional
+        Prefix for parameter names
+        
+    Returns
+    -------
+    None
+    """
+    pass
 
-::: smint.utils.config_utils.save_config
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+def load_config(config_path, format=None):
+    """
+    Load configuration from a file.
+    
+    Parameters
+    ----------
+    config_path : str
+        Path to configuration file
+    format : str, optional
+        Format of the file (yaml, json, etc.)
+        
+    Returns
+    -------
+    dict
+        Configuration dictionary
+    """
+    pass
+
+def save_config(config, config_path, format=None):
+    """
+    Save configuration to a file.
+    
+    Parameters
+    ----------
+    config : dict
+        Configuration dictionary
+    config_path : str
+        Path to save configuration to
+    format : str, optional
+        Format to save in (yaml, json, etc.)
+        
+    Returns
+    -------
+    str
+        Path to saved configuration
+    """
+    pass
+```
 
 ## Dependency Handling
 
