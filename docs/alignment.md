@@ -20,7 +20,7 @@ SMINT's alignment module supports the following data formats:
 - **CSV files** (preferred) - Simple tabular format with spatial coordinates
 - **AnnData objects** - Python objects with spatial omics data
 - **Pandas DataFrames** - In-memory tabular data
-- **10X Xenium data** - Spatial transcriptomics from 10X Genomics
+- **10X Visium data** - Spatial transcriptomics from 10X Genomics
 
 ### Required Data Columns
 
@@ -275,3 +275,83 @@ Alignment performance depends on several factors:
 5. **Visualization**: Visually inspect alignment results to catch issues metrics might miss
 6. **Iterative Approach**: For difficult cases, try iterative alignment with progressively more complex transformations
 7. **Common Markers**: For multi-modal data, focus on features/markers present in both datasets
+
+## Xenium to Metabolomics Alignment
+
+### Overview
+
+Aligning 10X Xenium spatial transcriptomics data with spatial metabolomics data presents unique challenges:
+- Different resolution and sampling density
+- Different coordinate systems and scaling
+- Potential tissue deformation between modalities
+- Different feature types (genes vs. metabolites)
+
+SMINT provides a specialized module that leverages STalign's Large Deformation Diffeomorphic Metric Mapping (LDDMM) to perform this alignment.
+
+### Quick Start
+
+```python
+from smint.alignment import align_xenium_to_metabolomics
+
+# Basic usage
+aligned_data = align_xenium_to_metabolomics(
+    xenium_file="path/to/xenium_data.csv",
+    metabolomics_file="path/to/metabolomics_data.csv",
+    output_dir="alignment_results",
+    pixel_size=30,
+    visualize=True
+)
+```
+
+### Advanced Usage
+
+For more complex alignment tasks, you can customize the parameters:
+
+```python
+from smint.alignment import align_xenium_to_metabolomics
+
+# Advanced usage with custom parameters
+aligned_data = align_xenium_to_metabolomics(
+    xenium_file="path/to/xenium_data.csv",
+    metabolomics_file="path/to/metabolomics_data.csv",
+    output_dir="alignment_results",
+    pixel_size=30,
+    xenium_x_col="x_centroid",
+    xenium_y_col="y_centroid",
+    met_x_col="x",
+    met_y_col="y",
+    lddmm_params={
+        'niter': 1500,        # More iterations for difficult alignments
+        'sigmaM': 0.3,        # Smaller kernel for more local deformations
+        'sigmaB': 1.0,        # Control smoothness of backward map
+        'sigmaA': 1.0,        # Control smoothness of forward map
+        'epV': 600,           # Regularization parameter
+        'diffeo_start': 30    # Start diffeomorphic transformation earlier
+    },
+    visualize=True,
+    save_intermediate=True    # Save intermediate results for debugging
+)
+```
+
+### Optimizing Alignment Quality
+
+The alignment quality depends on several factors:
+
+1. **Pixel Size for Rasterization**: 
+   - Typically 20-50µm works well for Xenium data
+   - Too small: Results in sparse representation
+   - Too large: Loses spatial resolution
+   - Start with 30µm and adjust based on results
+
+2. **LDDMM Parameters**:
+   - `sigmaM`: Controls local deformation flexibility (smaller = more flexible)
+   - `sigmaB/sigmaA`: Controls transformation smoothness
+   - `epV`: Regularization strength (higher = smoother but less accurate)
+   - `niter`: Number of iterations (higher = potentially better but slower)
+
+3. **Pre-processing**:
+   - Ensure coordinates are in the same scale
+   - Remove outlier points that could distort alignment
+   - For very different orientations, consider manual pre-alignment
+
+For detailed guidance on alignment optimization, see the [full Xenium-Metabolomics alignment documentation](xenium_metabolomics_alignment.md).
