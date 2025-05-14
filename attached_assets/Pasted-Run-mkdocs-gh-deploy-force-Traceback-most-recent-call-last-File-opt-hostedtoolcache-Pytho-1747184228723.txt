@@ -1,0 +1,46 @@
+Run mkdocs gh-deploy --force
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/bin/mkdocs", line 8, in <module>
+    sys.exit(cli())
+             ^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/click/core.py", line 1442, in __call__
+    return self.main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/click/core.py", line 1363, in main
+    rv = self.invoke(ctx)
+         ^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/click/core.py", line 1830, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/click/core.py", line 1226, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/click/core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/mkdocs/__main__.py", line 315, in gh_deploy_command
+    build.build(cfg, dirty=not clean)
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/mkdocs/commands/build.py", line 265, in build
+    config = config.plugins.on_config(config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/mkdocs/plugins.py", line 587, in on_config
+    return self.run_event('config', config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/mkdocs/plugins.py", line 566, in run_event
+    result = method(item, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/mkdocstrings/_internal/plugin.py", line 146, in on_config
+    handlers._download_inventories()
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/mkdocstrings/_internal/handlers/base.py", line 721, in _download_inventories
+    handler = self.get_handler(handler_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/mkdocstrings/_internal/handlers/base.py", line 699, in get_handler
+    self._handlers[name] = module.get_handler(**kwargs)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/mkdocstrings_handlers/python/_internal/handler.py", line 413, in get_handler
+    config=PythonConfig.from_data(**handler_config),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/mkdocstrings_handlers/python/_internal/config.py", line 1033, in from_data
+    return cls(**cls.coerce(**data))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PythonConfig.__init__() got an unexpected keyword argument 'setup_commands'

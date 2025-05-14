@@ -1,0 +1,89 @@
+site_name: SMINT Documentation
+site_description: Spatial Multi-Omics Integration Toolkit
+site_author: Jurgen Kriel
+repo_url: https://github.com/JurgenKriel/SMINT
+repo_name: JurgenKriel/SMINT
+
+theme:
+  name: material
+  palette:
+    primary: blue
+    accent: indigo
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - content.code.copy
+    - content.tabs.link
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed
+  - pymdownx.arithmatex
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: installation.md
+    - Dependency Handling: dependency_handling.md
+    - Configuration: configuration.md
+  - User Guide:
+    - Segmentation: segmentation.md
+    - Alignment: alignment.md
+    - R Integration: r_integration.md
+    - HPC Deployment: hpc_deployment.md
+  - Examples:
+    - Examples: examples.md
+  - API Reference:
+    - Segmentation: api/segmentation.md
+    - Preprocessing: api/preprocessing.md
+    - Visualization: api/visualization.md
+    - Alignment: api/alignment.md
+    - R Integration: api/r_integration.md
+    - Utilities: api/utils.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: numpy
+            show_root_heading: true
+            show_root_full_path: false
+            show_if_no_docstring: false
+            show_source: true
+            show_signature_annotations: true
+            inherited_members: false
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/JurgenKriel/SMINT
+  version:
+    provider: mike
+
+copyright: Copyright &copy; 2024 Jurgen Kriel

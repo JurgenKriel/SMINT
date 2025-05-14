@@ -1,0 +1,1136 @@
+---
+title: "01_transcript_to_cell"
+author: "Joel Moffet"
+date: "2023-09-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(sf)
+library(sfheaders)
+library(stringr)
+library(Seurat)
+library(SpatialExperiment)
+library(ggplot2)
+library(forcats)
+library(dplyr)
+```
+
+
+
+```{r create nuclei polygons}
+
+
+
+#locations of processed outlines
+segmentation_location <- '/path/to/nuclei/segmentation/files'
+
+#fov positions file
+fov_pos <- read.csv('/path/to/fov/positions/file', header = F)
+n_fovs <- nrow(fov_pos)
+
+
+
+outlines_list <- list()
+
+
+for(i in c(1:n_fovs)){outlines_list[[i]] <- read.delim(file = paste0(segmentation_location, list.files(segmentation_location, pattern = 'txt')[i]), header = F)}
+outlines_list_2 <- lapply(outlines_list, function(x) str_split(x$V1, ','))
+outlines_list_3 <- outlines_list_2
+for(i in 1:length(outlines_list_2)){for(j in 1:length(outlines_list_2[[i]])){outlines_list_3[[i]][[j]] <- outlines_list_2[[i]][[j]][seq(1, length(outlines_list_2[[i]][[j]]), 2)]}}
+outlines_list_4 <- outlines_list_3
+for(i in 1:length(outlines_list_2)){for(j in 1:length(outlines_list_2[[i]])){outlines_list_4[[i]][[j]] <- outlines_list_2[[i]][[j]][seq(2, length(outlines_list_2[[i]][[j]]), 2)]}}
+
+df_big <- data.frame(x = unlist(outlines_list_3), y = unlist(outlines_list_4))
+
+df_big$cell <- rep(1:sum(unlist(lapply(outlines_list_2, function(x=X) length(x)))), unlist(lapply(outlines_list_3, function(x=X) lapply(x, function(x=X) length(x)))))
+df_big$fov <- rep(rep(1:n_fovs,unlist(lapply(outlines_list_3, function(x=X) length(x)))), unlist(lapply(outlines_list_3, function(x=X) lapply(x, function(x=X) length(x)))))
+
+
+df_big$x <- as.numeric(df_big$x)
+df_big$y <- as.numeric(df_big$y)
+
+
+df_big$x_fov_global <- factor(df_big$fov)
+df_big$y_fov_global <- factor(df_big$fov)
+levels(df_big$x_fov_global) <- round(fov_pos[paste0(1:n_fovs),]$V1)
+levels(df_big$y_fov_global) <- round(fov_pos[paste0(1:n_fovs),]$V2)
+df_big$x_global_px <- as.numeric(as.character(df_big$x_fov_global))+df_big$y
+df_big$y_global_px <- as.numeric(as.character(df_big$y_fov_global))+df_big$x
+
+
+sf_polygons <- sf_polygon(df_big, x= 'x_global_px', y = 'y_global_px', polygon_id = 'cell', keep = T)
+sf_polygons <- st_make_valid(sf_polygons)
+
+#convert coordinates from pixels to µm
+sf_polygons$geometry <- sf_polygons$geometry * c(0.124,0.124)
+df_centroids <- st_centroid(sf_polygons)
+sf_polygons$x_centroid <- unlist(df_centroids$geometry)[seq(1, length(unlist(df_centroids$geometry)),2)]
+sf_polygons$y_centroid <- unlist(df_centroids$geometry)[seq(2, length(unlist(df_centroids$geometry)),2)]
+
+
+
+
+
+
+ggplot(st_centroid(sf_polygons))+geom_sf(alpha = 0.1, col ='black', size = 0.1)+ theme_classic()
+
+
+
+
+
+```
+
+
+```{r stitch nuclei polygons}
+
+#Find all polygon intersections
+
+sf_intersect <- st_intersects(sf_polygons)
+sf_polygons_smol <- sf_polygons[unlist(lapply(sf_intersect, length))>1,]
+sf_polygons_smol <- sf_polygons_smol[st_area(sf_polygons_smol)>0,]
+rownames(sf_polygons_smol) <- sf_polygons_smol$cell
+
+intsctn_pairs <- st_intersection(sf_polygons_smol, sf_polygons_smol)
+
+#remove doubling up of intersections: make sure cell id of 'cell' is larger than cell id of 'cell.1'
+
+intsctn_pairs <- intsctn_pairs[intsctn_pairs$cell >intsctn_pairs$cell.1,]
+
+int_only$area <- st_area(int_only)
+int_only <- int_only[int_only$area>0,]
+
+#calculate maximum overlap of intersection with either 'cell'
+
+int_only$overlap1 <- int_only$area/st_area(sf_polygons_smol[as.character(int_only$cell),])
+int_only$overlap2 <- int_only$area/st_area(sf_polygons_smol[as.character(int_only$cell.1),])
+
+int_only$maxover12 <- rowMaxs(cbind( int_only$overlap1,  int_only$overlap2))
+
+
+
+#for overlaps with >50% maximum overlap; combine polygons
+
+sf_list_max <- list()
+for(i in 1:length(int_only$maxover12)){if(int_only$maxover12[i] >0.5){
+    sf_list_max[[i]] <- st_sf(st_union(sf_polygons_smol[as.character(c(int_only$cell[i], int_only$cell.1[i])),]))
+  }}
+
+sf_max <- bind_rows(sf_list_max)
+    sf_max$cell1 <-int_only$cell[int_only$maxover12 >0.5]
+    sf_max$cell2 <- int_only$cell.1[int_only$maxover12 >0.5]
+    sf_max$fov1 <- int_only$fov[int_only$maxover12 >0.5]
+    sf_max$fov2 <- int_only$fov.1[int_only$maxover12 >0.5]
+    sf_max$cell <- paste0(sf_max$cell1, '_', sf_max$cell2)
+
+
+st_geometry(sf_max) <- 'out'
+
+
+
+# if a single polygon was joined with multiple other polygons at this stage, additionally join these new polygons together
+
+sf_list_max2 <- list()
+for(i in sort(unique(c(sf_max$cell1, sf_max$cell2)))){
+  if(min(c(sf_max$cell1[sf_max$cell2 ==i |sf_max$cell1 ==i], sf_max$cell2[sf_max$cell2 ==i |sf_max$cell1 ==i])) == i){
+    sf_list_max2[[i]] <- st_sf(st_union(sf_max[sf_max$cell2 ==i |sf_max$cell1 ==i ,]))
+    sf_list_max2[[i]]$cell.old <- i}}
+
+sf_max2 <- bind_rows(sf_list_max2)
+sf_max2$cell <- rownames(sf_max2)
+
+st_geometry(sf_max2) <- 'out'
+
+
+
+
+# Newly formed polygons may still have additional overlaps: above joining process is repeated
+
+
+intsctn2 <- st_intersection(sf_max2, sf_max2)
+int_only2 <- intsctn2[intsctn2$cell.old >intsctn2$cell.old.1,]
+
+int_only2$area <- st_area(int_only2)
+int_only2 <- int_only2[int_only2$area>0,]
+
+rownames(sf_max2) <- sf_max2$cell.old
+int_only2$overlap1 <- int_only2$area/st_area(sf_max2[as.character(int_only2$cell.old),])
+int_only2$overlap2 <- int_only2$area/st_area(sf_max2[as.character(int_only2$cell.old.1),])
+
+int_only2$maxover12 <- rowMaxs(cbind( int_only2$overlap1,  int_only2$overlap2))
+int_only2$minover12 <- rowMins(cbind( int_only2$overlap1,  int_only2$overlap2))
+
+sf_list_max3 <- list()
+for(i in 1:length(int_only2$maxover12)){if(int_only2$maxover12[i] >0.5){
+    sf_list_max3[[i]] <- st_sf(st_union(sf_max2[as.character(c(int_only2$cell.old[i], int_only2$cell.old.1[i])),]))
+  }}
+
+sf_max3 <- bind_rows(sf_list_max3)
+sf_max3$cell1 <-int_only2$cell.old[int_only2$maxover12 >0.5]
+    sf_max3$cell2 <- int_only2$cell.old.1[int_only2$maxover12 >0.5]
+st_geometry(sf_max3) <- 'out'
+sf_max3$cell.old <- rowMins(cbind(sf_max3$cell1, sf_max3$cell2))
+
+
+
+
+
+sf_list_max4 <- list()
+for(i in sort(unique(c(sf_max3$cell1, sf_max3$cell2)))){
+  if(min(c(sf_max3$cell1[sf_max3$cell2 ==i |sf_max3$cell1 ==i], sf_max3$cell2[sf_max3$cell2 ==i |sf_max3$cell1 ==i])) == i){
+    sf_list_max4[[i]] <- st_sf(st_union(sf_max3[sf_max3$cell2 ==i |sf_max3$cell1 ==i ,]))
+    sf_list_max4[[i]]$cell.old <- i}}
+
+sf_max4 <- bind_rows(sf_list_max4)
+sf_max4$cell <- rownames(sf_list_max4)
+
+st_geometry(sf_max4) <- 'out'
+
+
+#another round of joining
+
+intsctn3 <- st_intersection(sf_max4, sf_max4)
+int_only3 <- intsctn3[intsctn3$cell.old >intsctn3$cell.old.1,]
+
+int_only3$area <- st_area(int_only3)
+int_only3 <- int_only3[int_only3$area>0,]
+
+rownames(sf_max4) <- sf_max4$cell.old
+int_only3$overlap1 <- int_only3$area/st_area(sf_max4[as.character(int_only3$cell.old),])
+int_only3$overlap2 <- int_only3$area/st_area(sf_max4[as.character(int_only3$cell.old.1),])
+
+int_only3$maxover12 <- rowMaxs(cbind( int_only3$overlap1,  int_only3$overlap2))
+int_only3$minover12 <- rowMins(cbind( int_only3$overlap1,  int_only3$overlap2))
+
+
+
+
+sf_list_max5 <- list()
+for(i in 1:length(int_only3$maxover12)){if(int_only3$maxover12[i] >0.5){
+    sf_list_max5[[i]] <- st_sf(st_union(sf_max4[as.character(c(int_only3$cell.old[i], int_only3$cell.old.1[i])),]))
+  }}
+
+sf_max5 <- bind_rows(sf_list_max5)
+sf_max5$cell1 <-int_only3$cell.old[int_only3$maxover12 >0.5]
+    sf_max5$cell2 <- int_only3$cell.old.1[int_only3$maxover12 >0.5]
+st_geometry(sf_max5) <- 'out'
+sf_max5$cell.old <- rowMins(cbind(sf_max5$cell1, sf_max5$cell2))
+
+
+
+#combine all new polygons and unaffected original polygons into singular spatial object
+
+sub4 <- sf_max4[!sf_max4$cell.old %in% unique(c(sf_max5$cell1, sf_max5$cell2)),]
+sub4 <- rbind(sub4[,1], sf_max5[,4])
+
+sub2 <- sf_max2[!sf_max2$cell.old %in% unique(c(sf_max3$cell1, sf_max3$cell2)),]
+sub2 <- rbind(sub2[,1], sub4[,1])
+colnames(sub2)[1] <- 'cell'
+st_geometry(sub2) <- 'geometry'
+
+
+sf_polygons_sub <- sf_polygons_smol[!sf_polygons_smol$cell %in% unique(c(sf_max$cell1, sf_max$cell2)),]
+sf_polygons_sub <- rbind(sf_polygons_sub[,1], sub2[,1])
+
+
+#Now everything is recombined, check once more to join final polygons together
+
+intsctn4 <- st_intersection(sf_polygons_sub, sf_polygons_sub)
+int_only4 <- intsctn4[intsctn4$cell >intsctn4$cell.1,]
+
+int_only4$area <- st_area(int_only4)
+int_only4 <- int_only4[int_only4$area>0,]
+
+rownames(sf_polygons_sub) <- sf_polygons_sub$cell
+int_only4$overlap1 <- int_only4$area/st_area(sf_polygons_sub[as.character(int_only4$cell),])
+int_only4$overlap2 <- int_only4$area/st_area(sf_polygons_sub[as.character(int_only4$cell.1),])
+
+int_only4$maxover12 <- rowMaxs(cbind( int_only4$overlap1,  int_only4$overlap2))
+int_only4$minover12 <- rowMins(cbind( int_only4$overlap1,  int_only4$overlap2))
+
+sf_list_max6 <- list()
+for(i in 1:length(int_only4$maxover12)){if(int_only4$maxover12[i] >0.5){
+    sf_list_max6[[i]] <- st_sf(st_union(sf_polygons_sub[as.character(c(int_only4$cell[i], int_only4$cell.1[i])),]))
+  }}
+
+
+sf_max6 <- bind_rows(sf_list_max6)
+sf_max6$cell1 <-int_only4$cell[int_only4$maxover12 >0.5]
+    sf_max6$cell2 <- int_only4$cell.1[int_only4$maxover12 >0.5]
+st_geometry(sf_max6) <- 'geometry'
+sf_max6$cell <- rowMins(cbind(sf_max6$cell1, sf_max6$cell2))
+
+
+
+
+sf_polygons_sub2 <- sf_polygons_sub[!sf_polygons_sub$cell %in% unique(c(sf_max6$cell1, sf_max6$cell2)),]
+sf_polygons_sub2 <- rbind(sf_polygons_sub2[,1], sf_max6[,4])
+
+
+sf_out <- sf_polygons[!sf_polygons$cell %in% sf_polygons_smol$cell,]
+sf_out <- rbind(sf_out[,1], sf_polygons_sub2)
+sf_out$fov <- sf_polygons[as.character(sf_out$cell),]$fov
+
+
+
+
+
+# Next stage of stitching: splitting polygons with minute overlaps
+
+sf_intersect <- st_intersects(sf_out)
+sf_out_smol <- sf_out[unlist(lapply(sf_intersect, length))>1,]
+
+
+intsctn5 <- st_intersection(st_make_valid(sf_out_smol), st_make_valid(sf_out_smol))
+
+int_only5 <- intsctn5[intsctn5$cell >intsctn5$cell.1,]
+
+int_only5$area <- st_area(int_only5)
+int_only5 <- int_only5[int_only5$area>0,]
+
+rownames(sf_out_smol) <- sf_out_smol$cell
+int_only5$overlap1 <- int_only5$area/st_area(sf_out_smol[as.character(int_only5$cell),])
+int_only5$overlap2 <- int_only5$area/st_area(sf_out_smol[as.character(int_only5$cell.1),])
+
+int_only5$maxover12 <- rowMaxs(cbind( int_only5$overlap1,  int_only5$overlap2))
+int_only5$minover12 <- rowMins(cbind( int_only5$overlap1,  int_only5$overlap2))
+
+
+#for polygons with  maximum overlap less than 25%, split by removing overlapping area from both cells
+
+sf_list_max6 <- list()
+sf_list_max7 <- list()
+for(i in 1:length(int_only5$maxover12)){if(int_only5$maxover12[i] <0.25){
+    sf_list_max6[[i]] <- st_difference(sf_out_smol[as.character(c(int_only5$cell[i], int_only5$cell.1[i])),])[1,]
+    sf_list_max7[[i]] <- st_difference(sf_out_smol[as.character(c(int_only5$cell[i], int_only5$cell.1[i])),])[2,]
+}}
+
+sf_max7 <- distinct(bind_rows(sf_list_max7))
+sf_max6 <- distinct(bind_rows(sf_list_max6))
+
+sf_max8 <- rbind(sf_max6, sf_max7)
+
+sf_list_max8 <- list()
+for(i in sort(unique(sf_max8$cell))){if(table(c(sf_max8$cell))[as.character(i)]>1){
+  sf_list_max8[[i]] <- st_intersection(sf_max8[sf_max8$cell == i,])
+  sf_list_max8[[i]] <- sf_list_max8[[i]][which.max(sf_list_max8[[i]]$n.overlaps),]}}
+
+sf_max9 <- bind_rows(sf_list_max8)
+
+sub8 <- sf_max8[!sf_max8$cell %in% sf_max9$cell,]
+sub8 <- rbind(sub8[,1:2], sf_max9[,1:2])
+
+sf_out <- sf_out[!sf_out$cell %in% sub8$cell,] 
+sf_out <- rbind(sf_out, sub8[,1:2])
+
+
+# Next stage of stitching: removing polygons with intermediate overlaps
+
+
+sf_intersect <- st_intersects(sf_out)
+sf_out_smol <- sf_out[unlist(lapply(sf_intersect, length))>1,]
+
+intsctn5 <- st_intersection(st_make_valid(sf_out_smol), st_make_valid(sf_out_smol))
+
+int_only5 <- intsctn5[intsctn5$cell >intsctn5$cell.1,]
+
+int_only5$area <- st_area(int_only5)
+int_only5 <- int_only5[int_only5$area>0,]
+
+rownames(sf_out_smol) <- sf_out_smol$cell
+int_only5$overlap1 <- int_only5$area/st_area(sf_out_smol[as.character(int_only5$cell),])
+int_only5$overlap2 <- int_only5$area/st_area(sf_out_smol[as.character(int_only5$cell.1),])
+
+int_only5$maxover12 <- rowMaxs(cbind( int_only5$overlap1,  int_only5$overlap2))
+int_only5$minover12 <- rowMins(cbind( int_only5$overlap1,  int_only5$overlap2))
+
+#for remaining polygons with intermediate maximum overlap between 25% and 50%, split by removing overlapping area from both cells
+
+int_only5$cellout <- 0
+for(i in 1:length(int_only5$maxover12)){if(int_only5$maxover12[i] >= 0.25){
+  
+  if(st_area(sf_out_smol[as.character(c(int_only5$cell[i])),])<st_area(sf_out_smol[as.character(c(int_only5$cell.1[i])),])){
+    int_only5$cellout[i] <-  int_only5$cell[i]}
+  else{
+    int_only5$cellout[i] <- int_only5$cell.1[i]}
+}}
+
+sf_out <- sf_out[! sf_out$cell %in% int_only5$cellout,]
+sf_out <- st_make_valid(sf_out)
+
+sf_nuc <- sf_out
+ggplot(st_centroid(sf_nuc))+geom_sf(alpha = 0.1, col ='black', size = 0.1)+ theme_classic()
+
+#calculate centroids of new polygons
+
+sf_nuc$x_centroid <- unlist(st_centroid(sf_nuc)$geometry)[seq(1, length(unlist(st_centroid(sf_nuc)$geometry)),2)]
+sf_nuc$y_centroid <- unlist(st_centroid(sf_nuc)$geometry)[seq(2, length(unlist(st_centroid(sf_nuc)$geometry)),2)]
+```
+
+
+```{r create cell polygons}
+
+#locations of processed outlines
+segmentation_location <- '/path/to/cell/segmentation/files'
+
+
+outlines_list <- list()
+
+
+for(i in c(1:n_fovs)){outlines_list[[i]] <- read.delim(file = paste0(segmentation_location, list.files(segmentation_location)[i]), header = F)}
+outlines_list_2 <- lapply(outlines_list, function(x) str_split(x$V1, ','))
+outlines_list_3 <- outlines_list_2
+for(i in 1:length(outlines_list_2)){for(j in 1:length(outlines_list_2[[i]])){outlines_list_3[[i]][[j]] <- outlines_list_2[[i]][[j]][seq(1, length(outlines_list_2[[i]][[j]]), 2)]}}
+outlines_list_4 <- outlines_list_3
+for(i in 1:length(outlines_list_2)){for(j in 1:length(outlines_list_2[[i]])){outlines_list_4[[i]][[j]] <- outlines_list_2[[i]][[j]][seq(2, length(outlines_list_2[[i]][[j]]), 2)]}}
+
+df_big <- data.frame(x = unlist(outlines_list_3), y = unlist(outlines_list_4))
+
+df_big$cell <- rep(1:sum(unlist(lapply(outlines_list_2, function(x=X) length(x)))), unlist(lapply(outlines_list_3, function(x=X) lapply(x, function(x=X) length(x)))))
+df_big$fov <- rep(rep(1:n_fovs,unlist(lapply(outlines_list_3, function(x=X) length(x)))), unlist(lapply(outlines_list_3, function(x=X) lapply(x, function(x=X) length(x)))))
+
+
+df_big$x <- as.numeric(df_big$x)
+df_big$y <- as.numeric(df_big$y)
+
+
+df_big$x_fov_global <- factor(df_big$fov)
+df_big$y_fov_global <- factor(df_big$fov)
+levels(df_big$x_fov_global) <- round(fov_pos[paste0(1:n_fovs),]$V1)
+levels(df_big$y_fov_global) <- round(fov_pos[paste0(1:n_fovs),]$V2)
+df_big$x_global_px <- as.numeric(as.character(df_big$x_fov_global))+df_big$y
+df_big$y_global_px <- as.numeric(as.character(df_big$y_fov_global))+df_big$x
+
+
+sf_polygons <- sf_polygon(df_big, x= 'x_global_px', y = 'y_global_px', polygon_id = 'cell', keep = T)
+sf_polygons <- st_make_valid(sf_polygons)
+sf_polygons$geometry <- sf_polygons$geometry * c(0.124,0.124)
+df_centroids <- st_centroid(sf_polygons)
+sf_polygons$x_centroid <- unlist(df_centroids$geometry)[seq(1, length(unlist(df_centroids$geometry)),2)]
+sf_polygons$y_centroid <- unlist(df_centroids$geometry)[seq(2, length(unlist(df_centroids$geometry)),2)]
+
+
+
+
+
+
+ggplot(df_centroids)+geom_sf(alpha = 0.1, col ='black', size = 0.1)+ theme_classic()+xlim(c(0,10000))+ylim(c(0,10000))
+
+
+```
+
+
+
+```{r stitch cell polygons}
+#Find all polygon intersections
+
+int_cellnuc <- st_intersects(sf_polygons, sf_nuc)
+sf_polygons <- sf_polygons[unlist(lapply(int_cellnuc, length))>0,]
+
+
+int_cell <- st_intersects(sf_polygons, sf_polygons)
+
+
+sf_polygons_smol <- sf_polygons[unlist(lapply(int_cell, length))>1,]
+sf_polygons_smol <- sf_polygons_smol[st_area(sf_polygons_smol)>0,]
+rownames(sf_polygons_smol) <- sf_polygons_smol$cell
+
+intsctn_pairs <- st_intersection(sf_polygons_smol, sf_polygons_smol)
+
+#remove doubling up of intersections: make sure cell id of 'cell' is larger than cell id of 'cell.1'
+
+
+intsctn_pairs <- intsctn_pairs[intsctn_pairs$cell >intsctn_pairs$cell.1,]
+
+int_only$area <- st_area(int_only)
+int_only <- int_only[int_only$area>0,]
+
+#calculate maximum overlap of intersection with either cell
+
+
+int_only$overlap1 <- int_only$area/st_area(sf_polygons_smol[as.character(int_only$cell),])
+int_only$overlap2 <- int_only$area/st_area(sf_polygons_smol[as.character(int_only$cell.1),])
+
+int_only$maxover12 <- rowMaxs(cbind( int_only$overlap1,  int_only$overlap2))
+
+
+#for overlaps with >50% maximum overlap; combine polygons
+
+
+sf_list_max <- list()
+for(i in 1:length(int_only$maxover12)){if(int_only$maxover12[i] >0.5){
+    sf_list_max[[i]] <- st_sf(st_union(sf_polygons_smol[as.character(c(int_only$cell[i], int_only$cell.1[i])),]))
+  }}
+
+sf_max <- bind_rows(sf_list_max)
+    sf_max$cell1 <-int_only$cell[int_only$maxover12 >0.5]
+    sf_max$cell2 <- int_only$cell.1[int_only$maxover12 >0.5]
+    sf_max$fov1 <- int_only$fov[int_only$maxover12 >0.5]
+    sf_max$fov2 <- int_only$fov.1[int_only$maxover12 >0.5]
+    sf_max$cell <- paste0(sf_max$cell1, '_', sf_max$cell2)
+
+
+st_geometry(sf_max) <- 'out'
+
+
+# if a single polygon was joined with multiple other polygons at this stage, additionally join these new polygons together
+
+
+sf_list_max2 <- list()
+for(i in sort(unique(c(sf_max$cell1, sf_max$cell2)))){
+  if(min(c(sf_max$cell1[sf_max$cell2 ==i |sf_max$cell1 ==i], sf_max$cell2[sf_max$cell2 ==i |sf_max$cell1 ==i])) == i){
+    sf_list_max2[[i]] <- st_sf(st_union(sf_max[sf_max$cell2 ==i |sf_max$cell1 ==i ,]))
+    sf_list_max2[[i]]$cell.old <- i}}
+
+sf_max2 <- bind_rows(sf_list_max2)
+sf_max2$cell <- rownames(sf_max2)
+
+st_geometry(sf_max2) <- 'out'
+
+
+
+# Newly formed polygons may still have additional overlaps: above joining process is repeated
+
+
+intsctn2 <- st_intersection(sf_max2, sf_max2)
+int_only2 <- intsctn2[intsctn2$cell.old >intsctn2$cell.old.1,]
+
+int_only2$area <- st_area(int_only2)
+int_only2 <- int_only2[int_only2$area>0,]
+
+rownames(sf_max2) <- sf_max2$cell.old
+int_only2$overlap1 <- int_only2$area/st_area(sf_max2[as.character(int_only2$cell.old),])
+int_only2$overlap2 <- int_only2$area/st_area(sf_max2[as.character(int_only2$cell.old.1),])
+
+int_only2$maxover12 <- rowMaxs(cbind( int_only2$overlap1,  int_only2$overlap2))
+int_only2$minover12 <- rowMins(cbind( int_only2$overlap1,  int_only2$overlap2))
+
+sf_list_max3 <- list()
+for(i in 1:length(int_only2$maxover12)){if(int_only2$maxover12[i] >0.5){
+    sf_list_max3[[i]] <- st_sf(st_union(sf_max2[as.character(c(int_only2$cell.old[i], int_only2$cell.old.1[i])),]))
+  }}
+
+sf_max3 <- bind_rows(sf_list_max3)
+sf_max3$cell1 <-int_only2$cell.old[int_only2$maxover12 >0.5]
+    sf_max3$cell2 <- int_only2$cell.old.1[int_only2$maxover12 >0.5]
+st_geometry(sf_max3) <- 'out'
+sf_max3$cell.old <- rowMins(cbind(sf_max3$cell1, sf_max3$cell2))
+
+
+
+
+
+sf_list_max4 <- list()
+for(i in sort(unique(c(sf_max3$cell1, sf_max3$cell2)))){
+  if(min(c(sf_max3$cell1[sf_max3$cell2 ==i |sf_max3$cell1 ==i], sf_max3$cell2[sf_max3$cell2 ==i |sf_max3$cell1 ==i])) == i){
+    sf_list_max4[[i]] <- st_sf(st_union(sf_max3[sf_max3$cell2 ==i |sf_max3$cell1 ==i ,]))
+    sf_list_max4[[i]]$cell.old <- i}}
+
+sf_max4 <- bind_rows(sf_list_max4)
+sf_max4$cell <- rownames(sf_list_max4)
+
+st_geometry(sf_max4) <- 'out'
+
+
+#another round of joining
+
+
+
+intsctn3 <- st_intersection(sf_max4, sf_max4)
+int_only3 <- intsctn3[intsctn3$cell.old >intsctn3$cell.old.1,]
+
+int_only3$area <- st_area(int_only3)
+int_only3 <- int_only3[int_only3$area>0,]
+
+rownames(sf_max4) <- sf_max4$cell.old
+int_only3$overlap1 <- int_only3$area/st_area(sf_max4[as.character(int_only3$cell.old),])
+int_only3$overlap2 <- int_only3$area/st_area(sf_max4[as.character(int_only3$cell.old.1),])
+
+int_only3$maxover12 <- rowMaxs(cbind( int_only3$overlap1,  int_only3$overlap2))
+int_only3$minover12 <- rowMins(cbind( int_only3$overlap1,  int_only3$overlap2))
+
+
+
+
+sf_list_max5 <- list()
+for(i in 1:length(int_only3$maxover12)){if(int_only3$maxover12[i] >0.5){
+    sf_list_max5[[i]] <- st_sf(st_union(sf_max4[as.character(c(int_only3$cell.old[i], int_only3$cell.old.1[i])),]))
+  }}
+
+sf_max5 <- bind_rows(sf_list_max5)
+sf_max5$cell1 <-int_only3$cell.old[int_only3$maxover12 >0.5]
+    sf_max5$cell2 <- int_only3$cell.old.1[int_only3$maxover12 >0.5]
+st_geometry(sf_max5) <- 'out'
+sf_max5$cell.old <- rowMins(cbind(sf_max5$cell1, sf_max5$cell2))
+
+
+#combine all new polygons and unaffected original polygons into singular spatial object
+
+
+sub4 <- sf_max4[!sf_max4$cell.old %in% unique(c(sf_max5$cell1, sf_max5$cell2)),]
+sub4 <- rbind(sub4[,1], sf_max5[,4])
+
+sub2 <- sf_max2[!sf_max2$cell.old %in% unique(c(sf_max3$cell1, sf_max3$cell2)),]
+sub2 <- rbind(sub2[,1], sub4[,1])
+colnames(sub2)[1] <- 'cell'
+st_geometry(sub2) <- 'geometry'
+
+
+
+
+sf_polygons_sub <- sf_polygons_smol[!sf_polygons_smol$cell %in% unique(c(sf_max$cell1, sf_max$cell2)),]
+sf_polygons_sub <- rbind(sf_polygons_sub[,1], sub2[,1])
+
+#Now everything is recombined, check once more to join final polygons together
+
+
+intsctn4 <- st_intersection(sf_polygons_sub, sf_polygons_sub)
+int_only4 <- intsctn4[intsctn4$cell >intsctn4$cell.1,]
+
+int_only4$area <- st_area(int_only4)
+int_only4 <- int_only4[int_only4$area>0,]
+
+rownames(sf_polygons_sub) <- sf_polygons_sub$cell
+int_only4$overlap1 <- int_only4$area/st_area(sf_polygons_sub[as.character(int_only4$cell),])
+int_only4$overlap2 <- int_only4$area/st_area(sf_polygons_sub[as.character(int_only4$cell.1),])
+
+int_only4$maxover12 <- rowMaxs(cbind( int_only4$overlap1,  int_only4$overlap2))
+int_only4$minover12 <- rowMins(cbind( int_only4$overlap1,  int_only4$overlap2))
+
+sf_list_max6 <- list()
+for(i in 1:length(int_only4$maxover12)){if(int_only4$maxover12[i] >0.5){
+    sf_list_max6[[i]] <- st_sf(st_union(sf_polygons_sub[as.character(c(int_only4$cell[i], int_only4$cell.1[i])),]))
+  }}
+
+
+sf_max6 <- bind_rows(sf_list_max6)
+sf_max6$cell1 <-int_only4$cell[int_only4$maxover12 >0.5]
+    sf_max6$cell2 <- int_only4$cell.1[int_only4$maxover12 >0.5]
+st_geometry(sf_max6) <- 'geometry'
+sf_max6$cell <- rowMins(cbind(sf_max6$cell1, sf_max6$cell2))
+
+
+
+
+sf_polygons_sub2 <- sf_polygons_sub[!sf_polygons_sub$cell %in% unique(c(sf_max6$cell1, sf_max6$cell2)),]
+sf_polygons_sub2 <- rbind(sf_polygons_sub2[,1], sf_max6[,4])
+
+
+sf_out <- sf_polygons[!sf_polygons$cell %in% sf_polygons_smol$cell,]
+sf_out <- rbind(sf_out[,1], sf_polygons_sub2)
+sf_out$fov <- sf_polygons[as.character(sf_out$cell),]$fov
+
+
+
+sf_intersect <- st_intersects(sf_out)
+sf_out_smol <- sf_out[unlist(lapply(sf_intersect, length))>1,]
+
+
+# Next stage of stitching: splitting polygons with minute overlaps
+
+
+intsctn5 <- st_intersection(st_make_valid(sf_out_smol), st_make_valid(sf_out_smol))
+
+int_only5 <- intsctn5[intsctn5$cell >intsctn5$cell.1,]
+
+int_only5$area <- st_area(int_only5)
+int_only5 <- int_only5[int_only5$area>0,]
+
+rownames(sf_out_smol) <- sf_out_smol$cell
+int_only5$overlap1 <- int_only5$area/st_area(sf_out_smol[as.character(int_only5$cell),])
+int_only5$overlap2 <- int_only5$area/st_area(sf_out_smol[as.character(int_only5$cell.1),])
+
+int_only5$maxover12 <- rowMaxs(cbind( int_only5$overlap1,  int_only5$overlap2))
+int_only5$minover12 <- rowMins(cbind( int_only5$overlap1,  int_only5$overlap2))
+
+#for polygons with  maximum overlap less than 25%, split by removing overlapping area from both cells
+
+
+sf_list_max6 <- list()
+sf_list_max7 <- list()
+for(i in 1:length(int_only5$maxover12)){if(int_only5$maxover12[i] <0.25){
+    sf_list_max6[[i]] <- st_difference(sf_out_smol[as.character(c(int_only5$cell[i], int_only5$cell.1[i])),])[1,]
+    sf_list_max7[[i]] <- st_difference(sf_out_smol[as.character(c(int_only5$cell[i], int_only5$cell.1[i])),])[2,]
+}}
+
+sf_max7 <- distinct(bind_rows(sf_list_max7))
+sf_max6 <- distinct(bind_rows(sf_list_max6))
+
+sf_max8 <- rbind(sf_max6, sf_max7)
+
+sf_list_max8 <- list()
+for(i in sort(unique(sf_max8$cell))){if(table(c(sf_max8$cell))[as.character(i)]>1){
+  sf_list_max8[[i]] <- st_intersection(sf_max8[sf_max8$cell == i,])
+  sf_list_max8[[i]] <- sf_list_max8[[i]][which.max(sf_list_max8[[i]]$n.overlaps),]}}
+
+sf_max9 <- bind_rows(sf_list_max8)
+
+sub8 <- sf_max8[!sf_max8$cell %in% sf_max9$cell,]
+sub8 <- rbind(sub8[,1:2], sf_max9[,1:2])
+
+sf_out <- sf_out[!sf_out$cell %in% sub8$cell,] 
+sf_out <- rbind(sf_out, sub8[,1:2])
+
+
+
+
+sf_intersect <- st_intersects(sf_out)
+sf_out_smol <- sf_out[unlist(lapply(sf_intersect, length))>1,]
+
+intsctn5 <- st_intersection(st_make_valid(sf_out_smol), st_make_valid(sf_out_smol))
+
+int_only5 <- intsctn5[intsctn5$cell >intsctn5$cell.1,]
+
+int_only5$area <- st_area(int_only5)
+int_only5 <- int_only5[int_only5$area>0,]
+
+rownames(sf_out_smol) <- sf_out_smol$cell
+int_only5$overlap1 <- int_only5$area/st_area(sf_out_smol[as.character(int_only5$cell),])
+int_only5$overlap2 <- int_only5$area/st_area(sf_out_smol[as.character(int_only5$cell.1),])
+
+int_only5$maxover12 <- rowMaxs(cbind( int_only5$overlap1,  int_only5$overlap2))
+int_only5$minover12 <- rowMins(cbind( int_only5$overlap1,  int_only5$overlap2))
+
+int_only5$cellout <- 0
+for(i in 1:length(int_only5$maxover12)){if(int_only5$maxover12[i] >= 0.25){
+  
+  if(st_area(sf_out_smol[as.character(c(int_only5$cell[i])),])<st_area(sf_out_smol[as.character(c(int_only5$cell.1[i])),])){
+    int_only5$cellout[i] <-  int_only5$cell[i]}
+  else{
+    int_only5$cellout[i] <- int_only5$cell.1[i]}
+}}
+
+sf_out <- sf_out[! sf_out$cell %in% int_only5$cellout,]
+sf_out <- st_make_valid(sf_out)
+
+ggplot(st_centroid(sf_out))+geom_sf(alpha =0.1, size = 0.1)
+
+sf_cell <- sf_out
+
+sf_cell$x_centroid <- unlist(st_centroid(sf_cell)$geometry)[seq(1, length(unlist(st_centroid(sf_cell)$geometry)),2)]
+sf_cell$y_centroid <- unlist(st_centroid(sf_cell)$geometry)[seq(2, length(unlist(st_centroid(sf_cell)$geometry)),2)]
+```
+
+
+
+
+
+```{r join nuclei to cells}
+
+#find overlapping cells and nuclei
+
+int_nuccell <- st_intersects(sf_nuc, sf_cell)
+int_cellnuc <- st_intersects(sf_cell, sf_nuc)
+
+sf_cell$num_int <- unlist(lapply(int_cellnuc, length))
+sf_nuc$num_int <- unlist(lapply(int_nuccell, length))
+
+
+#remove cell morphology segmentations without a nucleus (<10% of any nucleus within cell)
+
+sf_cellout <- sf_cell[sf_cell$num_int >0,]
+sf_nucout <- sf_nuc
+
+sf_cellout$area <- st_area(sf_cellout)
+sf_nucout$area <- st_area(sf_nucout)
+
+int_cellnuc <- st_intersection(sf_cellout, sf_nucout)
+
+int_cellnuc$int_area <- st_area(int_cellnuc)
+int_cellnuc <- int_cellnuc[int_cellnuc$int_area>0,]
+ggplot(int_cellnuc, aes(int_area/area.1))+geom_histogram(bins = 100)+theme_classic()
+
+int_out <- int_cellnuc[int_cellnuc$int_area/int_cellnuc$area.1 <0.1,]
+
+sf_cellout <- sf_cellout[!sf_cellout$cell %in% int_out$cell[int_out$num_int==1],]
+
+
+
+
+int_nuccell <- st_intersects(sf_nucout, sf_cellout)
+int_cellnuc <- st_intersects(sf_cellout, sf_nucout)
+
+sf_cellout$num_int <- unlist(lapply(int_cellnuc, length))
+sf_nucout$num_int <- unlist(lapply(int_nuccell, length))
+
+sf_cellout <- sf_cellout[sf_cellout$num_int >0,]
+
+
+sf_cellout$area <- st_area(sf_cellout)
+sf_nucout$area <- st_area(sf_nucout)
+int_cellnuc <- st_intersection(sf_cellout, sf_nucout)
+
+int_cellnuc$int_area <- st_area(int_cellnuc)
+int_cellnuc <- int_cellnuc[int_cellnuc$int_area>0,]
+ggplot(int_cellnuc, aes(int_area/area.1))+geom_histogram(bins = 100)+theme_classic()
+
+# collect all nuclei that are incompletely contained by one cell segmentation with no other nuclei, and add additional area to the cell
+
+nuc1out <- int_cellnuc[int_cellnuc$num_int.1 ==1,]
+nuc1out <- nuc1out[nuc1out$int_area/nuc1out$area.1 >0.5 &
+                     nuc1out$int_area/nuc1out$area.1 <1,]
+
+cell1nucout <- list()
+for(i in 1:nrow(nuc1out)){cell1nucout[[i]] <- st_union(sf_cellout[sf_cellout$cell %in% nuc1out$cell[i],], sf_nucout[sf_nucout$cell %in% nuc1out$cell.1[i],])}
+
+cell1nucout <- bind_rows(cell1nucout)
+
+cell1nucout2 <- list()
+for(i in unique(cell1nucout$cell[duplicated(cell1nucout$cell)])){cell1nucout2[[i]] <- st_sf(st_union(cell1nucout[cell1nucout$cell == i,]))
+cell1nucout2[[i]]$cell <-  i
+cell1nucout2[[i]]$area <- sf_cellout$area[sf_cellout$cell ==i]
+cell1nucout2[[i]]$fov <- sf_cellout$fov[sf_cellout$cell ==i]
+cell1nucout2[[i]]$num_int <- sf_cellout$num_int[sf_cellout$cell ==i]
+cell1nucout2[[i]]$x_centroid <- sf_cellout$x_centroid[sf_cellout$cell ==i]
+cell1nucout2[[i]]$y_centroid <- sf_cellout$y_centroid[sf_cellout$cell ==i]
+}
+
+cell1nucout2 <- bind_rows(cell1nucout2)
+st_geometry(cell1nucout2) <-  'geometry'
+
+cell1nucout <- cell1nucout[!cell1nucout$cell %in% cell1nucout2$cell,]
+sf_cell_final <- rbind(rbind(cell1nucout[,1:6], cell1nucout2))
+
+
+
+
+sf_cellout <- sf_cellout[!sf_cellout$cell %in% sf_cell_final$cell,]
+
+
+
+#for all nuclei intersecting 2 cells; split between cells and keep area if it represents at least 40% of the original nucleus area
+
+
+nuc2out <- sf_nucout[sf_nucout$num_int==2,]
+
+int_cellnuc2 <- st_intersection(sf_cellout, nuc2out)
+int_cellnuc2$int_area <- st_area(int_cellnuc2)
+
+sf_cellout <- sf_cellout[!sf_cellout$cell %in% int_cellnuc2$cell[int_cellnuc2$num_int ==1 & int_cellnuc2$int_area/int_cellnuc2$area.1<0.4],]
+
+
+nuc2keep <- int_cellnuc2[!((int_cellnuc2$int_area/int_cellnuc2$area.1<0.5 & int_cellnuc2$num_int >1) | 
+                             (int_cellnuc2$num_int ==1 & int_cellnuc2$int_area/int_cellnuc2$area.1<0.4)),]
+
+sf_nuc_final <- nuc2keep
+
+sf_nucout <- sf_nucout[!sf_nucout$cell %in% int_cellnuc2$cell.1,]
+
+
+#for all nuclei intersecting 3 cells; split between cells and keep area if it represents at least 30% of the original nucleus area
+
+nuc3out <- sf_nucout[sf_nucout$num_int==3,]
+
+int_cellnuc3 <- st_intersection(sf_cellout, nuc3out)
+int_cellnuc3$int_area <- st_area(int_cellnuc3)
+
+sf_cellout <- sf_cellout[!sf_cellout$cell %in% int_cellnuc3$cell[int_cellnuc3$num_int ==1 & int_cellnuc3$int_area/int_cellnuc3$area.1<0.3],]
+
+
+nuc3keep <- int_cellnuc3[!((int_cellnuc3$int_area/int_cellnuc3$area.1<0.5 & int_cellnuc3$num_int >1) | 
+                             (int_cellnuc3$num_int ==1 & int_cellnuc3$int_area/int_cellnuc3$area.1<0.3)),]
+
+sf_nuc_final <- rbind(sf_nuc_final[,1:6], nuc3keep[,1:6])
+
+sf_nucout <- sf_nucout[!sf_nucout$cell %in% int_cellnuc3$cell.1,]
+
+#for all nuclei intersecting 4+ cells; split between cells and keep area if it represents at least 30% of the original nucleus area
+
+
+nuc4out <- sf_nucout[sf_nucout$num_int>3,]
+
+int_cellnuc4 <- st_intersection(sf_cellout, nuc4out)
+int_cellnuc4$int_area <- st_area(int_cellnuc4)
+
+sf_cellout <- sf_cellout[!sf_cellout$cell %in% int_cellnuc4$cell[int_cellnuc4$num_int ==1 & int_cellnuc4$int_area/int_cellnuc4$area.1<0.3],]
+
+
+nuc4keep <- int_cellnuc4[!((int_cellnuc4$int_area/int_cellnuc4$area.1<0.5 & int_cellnuc4$num_int >1) | 
+                             (int_cellnuc4$num_int ==1 & int_cellnuc4$int_area/int_cellnuc4$area.1<0.3)),]
+
+sf_nuc_final <- rbind(sf_nuc_final[,1:6], nuc4keep[,1:6])
+
+sf_nucout <- sf_nucout[!sf_nucout$cell %in% int_cellnuc4$cell.1,]
+
+
+# remove cell segmentations if there are no longer nuclei contained within them to a sufficient degree (40% of nucleus area)
+
+nuc5out <- sf_nucout[sf_nucout$num_int>1,]
+
+int_cellnuc5 <- st_intersection(sf_cellout, nuc5out)
+int_cellnuc5$int_area <- st_area(int_cellnuc5)
+
+sf_cellout <- sf_cellout[!sf_cellout$cell %in% int_cellnuc5$cell[int_cellnuc5$num_int ==1 & int_cellnuc5$int_area/int_cellnuc5$area.1<0.4],]
+
+
+nuc5keep <- int_cellnuc5[!((int_cellnuc5$int_area/int_cellnuc5$area.1<0.5 & int_cellnuc5$num_int >1) | 
+                             (int_cellnuc5$num_int ==1 & int_cellnuc5$int_area/int_cellnuc5$area.1<0.4)),]
+
+sf_nuc_final <- rbind(sf_nuc_final[,1:6], nuc5keep[,1:6])
+
+sf_nucout <- sf_nucout[!sf_nucout$cell %in% int_cellnuc5$cell.1,]
+
+sf_nuc_final <- rbind(sf_nuc_final[,1:6], sf_nucout[,1:7])
+
+
+sf_cell_final <- rbind(sf_cell_final, sf_cellout)
+
+sf_nuc_final$cell <- 1:nrow(sf_nuc_final)
+sf_cell_final$cell <- 1:nrow(sf_cell_final)
+sf_nuc_final$area <- st_area(sf_nuc_final)
+sf_cell_final$area <- st_area(sf_cell_final)
+
+#check no more intersection for cells or nuclei
+
+int_nuc <- st_intersection(sf_nuc_final, sf_nuc_final)
+int_cell <- st_intersection(sf_cell_final, sf_cell_final)
+
+int_nuc <- int_nuc[int_nuc$cell.1 > int_nuc$cell,]
+int_nuc$int_area <- st_area(int_nuc)
+int_nuc <- int_nuc[int_nuc$int_area>0.0001,]
+
+int_cell <- int_cell[int_cell$cell.1 > int_cell$cell,]
+
+int_cell$int_area <- st_area(int_cell)
+int_cell <- int_cell[int_cell$int_area>0.0001,]
+
+sf_cell_final <- sf_cell_final[!sf_cell_final$cell %in% int_cell$cell.1[int_cell$int_area/int_cell$area ==1 & int_cell$int_area/int_cell$area.1 ==1],]
+
+int_cell <- int_cell[int_cell$int_area/int_cell$area !=1 | int_cell$int_area/int_cell$area.1 !=1,]
+
+sf_cell_final <- sf_cell_final[!sf_cell_final$cell %in% int_cell$cell.1[int_cell$int_area/int_cell$area.1 ==1],]
+sf_cell_final <- sf_cell_final[!sf_cell_final$cell %in% int_cell$cell[int_cell$int_area/int_cell$area ==1],]
+
+int_cell <- int_cell[int_cell$int_area/int_cell$area !=1 & int_cell$int_area/int_cell$area.1 !=1,]
+int_cell <- int_cell[int_cell$cell.1 %in% sf_cell_final$cell & int_cell$cell %in% sf_cell_final$cell,]
+
+sf_cell_final <- sf_cell_final[!sf_cell_final$cell %in% int_cell$cell.1[int_cell$int_area/int_cell$area.1 >0.5],]
+int_cell <- int_cell[int_cell$cell.1 %in% sf_cell_final$cell & int_cell$cell %in% sf_cell_final$cell,]
+
+intcellout <- list()
+for(i in 1:nrow(int_cell)){if(int_cell$area[i]>int_cell$area.1[i]){
+  intcellout[[i]] <- st_difference(sf_cell_final[sf_cell_final$cell %in% int_cell$cell[i],], sf_cell_final[sf_cell_final$cell %in% int_cell$cell.1[i],])
+}
+  if(int_cell$area[i]<int_cell$area.1[i]){intcellout[[i]] <- st_difference(sf_cell_final[sf_cell_final$cell %in% int_cell$cell.1[i],], sf_cell_final[sf_cell_final$cell %in% int_cell$cell[i],])
+  }}
+
+intcellout <- bind_rows(intcellout)
+
+intcellout2 <- list()
+for(i in unique(intcellout$cell)){intcellout2[[i]] <- st_intersection(intcellout[intcellout$cell ==i,])
+      intcellout2[[i]] <- intcellout2[[i]][which.max(intcellout2[[i]]$n.overlaps),]}
+
+intcellout2 <- bind_rows(intcellout2)
+
+intcellout2$cellout <- intcellout2$cell
+intcellout2$cellout[intcellout2$area.1 >intcellout2$area] <- intcellout2$cell.1[intcellout2$area.1 >intcellout2$area]
+
+sf_cell_final <- sf_cell_final[!sf_cell_final$cell %in% intcellout2$cellout,]
+sf_cell_final <- rbind(sf_cell_final, intcellout2[,1:6])
+
+
+intnucout <- list()
+for(i in 1:nrow(int_nuc)){if(int_nuc$area[i]>int_nuc$area.1[i]){
+  intnucout[[i]] <- st_difference(sf_nuc_final[sf_nuc_final$cell %in% int_nuc$cell[i],], sf_nuc_final[sf_nuc_final$cell %in% int_nuc$cell.1[i],])
+}
+  if(int_nuc$area[i]<int_nuc$area.1[i]){intnucout[[i]] <- st_difference(sf_nuc_final[sf_nuc_final$cell %in% int_nuc$cell.1[i],], sf_nuc_final[sf_nuc_final$cell %in% int_nuc$cell[i],])
+  }}
+
+intnucout <- bind_rows(intnucout)
+
+intnucout2 <- list()
+for(i in unique(intnucout$cell)){intnucout2[[i]] <- st_intersection(intnucout[intnucout$cell ==i,])
+      intnucout2[[i]] <- intnucout2[[i]][which.max(intnucout2[[i]]$n.overlaps),]}
+
+intnucout2 <- bind_rows(intnucout2)
+
+intnucout2$cellout <- intnucout2$cell
+intnucout2$cellout[intnucout2$area.1 >intnucout2$area] <- intnucout2$cell.1[intnucout2$area.1 >intnucout2$area]
+
+sf_nuc_final <- sf_nuc_final[!sf_nuc_final$cell %in% intnucout2$cellout,]
+sf_nuc_final <- rbind(sf_nuc_final, intnucout2[,1:6])
+
+
+
+
+
+
+
+
+
+
+#assign nuclei to cells
+
+int_nuccell <- st_intersects(sf_nuc_final, sf_cell_final)
+int_cellnuc <- st_intersects(sf_cell_final, sf_nuc_final)
+
+sf_cell_final$num_int <- unlist(lapply(int_cellnuc, length))
+sf_nuc_final$num_int <- unlist(lapply(int_nuccell, length))
+sf_cell_final$area <- st_area(sf_cell_final)
+sf_nuc_final$area <- st_area(sf_nuc_final)
+
+intsctn <- st_intersection(sf_cell_final, sf_nuc_final)
+intsctn$int_area <- st_area(intsctn)
+intsctn <- intsctn[intsctn$int_area>0,]
+intsctn <- intsctn[intsctn$int_area/intsctn$area.1 > 0.001 &intsctn$int_area/intsctn$area.1<0.999,]
+
+
+bigsect <- intsctn[intsctn$int_area/intsctn$area.1>0.5,]
+
+bigout <- list()
+for(i in 1:nrow(bigsect)){bigout[[i]] <- st_union(sf_cell_final[sf_cell_final$cell %in% bigsect$cell[i],], sf_nuc_final[sf_nuc_final$cell %in% bigsect$cell.1[i],])}
+bigout <- bind_rows(bigout)
+
+bigout2 <- list()
+for(i in sort(unique(bigout$cell))){
+    bigout2[[i]] <- st_sf(st_union(bigout[bigout$cell == i ,]))
+    bigout2[[i]]$cell <-  i
+bigout2[[i]]$area <- sf_cell_final$area[sf_cell_final$cell ==i]
+bigout2[[i]]$fov <- sf_cell_final$fov[sf_cell_final$cell ==i]
+bigout2[[i]]$num_int <- sf_cell_final$num_int[sf_cell_final$cell ==i]
+bigout2[[i]]$x_centroid <- sf_cell_final$x_centroid[sf_cell_final$cell ==i]
+bigout2[[i]]$y_centroid <- sf_cell_final$y_centroid[sf_cell_final$cell ==i]}
+
+bigout2 <- bind_rows(bigout2)
+st_geometry(bigout2) <- 'geometry'
+
+smallsect <- intsctn[intsctn$int_area/intsctn$area.1<0.5,]
+smallout_cell <- list()
+smallout_nuc <- list()
+for(i in 1:nrow(smallsect)){smallout_cell[[i]] <- st_difference(sf_cell_final[sf_cell_final$cell %in% smallsect$cell[i],], sf_nuc_final[sf_nuc_final$cell %in% smallsect$cell.1[i],])
+smallout_nuc[[i]] <- st_difference(sf_nuc_final[sf_nuc_final$cell %in% smallsect$cell.1[i],], sf_cell_final[sf_cell_final$cell %in% smallsect$cell[i],] )}
+smallout_cell <- bind_rows(smallout_cell)
+
+smallout_cell2 <- list()
+for(i in sort(unique(smallout_cell$cell))){
+    smallout_cell2[[i]] <- st_intersection(smallout_cell[smallout_cell$cell == i ,])
+    smallout_cell2[[i]] <- smallout_cell2[[i]][which.max(smallout_cell2[[i]]$n.overlaps),]}
+
+smallout_cell2 <- bind_rows(smallout_cell2)
+
+smallout_nuc <- bind_rows(smallout_nuc)
+smallout_nuc2 <- list()
+for(i in sort(unique(smallout_nuc$cell))){
+    smallout_nuc2[[i]] <- st_intersection(smallout_nuc[smallout_nuc$cell == i ,])
+    smallout_nuc2[[i]] <- smallout_nuc2[[i]][which.max(smallout_nuc2[[i]]$n.overlaps),]}
+
+smallout_nuc2 <- bind_rows(smallout_nuc2)
+
+
+final_out <- list()
+for(i in unique(smallout_cell2$cell[smallout_cell2$cell %in% bigout2$cell])){
+  final_out[[i]] <- st_difference(bigout2[bigout2$cell ==i,],  sf_cell_final[sf_cell_final$cell ==i,])
+}
+
+final_out <- bind_rows(final_out)
+bigout2 <- bigout2[!bigout2$cell %in% final_out$cell,]
+bigout2 <- rbind(bigout2[,1:6], final_out[,1:6])
+
+last_out <- list()
+for(i in unique(smallout_cell2$cell[smallout_cell2$cell %in% bigout2$cell])){
+  last_out[[i]] <- st_union(bigout2[bigout2$cell ==i,], smallout_cell2[smallout_cell2$cell ==i,], )
+}
+
+last_out <- bind_rows(last_out)
+bigout2 <- bigout2[!bigout2$cell %in% last_out$cell,]
+bigout2 <- rbind(bigout2, last_out[,1:6])
+
+
+sf_nuc_final <- sf_nuc_final[! sf_nuc_final$cell %in% smallout_nuc2$cell,]
+sf_nuc_final <- rbind(sf_nuc_final, smallout_nuc2[,1:6])
+
+sf_cell_final <- sf_cell_final[!sf_cell_final$cell %in% bigout2$cell,]
+sf_cell_final <- rbind(sf_cell_final, bigout2[,1:6])
+sf_cell_final <- sf_cell_final[sf_cell_final$num_int >0,]
+sf_cell_final <- rbind(sf_cell_final, sf_nuc_final[sf_nuc_final$num_int==0,])
+
+rownames(sf_cell_final) <- 1:nrow(sf_cell_final)
+rownames(sf_nuc_final) <- 1:nrow(sf_nuc_final)
+int_nuccell <- st_intersects(sf_nuc_final, sf_cell_final)
+int_cellnuc <- st_intersects(sf_cell_final, sf_nuc_final)
+
+sf_cell_final$num_int <- unlist(lapply(int_cellnuc, length))
+sf_nuc_final$num_int <- unlist(lapply(int_nuccell, length))
+sf_cell_final$area <- st_area(sf_cell_final)
+sf_nuc_final$area <- st_area(sf_nuc_final)
+
+intsctn <- st_intersection(sf_cell_final, sf_nuc_final)
+intsctn$int_area <- st_area(intsctn)
+intsctn <- intsctn[intsctn$int_area>0,]
+intsctn <- intsctn[intsctn$int_area/intsctn$area.1 > 0.001 &intsctn$int_area/intsctn$area.1<0.999,]
+
+
+sf_nuc_final <- sf_nuc_final[!sf_nuc_final$cell %in% intsctn$cell.1,]
+
+intsctn <- st_intersection(sf_cell_final, sf_nuc_final)
+intsctn$int_area <- st_area(intsctn)
+intsctn <- intsctn[intsctn$int_area>0.001,]
+
+sf_cell_final <- sf_cell_final[sf_cell_final$cell %in%intsctn$cell,]
+sf_cell_final <- rbind(sf_cell_final, sf_nuc_final[!sf_nuc_final$cell %in%intsctn$cell.1,])
+
+sf_cell_final$cell <- 1:nrow(sf_cell_final)
+rownames(sf_cell_final) <- 1:nrow(sf_cell_final)
+rownames(sf_nuc_final) <- 1:nrow(sf_nuc_final)
+int_nuccell <- st_intersects(sf_nuc_final, sf_cell_final)
+int_cellnuc <- st_intersects(sf_cell_final, sf_nuc_final)
+
+sf_cell_final$num_int <- unlist(lapply(int_cellnuc, length))
+sf_nuc_final$num_int <- unlist(lapply(int_nuccell, length))
+sf_cell_final$area <- st_area(sf_cell_final)
+sf_nuc_final$area <- st_area(sf_nuc_final)
+
+sf_nuc_final <- sf_nuc_final[sf_nuc_final$area>0,]
+sf_cell_final <- sf_cell_final[sf_cell_final$area>0,]
+
+intsctn <- st_intersection(sf_cell_final, sf_nuc_final)
+intsctn$int_area <- st_area(intsctn)
+intsctn <- intsctn[intsctn$int_area>0.001,]
+
+
+
+
+intsctn <- intsctn[!duplicated(intsctn$cell.1),]
+rownames(intsctn) <- intsctn$cell.1
+sf_nuc_final$cellmatch <- intsctn[as.character(sf_nuc_final$cell),]$cell
+
+sf_cell_final <- sf_cell_final[sf_cell_final$cell %in% unique(intsctn$cell),]
+sf_cell_final$num_int <- table(intsctn$cell)
+
+
+
+table(sf_cell_final$num_int)
+table(table(sf_nuc_final$cellmatch ))
+
+ggplot(sf_cell_final[sf_cell_final$x_centroid >2000 & sf_cell_final$x_centroid <3000 & sf_cell_final$y_centroid >2000 & sf_cell_final$y_centroid <3000,])+geom_sf(size =0.1, alpha = 0.5, aes(fill = factor(num_int))) +geom_sf(data = sf_nuc_final[sf_nuc_final$x_centroid >2000 & sf_nuc_final$x_centroid <3000 & sf_nuc_final$y_centroid >2000 & sf_nuc_final$y_centroid <3000,], size =0.1, alpha =0.5, fill ='red')+theme_classic()
+
+ggplot(st_centroid(sf_nuc_final))+geom_sf(alpha = 0.1, col ='black', size = 0.1)+ theme_classic()
+```
+
+```{r save outputs}
+sf_cell_final$x_centroid <- unlist(st_centroid(sf_cell_final)$geometry)[seq(1, length(unlist(st_centroid(sf_cell_final)$geometry)),2)]
+sf_cell_final$y_centroid <- unlist(st_centroid(sf_cell_final)$geometry)[seq(2, length(unlist(st_centroid(sf_cell_final)$geometry)),2)]
+
+sf_nuc_final$x_centroid <- unlist(st_centroid(sf_nuc_final)$geometry)[seq(1, length(unlist(st_centroid(sf_nuc_final)$geometry)),2)]
+sf_nuc_final$y_centroid <- unlist(st_centroid(sf_nuc_final)$geometry)[seq(2, length(unlist(st_centroid(sf_nuc_final)$geometry)),2)]
+
+#name sample
+sample <- 'sample_name'
+saveRDS(sf_nuc_final, paste0('../data/processed/', sample,'/sf_nuc_final_', sample,'_', format(Sys.Date(), "%y%m%d"), '.rds'))
+saveRDS(sf_cell_final, paste0('../data/processed/', sample,'/sf_cell_final_', sample,'_', format(Sys.Date(), "%y%m%d"), '.rds'))
+
+
+write.csv(as.data.frame(sf_nuc_final)[,1:4], paste0('../data/out/', sample,'/nuc_centroids_', sample,'_', format(Sys.Date(), "%y%m%d"), '.csv'))
+write.csv(as.data.frame(sf_cell_final)[,1:4], paste0('../data/out/', sample,'/cell_centroids_', sample,'_', format(Sys.Date(), "%y%m%d"), '.csv'))
+```
+
+
+
+
+
+
+
+
+
