@@ -2,33 +2,98 @@
 
 The preprocessing module provides functions for preparing and transforming spatial omics data for analysis.
 
-## OME-TIFF Preprocessing
+## Overview
 
-::: smint.preprocessing.preprocess_ome.split_large_ometiff
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+The preprocessing module includes the following key functionalities:
 
-::: smint.preprocessing.preprocess_ome.extract_channels
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+- **split_large_ometiff**: Split a large OME-TIFF file into smaller chunks
+- **extract_channels**: Extract specific channels from an OME-TIFF file
+- **normalize_expression**: Normalize expression data for analysis
+- **scale_data**: Scale data to a specific range
 
-## Data Normalization
+## Function Reference
 
-::: smint.preprocessing.normalization.normalize_expression
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+```python
+def split_large_ometiff(file_path, output_dir, chunk_size=(2048, 2048)):
+    """
+    Split a large OME-TIFF file into smaller chunks.
+    
+    Parameters
+    ----------
+    file_path : str
+        Path to the input OME-TIFF file
+    output_dir : str
+        Directory to save the output chunks
+    chunk_size : tuple, optional
+        Size of chunks (height, width)
+        
+    Returns
+    -------
+    dict
+        Information about the chunking process
+    """
+    pass
 
-::: smint.preprocessing.normalization.scale_data
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true
+def extract_channels(file_path, output_path, channels=None):
+    """
+    Extract specific channels from an OME-TIFF file.
+    
+    Parameters
+    ----------
+    file_path : str
+        Path to the input OME-TIFF file
+    output_path : str
+        Path to save the extracted channels
+    channels : list, optional
+        List of channel indices to extract
+        
+    Returns
+    -------
+    dict
+        Information about the extraction process
+    """
+    pass
+
+def normalize_expression(data, method="log1p", scale_factor=10000):
+    """
+    Normalize expression data for analysis.
+    
+    Parameters
+    ----------
+    data : DataFrame or array-like
+        Expression data to normalize
+    method : str, optional
+        Normalization method
+    scale_factor : float, optional
+        Scale factor for normalization
+        
+    Returns
+    -------
+    DataFrame or array-like
+        Normalized data
+    """
+    pass
+
+def scale_data(data, feature_range=(0, 1), axis=0):
+    """
+    Scale data to a specific range.
+    
+    Parameters
+    ----------
+    data : DataFrame or array-like
+        Data to scale
+    feature_range : tuple, optional
+        Range to scale to
+    axis : int, optional
+        Axis along which to scale
+        
+    Returns
+    -------
+    DataFrame or array-like
+        Scaled data
+    """
+    pass
+```
 
 ## Dependency Handling
 
