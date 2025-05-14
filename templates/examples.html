@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMINT - Examples</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <style>
+        pre code {
+            display: block;
+            padding: 1rem;
+            background-color: #1e1e1e;
+            color: #f8f9fa;
+            border-radius: 0.375rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">SMINT</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/documentation">Documentation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/examples">Examples</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/demo">Demo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/JurgenKriel/SMINT" target="_blank">GitHub</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/JurgenKriel/SMINT/blob/main/docs/examples.md" target="_blank">More Examples</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2>SMINT Examples</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">Example code snippets to help you get started with SMINT.</p>
+                        
+                        {% if not smint_available %}
+                        <div class="alert alert-warning" role="alert">
+                            <h4 class="alert-heading">Example Preview Mode</h4>
+                            <p>These examples are provided for reference. To run these examples, please install the SMINT package and its dependencies.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% for example in examples %}
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h3>{{ example.title }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">{{ example.description }}</p>
+                        
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                <h5 class="mb-0 text-white">Code Example</h5>
+                            </div>
+                            <div class="card-body">
+                                <pre><code>{{ example.code }}</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info" role="alert">
+                            <h5 class="alert-heading">Key Points:</h5>
+                            {% if example.title == "Basic Cell Segmentation" %}
+                            <ul>
+                                <li>Uses the CellPose algorithm for accurate cell segmentation</li>
+                                <li>Processes large images in chunks to optimize memory usage</li>
+                                <li>Outputs results in a CSV format for easy downstream analysis</li>
+                                <li>Can use pre-trained or custom models for different cell types</li>
+                            </ul>
+                            {% elif example.title == "Spatial Transcriptomics Alignment" %}
+                            <ul>
+                                <li>Aligns spatial coordinates between different modalities</li>
+                                <li>Supports multiple transformation methods (rigid, similarity, affine, projective)</li>
+                                <li>Works with standard pandas DataFrames for easy integration</li>
+                                <li>Returns both the transformation matrix and quality metrics</li>
+                            </ul>
+                            {% elif example.title == "Multi-GPU Segmentation" %}
+                            <ul>
+                                <li>Distributes workload across multiple GPUs for faster processing</li>
+                                <li>Uses Dask for distributed computing infrastructure</li>
+                                <li>Stores intermediate results in Zarr format for efficient I/O</li>
+                                <li>Optimized for very large whole-slide images (100k x 100k pixels and larger)</li>
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Additional Resources</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row row-cols-1 row-cols-md-3 g-4">
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Detailed Documentation</h5>
+                                        <p class="card-text">Browse the complete guides and documentation.</p>
+                                        <div class="d-grid gap-2">
+                                            <a href="https://github.com/JurgenKriel/SMINT/blob/main/docs/segmentation.md" class="btn btn-primary btn-sm mb-1">Segmentation Guide</a>
+                                            <a href="https://github.com/JurgenKriel/SMINT/blob/main/docs/alignment.md" class="btn btn-primary btn-sm">Alignment Guide</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">GitHub Repository</h5>
+                                        <p class="card-text">Contribute to the project or report issues on GitHub.</p>
+                                        <a href="https://github.com/JurgenKriel/SMINT" class="btn btn-primary">Visit GitHub</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Interactive Demo</h5>
+                                        <p class="card-text">See a visual demonstration of SMINT's capabilities.</p>
+                                        <a href="/demo" class="btn btn-primary">Try Demo</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-light mt-5 py-3">
+        <div class="container text-center">
+            <p>SMINT - Spatial Multi-Omics Integration Package &copy; 2025</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
