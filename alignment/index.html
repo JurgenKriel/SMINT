@@ -873,6 +873,57 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#xenium-to-metabolomics-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Xenium to Metabolomics Alignment
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Xenium to Metabolomics Alignment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-start_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimizing-alignment-quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optimizing Alignment Quality
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1484,6 +1535,57 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#xenium-to-metabolomics-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Xenium to Metabolomics Alignment
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Xenium to Metabolomics Alignment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-start_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimizing-alignment-quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optimizing Alignment Quality
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1520,7 +1622,7 @@
 - <strong>CSV files</strong> (preferred) - Simple tabular format with spatial coordinates
 - <strong>AnnData objects</strong> - Python objects with spatial omics data
 - <strong>Pandas DataFrames</strong> - In-memory tabular data
-- <strong>10X Xenium data</strong> - Spatial transcriptomics from 10X Genomics</p>
+- <strong>10X Visium data</strong> - Spatial transcriptomics from 10X Genomics</p>
 <h3 id="required-data-columns">Required Data Columns<a class="headerlink" href="#required-data-columns" title="Permanent link">&para;</a></h3>
 <p>For optimal alignment, input data files should contain:
 - <strong>Spatial coordinates</strong>: Columns named 'x' and 'y' or similar ('X_position', 'Y_position')
@@ -1942,6 +2044,79 @@ cell_2,1150.2,2220.1,0.7,0.3
 <li><strong>Iterative Approach</strong>: For difficult cases, try iterative alignment with progressively more complex transformations</li>
 <li><strong>Common Markers</strong>: For multi-modal data, focus on features/markers present in both datasets</li>
 </ol>
+<h2 id="xenium-to-metabolomics-alignment">Xenium to Metabolomics Alignment<a class="headerlink" href="#xenium-to-metabolomics-alignment" title="Permanent link">&para;</a></h2>
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>Aligning 10X Xenium spatial transcriptomics data with spatial metabolomics data presents unique challenges:
+- Different resolution and sampling density
+- Different coordinate systems and scaling
+- Potential tissue deformation between modalities
+- Different feature types (genes vs. metabolites)</p>
+<p>SMINT provides a specialized module that leverages STalign's Large Deformation Diffeomorphic Metric Mapping (LDDMM) to perform this alignment.</p>
+<h3 id="quick-start_1">Quick Start<a class="headerlink" href="#quick-start_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">align_xenium_to_metabolomics</span>
+
+<span class="c1"># Basic usage</span>
+<span class="n">aligned_data</span> <span class="o">=</span> <span class="n">align_xenium_to_metabolomics</span><span class="p">(</span>
+    <span class="n">xenium_file</span><span class="o">=</span><span class="s2">&quot;path/to/xenium_data.csv&quot;</span><span class="p">,</span>
+    <span class="n">metabolomics_file</span><span class="o">=</span><span class="s2">&quot;path/to/metabolomics_data.csv&quot;</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;alignment_results&quot;</span><span class="p">,</span>
+    <span class="n">pixel_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">visualize</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="advanced-usage">Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permanent link">&para;</a></h3>
+<p>For more complex alignment tasks, you can customize the parameters:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">align_xenium_to_metabolomics</span>
+
+<span class="c1"># Advanced usage with custom parameters</span>
+<span class="n">aligned_data</span> <span class="o">=</span> <span class="n">align_xenium_to_metabolomics</span><span class="p">(</span>
+    <span class="n">xenium_file</span><span class="o">=</span><span class="s2">&quot;path/to/xenium_data.csv&quot;</span><span class="p">,</span>
+    <span class="n">metabolomics_file</span><span class="o">=</span><span class="s2">&quot;path/to/metabolomics_data.csv&quot;</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;alignment_results&quot;</span><span class="p">,</span>
+    <span class="n">pixel_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">xenium_x_col</span><span class="o">=</span><span class="s2">&quot;x_centroid&quot;</span><span class="p">,</span>
+    <span class="n">xenium_y_col</span><span class="o">=</span><span class="s2">&quot;y_centroid&quot;</span><span class="p">,</span>
+    <span class="n">met_x_col</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
+    <span class="n">met_y_col</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
+    <span class="n">lddmm_params</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;niter&#39;</span><span class="p">:</span> <span class="mi">1500</span><span class="p">,</span>        <span class="c1"># More iterations for difficult alignments</span>
+        <span class="s1">&#39;sigmaM&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>        <span class="c1"># Smaller kernel for more local deformations</span>
+        <span class="s1">&#39;sigmaB&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>        <span class="c1"># Control smoothness of backward map</span>
+        <span class="s1">&#39;sigmaA&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>        <span class="c1"># Control smoothness of forward map</span>
+        <span class="s1">&#39;epV&#39;</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>           <span class="c1"># Regularization parameter</span>
+        <span class="s1">&#39;diffeo_start&#39;</span><span class="p">:</span> <span class="mi">30</span>    <span class="c1"># Start diffeomorphic transformation earlier</span>
+    <span class="p">},</span>
+    <span class="n">visualize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">save_intermediate</span><span class="o">=</span><span class="kc">True</span>    <span class="c1"># Save intermediate results for debugging</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="optimizing-alignment-quality">Optimizing Alignment Quality<a class="headerlink" href="#optimizing-alignment-quality" title="Permanent link">&para;</a></h3>
+<p>The alignment quality depends on several factors:</p>
+<ol>
+<li><strong>Pixel Size for Rasterization</strong>: </li>
+<li>Typically 20-50µm works well for Xenium data</li>
+<li>Too small: Results in sparse representation</li>
+<li>Too large: Loses spatial resolution</li>
+<li>
+<p>Start with 30µm and adjust based on results</p>
+</li>
+<li>
+<p><strong>LDDMM Parameters</strong>:</p>
+</li>
+<li><code>sigmaM</code>: Controls local deformation flexibility (smaller = more flexible)</li>
+<li><code>sigmaB/sigmaA</code>: Controls transformation smoothness</li>
+<li><code>epV</code>: Regularization strength (higher = smoother but less accurate)</li>
+<li>
+<p><code>niter</code>: Number of iterations (higher = potentially better but slower)</p>
+</li>
+<li>
+<p><strong>Pre-processing</strong>:</p>
+</li>
+<li>Ensure coordinates are in the same scale</li>
+<li>Remove outlier points that could distort alignment</li>
+<li>For very different orientations, consider manual pre-alignment</li>
+</ol>
+<p>For detailed guidance on alignment optimization, see the <a href="../xenium_metabolomics_alignment/">full Xenium-Metabolomics alignment documentation</a>.</p>
 
 
 
