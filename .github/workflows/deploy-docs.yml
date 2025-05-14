@@ -30,4 +30,8 @@ jobs:
           git config --local user.name "github-actions[bot]"
       
       - name: Deploy documentation
-        run: mkdocs gh-deploy --force
+        run: |
+          # Make script executable
+          chmod +x scripts/build_docs.py
+          # Use our custom script to build and deploy with proper mocking
+          python scripts/build_docs.py --deploy
