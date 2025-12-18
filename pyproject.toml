@@ -1,11 +1,20 @@
 [project]
-name = "repl-nix-workspace"
+name = "smint"
 version = "0.1.0"
-description = "Add your description here"
-requires-python = ">=3.11"
+description = "SMINT - Spatial Multi-Omics Integration Toolkit"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+authors = [
+    {name = "Jurgen Kriel"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
 dependencies = [
     "cellpose",
-    "dask>=2025.4.1",
+    "dask>=2024.11.2",
     "email-validator>=2.2.0",
     "flask>=3.1.0",
     "flask-sqlalchemy>=3.1.1",
@@ -19,6 +28,31 @@ dependencies = [
     "setuptools>=80.4.0",
     "tifffile>=2025.5.10",
 ]
+
+[project.urls]
+Homepage = "https://github.com/JurgenKriel/SMINT"
+Documentation = "https://jurgenkriel.github.io/SMINT/"
+
+[project.scripts]
+smint-segmentation = "scripts.run_segmentation:main"
+smint-alignment = "scripts.run_alignment:main"
+smint-viewer = "smint.visualization.live_scan_viewer:main"
+
+[project.optional-dependencies]
+r_integration = ["rpy2>=3.4.0"]
+segmentation = ["cellpose"]
+visualization = ["matplotlib>=3.10.3"]
+gui = []
+docs = ["mkdocs", "mkdocs-material"]
+dev = ["pytest", "flake8", "black"]
+all = ["rpy2>=3.4.0", "mkdocs", "mkdocs-material", "pytest", "flake8", "black"]
+
+[tool.setuptools]
+packages = ["smint"]
+
+[tool.setuptools.package-data]
+smint = ["**/*"]
+
 
 [[tool.uv.index]]
 explicit = true
