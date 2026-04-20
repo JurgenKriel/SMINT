@@ -1,8 +1,5 @@
 import os
 import re
-import json
-import gzip
-import base64
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -20,6 +17,8 @@ pt5_base = '/vast/projects/BCRL_Multi_Omics/venture_pt5/'
 pt5_z_planes = [80, 70, 60, 50, 40, 30, 20, 10]
 
 out_path = '/vast/projects/BCRL_Multi_Omics/SMINT/docs/bcrl_patient_3d_comparison.html'
+
+PATIENT_LABELS = ['Patient 1', 'Patient 5', 'Patient 3']
 
 # =========================================================
 # Helpers
@@ -76,14 +75,14 @@ default_color_tuple = (0.5, 0.5, 0.5)
 # =========================================================
 # Load data
 # =========================================================
-print('Loading PT2...')
+print('Loading Patient 1 (PT2)...')
 v2_all = pd.read_csv(v2_csv)
 v2_all['Anno'] = v2_all['Anno'].apply(normalize_label)
 v2_all = round_cols(v2_all, ['x_centroid', 'y_centroid', 'z_centroid'], COORD_PRECISION)
 v2_all = subsample(v2_all, 'Anno', PER_CLASS_CAP)
-print(f'  PT2 after subsampling: {len(v2_all)}')
+print(f'  {len(v2_all)} cells')
 
-print('Loading PT5...')
+print('Loading Patient 5 (PT5)...')
 pt5_parts = []
 for i, z_val in enumerate(pt5_z_planes):
     df = pd.read_csv(f'{pt5_base}/Z{i+1}_final_aligned_annos.csv')
@@ -93,9 +92,9 @@ plot_df = pd.concat(pt5_parts, ignore_index=True)
 plot_df['Anno'] = plot_df['Anno'].apply(normalize_label)
 plot_df = round_cols(plot_df, ['x_final', 'y_final'], COORD_PRECISION)
 plot_df = subsample(plot_df, 'Anno', PER_CLASS_CAP)
-print(f'  PT5 after subsampling: {len(plot_df)}')
+print(f'  {len(plot_df)} cells')
 
-print('Loading PT3...')
+print('Loading Patient 3 (PT3)...')
 v3_all = pd.read_csv(v3_csv)
 v3_all = v3_all.rename(columns={'Anno2': 'Anno', 'new_x_centroid': 'x_centroid', 'new_y_centroid': 'y_centroid'})
 v3_all['Anno'] = v3_all['Anno'].apply(normalize_label)
@@ -103,7 +102,7 @@ layer_to_z = {'z1': 10, 'z2': 20, 'z3': 30, 'z4': 40, 'z5': 50, 'z6': 60, 'z7': 
 v3_all['z_centroid'] = v3_all['layer'].map(layer_to_z).fillna(0.0).astype(float)
 v3_all = round_cols(v3_all, ['x_centroid', 'y_centroid', 'z_centroid'], COORD_PRECISION)
 v3_all = subsample(v3_all, 'Anno', PER_CLASS_CAP)
-print(f'  PT3 after subsampling: {len(v3_all)}')
+print(f'  {len(v3_all)} cells')
 
 # =========================================================
 # Unified annotation list
@@ -117,6 +116,18 @@ all_annotations = sorted(
 # =========================================================
 print('Building figures...')
 
+legend_style = dict(
+    x=0.99, y=0.01, xanchor='right', yanchor='bottom',
+    bgcolor='rgba(255,255,255,0.8)', bordercolor='rgba(0,0,0,0.25)', borderwidth=1,
+    font=dict(family='Arial, sans-serif', size=11), itemwidth=30,
+)
+scene_cfg = dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='cube')
+layout_common = dict(
+    title=None, margin=dict(l=0, r=0, t=0, b=0),
+    showlegend=True, legend=legend_style, legend_title_text='',
+    scene=scene_cfg,
+)
+
 fig_pt2 = px.scatter_3d(
     v2_all, x='x_centroid', y='y_centroid', z='z_centroid',
     color='Anno', color_discrete_map=cell_type_to_rgb_plotly,
@@ -124,6 +135,7 @@ fig_pt2 = px.scatter_3d(
     labels={'x_centroid': 'X', 'y_centroid': 'Y', 'z_centroid': 'Z', 'Anno': 'Annotation'}
 )
 fig_pt2.update_traces(marker=dict(size=2), hoverinfo='skip', hovertemplate=None)
+fig_pt2.update_layout(**layout_common)
 
 def build_scatter_fig(df, x_col, y_col, z_col):
     traces = []
@@ -138,22 +150,12 @@ def build_scatter_fig(df, x_col, y_col, z_col):
             marker=dict(size=2, color=f'rgb({int(r*255)},{int(g*255)},{int(b*255)})'),
             hoverinfo='skip', legendgroup=str(ann), showlegend=True
         ))
-    return go.Figure(data=traces)
+    fig = go.Figure(data=traces)
+    fig.update_layout(**layout_common)
+    return fig
 
 fig_pt5 = build_scatter_fig(plot_df, 'x_final', 'y_final', 'z_plane')
 fig_pt3 = build_scatter_fig(v3_all, 'x_centroid', 'y_centroid', 'z_centroid')
-
-legend_style = dict(
-    x=0.99, y=0.01, xanchor='right', yanchor='bottom',
-    bgcolor='rgba(255,255,255,0.8)', bordercolor='rgba(0,0,0,0.25)', borderwidth=1,
-    font=dict(family='Arial, sans-serif', size=11), itemwidth=30,
-)
-for fig in (fig_pt2, fig_pt5, fig_pt3):
-    fig.update_layout(
-        title=None, margin=dict(l=0, r=0, t=0, b=0),
-        showlegend=True, legend=legend_style, legend_title_text='',
-        scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='cube'),
-    )
 
 # =========================================================
 # Export
@@ -163,23 +165,144 @@ div1 = fig_pt2.to_html(full_html=False, include_plotlyjs='cdn')
 div2 = fig_pt5.to_html(full_html=False, include_plotlyjs=False)
 div3 = fig_pt3.to_html(full_html=False, include_plotlyjs=False)
 
-html = f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/>
-<title>Venture PT2, PT5, PT3 - Side-by-Side 3D Plots</title>
+p1, p2, p3 = PATIENT_LABELS
+
+html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>BCRL Patient 3D Spatial Transcriptomics</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
-.grid{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;height:100vh;box-sizing:border-box;padding:8px;align-items:stretch;}}
-.panel{{min-height:0;display:flex;flex-direction:column;}}
-.panel>.title{{flex:0 0 auto;font-family:sans-serif;font-size:16px;font-weight:600;margin:4px 0 6px 4px;}}
-.panel>.plot{{flex:1 1 0;min-height:0;}}
-.panel>.plot>div{{height:100% !important;}}
-body,html{{margin:0;height:100%;}}
-</style></head><body>
-<div class="grid">
-<div class="panel"><div class="title">Venture Patient 2 - Transcriptomics</div><div class="plot">{div1}</div></div>
-<div class="panel"><div class="title">Venture Patient 5 - Transcriptomics</div><div class="plot">{div2}</div></div>
-<div class="panel"><div class="title">Venture Patient 3 - Transcriptomics</div><div class="plot">{div3}</div></div>
+  *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body, html {{ height: 100%; font-family: Arial, sans-serif; background: #f5f5f5; }}
+
+  /* ---- selector bar ---- */
+  #selector {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 10px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    align-items: center;
+  }}
+  #selector span {{
+    font-size: 13px;
+    color: #555;
+    margin-right: 4px;
+    white-space: nowrap;
+  }}
+  .tab-btn {{
+    padding: 5px 14px;
+    border: 1px solid #bbb;
+    border-radius: 20px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    color: #333;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }}
+  .tab-btn:hover {{ background: #e8f0fe; border-color: #4a90d9; }}
+  .tab-btn.active {{ background: #1a73e8; color: #fff; border-color: #1a73e8; }}
+
+  /* ---- plot area ---- */
+  #plot-area {{
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    height: calc(100vh - 50px);
+  }}
+  .panel {{
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+  }}
+  .panel.hidden {{ display: none; }}
+  .panel-title {{
+    flex: 0 0 auto;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-bottom: 1px solid #eee;
+    color: #222;
+  }}
+  .panel-plot {{
+    flex: 1 1 0;
+    min-height: 0;
+  }}
+  .panel-plot > div {{ height: 100% !important; }}
+</style>
+</head>
+<body>
+
+<div id="selector">
+  <span>View:</span>
+  <button class="tab-btn active" data-view="all">All patients</button>
+  <button class="tab-btn" data-view="p1">{p1}</button>
+  <button class="tab-btn" data-view="p2">{p2}</button>
+  <button class="tab-btn" data-view="p3">{p3}</button>
 </div>
-</body></html>"""
+
+<div id="plot-area">
+  <div class="panel" id="panel-p1">
+    <div class="panel-title">{p1} — Spatial Transcriptomics</div>
+    <div class="panel-plot">{div1}</div>
+  </div>
+  <div class="panel" id="panel-p2">
+    <div class="panel-title">{p2} — Spatial Transcriptomics</div>
+    <div class="panel-plot">{div2}</div>
+  </div>
+  <div class="panel" id="panel-p3">
+    <div class="panel-title">{p3} — Spatial Transcriptomics</div>
+    <div class="panel-plot">{div3}</div>
+  </div>
+</div>
+
+<script>
+(function() {{
+  var panels = {{
+    all: ['panel-p1','panel-p2','panel-p3'],
+    p1:  ['panel-p1'],
+    p2:  ['panel-p2'],
+    p3:  ['panel-p3']
+  }};
+  function showView(view) {{
+    var all = ['panel-p1','panel-p2','panel-p3'];
+    var show = panels[view];
+    all.forEach(function(id) {{
+      var el = document.getElementById(id);
+      if (show.indexOf(id) >= 0) {{
+        el.classList.remove('hidden');
+      }} else {{
+        el.classList.add('hidden');
+      }}
+    }});
+    // trigger Plotly resize so plots fill the new panel size
+    setTimeout(function() {{
+      show.forEach(function(id) {{
+        var plotDiv = document.getElementById(id).querySelector('.js-plotly-plot');
+        if (plotDiv) Plotly.relayout(plotDiv, {{}});
+      }});
+    }}, 50);
+  }}
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {{
+    btn.addEventListener('click', function() {{
+      document.querySelectorAll('.tab-btn').forEach(function(b) {{ b.classList.remove('active'); }});
+      btn.classList.add('active');
+      showView(btn.getAttribute('data-view'));
+    }});
+  }});
+}})();
+</script>
+</body>
+</html>"""
 
 os.makedirs(os.path.dirname(out_path), exist_ok=True)
 with open(out_path, 'w', encoding='utf-8') as f:
