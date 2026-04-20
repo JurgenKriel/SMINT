@@ -116,15 +116,10 @@ all_annotations = sorted(
 # =========================================================
 print('Building figures...')
 
-legend_style = dict(
-    x=0.99, y=0.01, xanchor='right', yanchor='bottom',
-    bgcolor='rgba(255,255,255,0.8)', bordercolor='rgba(0,0,0,0.25)', borderwidth=1,
-    font=dict(family='Arial, sans-serif', size=11), itemwidth=30,
-)
 scene_cfg = dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='cube')
 layout_common = dict(
     title=None, margin=dict(l=0, r=0, t=0, b=0),
-    showlegend=True, legend=legend_style, legend_title_text='',
+    showlegend=False,
     scene=scene_cfg,
 )
 
@@ -167,6 +162,18 @@ div3 = fig_pt3.to_html(full_html=False, include_plotlyjs=False)
 
 p1, p2, p3 = PATIENT_LABELS
 
+# Build HTML legend items from annotation colour map
+legend_items_html = ''
+for ann in all_annotations:
+    r, g, b = cell_type_to_rgb.get(ann, default_color_tuple)
+    color = f'rgb({int(r*255)},{int(g*255)},{int(b*255)})'
+    legend_items_html += (
+        f'<div class="legend-item">'
+        f'<span class="legend-swatch" style="background:{color};"></span>'
+        f'<span class="legend-label">{ann}</span>'
+        f'</div>'
+    )
+
 html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -176,6 +183,7 @@ html = f"""<!DOCTYPE html>
 <style>
   *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
   body, html {{ height: 100%; font-family: Arial, sans-serif; background: #f5f5f5; }}
+  body {{ position: relative; }}
 
   /* ---- selector bar ---- */
   #selector {{
@@ -268,6 +276,65 @@ html = f"""<!DOCTYPE html>
     -webkit-user-select: none;
   }}
   .zoom-btn:active {{ background: #e8f0fe; }}
+
+  /* ---- legend toggle button ---- */
+  #legend-toggle {{
+    margin-left: auto;
+    padding: 5px 14px;
+    border: 1px solid #bbb;
+    border-radius: 20px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    color: #333;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+  }}
+  #legend-toggle:hover {{ background: #e8f0fe; border-color: #4a90d9; }}
+  #legend-toggle.open {{ background: #1a73e8; color: #fff; border-color: #1a73e8; }}
+
+  /* ---- legend panel ---- */
+  #legend-panel {{
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    width: 210px;
+    max-height: calc(100vh - 70px);
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    padding: 10px 12px;
+    z-index: 100;
+  }}
+  #legend-panel.open {{ display: block; }}
+  #legend-panel h4 {{
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #555;
+    margin-bottom: 8px;
+  }}
+  .legend-item {{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+  }}
+  .legend-swatch {{
+    flex: 0 0 14px;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.1);
+  }}
+  .legend-label {{
+    font-size: 12px;
+    color: #222;
+  }}
 </style>
 </head>
 <body>
@@ -277,6 +344,12 @@ html = f"""<!DOCTYPE html>
   <button class="tab-btn active" data-panel="panel-p1">{p1}</button>
   <button class="tab-btn" data-panel="panel-p2">{p2}</button>
   <button class="tab-btn" data-panel="panel-p3">{p3}</button>
+  <button id="legend-toggle" title="Toggle legend">Legend &#9660;</button>
+</div>
+
+<div id="legend-panel">
+  <h4>Cell Types</h4>
+  {legend_items_html}
 </div>
 
 <div id="plot-area">
@@ -358,6 +431,21 @@ html = f"""<!DOCTYPE html>
       showPanel(btn.getAttribute('data-panel'));
     }});
   }});
+
+  var legendToggle = document.getElementById('legend-toggle');
+  var legendPanel  = document.getElementById('legend-panel');
+  legendToggle.addEventListener('click', function(e) {{
+    e.stopPropagation();
+    var open = legendPanel.classList.toggle('open');
+    legendToggle.classList.toggle('open', open);
+    legendToggle.innerHTML = open ? 'Legend &#9650;' : 'Legend &#9660;';
+  }});
+  document.addEventListener('click', function() {{
+    legendPanel.classList.remove('open');
+    legendToggle.classList.remove('open');
+    legendToggle.innerHTML = 'Legend &#9660;';
+  }});
+  legendPanel.addEventListener('click', function(e) {{ e.stopPropagation(); }});
 
   document.querySelectorAll('.zoom-btn').forEach(function(btn) {{
     btn.addEventListener('click', function(e) {{
