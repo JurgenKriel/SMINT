@@ -59,6 +59,7 @@ SMINT provides a comprehensive toolkit for processing and analyzing spatial omic
 - [Examples](examples.md): Complete examples of SMINT workflows
 - [Configuration](configuration.md): Configure SMINT for your specific needs
 - [HPC Deployment](hpc_deployment.md): Run SMINT on HPC clusters
+- [Visualizations](visualizations.md): Interactive 3D multi-omics plots from the BCRL patient cohort
 
 ## Citation
 

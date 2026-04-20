@@ -57,6 +57,8 @@ nav:
     - HPC Deployment: hpc_deployment.md
   - Examples:
     - Examples: examples.md
+  - Visualizations:
+    - Interactive Plots: visualizations.md
   - API Reference:
     - Segmentation: api/segmentation.md
     - Preprocessing: api/preprocessing.md
