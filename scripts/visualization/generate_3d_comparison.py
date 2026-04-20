@@ -284,7 +284,6 @@ html = f"""<!DOCTYPE html>
         el.classList.add('hidden');
       }}
     }});
-    // trigger Plotly resize so plots fill the new panel size
     setTimeout(function() {{
       show.forEach(function(id) {{
         var plotDiv = document.getElementById(id).querySelector('.js-plotly-plot');
