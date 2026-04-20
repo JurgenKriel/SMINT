@@ -236,8 +236,38 @@ html = f"""<!DOCTYPE html>
   .panel-plot {{
     flex: 1 1 0;
     min-height: 0;
+    position: relative;
   }}
   .panel-plot > div {{ height: 100% !important; }}
+
+  /* ---- zoom controls ---- */
+  .zoom-controls {{
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 10;
+  }}
+  .zoom-btn {{
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    background: rgba(255,255,255,0.92);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    color: #333;
+    user-select: none;
+    -webkit-user-select: none;
+  }}
+  .zoom-btn:active {{ background: #e8f0fe; }}
 </style>
 </head>
 <body>
@@ -252,26 +282,67 @@ html = f"""<!DOCTYPE html>
 <div id="plot-area">
   <div class="panel" id="panel-p1">
     <div class="panel-title">{p1} — Spatial Transcriptomics</div>
-    <div class="panel-plot">{div1}</div>
+    <div class="panel-plot">
+      {div1}
+      <div class="zoom-controls">
+        <button class="zoom-btn" data-action="in"  title="Zoom in">+</button>
+        <button class="zoom-btn" data-action="out" title="Zoom out">−</button>
+        <button class="zoom-btn" data-action="reset" title="Reset view" style="font-size:14px;">&#8635;</button>
+      </div>
+    </div>
   </div>
   <div class="panel hidden" id="panel-p2">
     <div class="panel-title">{p2} — Spatial Transcriptomics</div>
-    <div class="panel-plot">{div2}</div>
+    <div class="panel-plot">
+      {div2}
+      <div class="zoom-controls">
+        <button class="zoom-btn" data-action="in"  title="Zoom in">+</button>
+        <button class="zoom-btn" data-action="out" title="Zoom out">−</button>
+        <button class="zoom-btn" data-action="reset" title="Reset view" style="font-size:14px;">&#8635;</button>
+      </div>
+    </div>
   </div>
   <div class="panel hidden" id="panel-p3">
     <div class="panel-title">{p3} — Spatial Transcriptomics</div>
-    <div class="panel-plot">{div3}</div>
+    <div class="panel-plot">
+      {div3}
+      <div class="zoom-controls">
+        <button class="zoom-btn" data-action="in"  title="Zoom in">+</button>
+        <button class="zoom-btn" data-action="out" title="Zoom out">−</button>
+        <button class="zoom-btn" data-action="reset" title="Reset view" style="font-size:14px;">&#8635;</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
 (function() {{
+  var ZOOM_IN  = 0.8;
+  var ZOOM_OUT = 1.25;
+
+  function getPlotDiv(panel) {{
+    return panel.querySelector('.js-plotly-plot');
+  }}
+
+  function zoomCamera(plotDiv, factor) {{
+    var eye = plotDiv._fullLayout.scene.camera.eye;
+    Plotly.relayout(plotDiv, {{'scene.camera.eye': {{
+      x: eye.x * factor,
+      y: eye.y * factor,
+      z: eye.z * factor
+    }}}});
+  }}
+
+  function resetCamera(plotDiv) {{
+    Plotly.relayout(plotDiv, {{'scene.camera': {{}}}});
+  }}
+
   function showPanel(targetId) {{
     document.querySelectorAll('#plot-area .panel').forEach(function(el) {{
       if (el.id === targetId) {{
         el.classList.remove('hidden');
         setTimeout(function() {{
-          var plotDiv = el.querySelector('.js-plotly-plot');
+          var plotDiv = getPlotDiv(el);
           if (plotDiv) Plotly.Plots.resize(plotDiv);
         }}, 50);
       }} else {{
@@ -279,11 +350,25 @@ html = f"""<!DOCTYPE html>
       }}
     }});
   }}
+
   document.querySelectorAll('.tab-btn').forEach(function(btn) {{
     btn.addEventListener('click', function() {{
       document.querySelectorAll('.tab-btn').forEach(function(b) {{ b.classList.remove('active'); }});
       btn.classList.add('active');
       showPanel(btn.getAttribute('data-panel'));
+    }});
+  }});
+
+  document.querySelectorAll('.zoom-btn').forEach(function(btn) {{
+    btn.addEventListener('click', function(e) {{
+      e.stopPropagation();
+      var panel = btn.closest('.panel');
+      var plotDiv = getPlotDiv(panel);
+      if (!plotDiv) return;
+      var action = btn.getAttribute('data-action');
+      if (action === 'in')    zoomCamera(plotDiv, ZOOM_IN);
+      else if (action === 'out')   zoomCamera(plotDiv, ZOOM_OUT);
+      else if (action === 'reset') resetCamera(plotDiv);
     }});
   }});
 }})();
