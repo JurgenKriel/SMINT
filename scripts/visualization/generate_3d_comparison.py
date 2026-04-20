@@ -272,7 +272,7 @@ html = f"""<!DOCTYPE html>
         el.classList.remove('hidden');
         setTimeout(function() {{
           var plotDiv = el.querySelector('.js-plotly-plot');
-          if (plotDiv) Plotly.relayout(plotDiv, {{}});
+          if (plotDiv) Plotly.Plots.resize(plotDiv);
         }}, 50);
       }} else {{
         el.classList.add('hidden');
