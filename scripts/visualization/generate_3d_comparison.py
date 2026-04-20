@@ -243,11 +243,10 @@ html = f"""<!DOCTYPE html>
 <body>
 
 <div id="selector">
-  <span>View:</span>
-  <button class="tab-btn active" data-view="all">All patients</button>
-  <button class="tab-btn" data-view="p1">{p1}</button>
-  <button class="tab-btn" data-view="p2">{p2}</button>
-  <button class="tab-btn" data-view="p3">{p3}</button>
+  <span>Patient:</span>
+  <button class="tab-btn active" data-panel="panel-p1">{p1}</button>
+  <button class="tab-btn" data-panel="panel-p2">{p2}</button>
+  <button class="tab-btn" data-panel="panel-p3">{p3}</button>
 </div>
 
 <div id="plot-area">
@@ -255,11 +254,11 @@ html = f"""<!DOCTYPE html>
     <div class="panel-title">{p1} — Spatial Transcriptomics</div>
     <div class="panel-plot">{div1}</div>
   </div>
-  <div class="panel" id="panel-p2">
+  <div class="panel hidden" id="panel-p2">
     <div class="panel-title">{p2} — Spatial Transcriptomics</div>
     <div class="panel-plot">{div2}</div>
   </div>
-  <div class="panel" id="panel-p3">
+  <div class="panel hidden" id="panel-p3">
     <div class="panel-title">{p3} — Spatial Transcriptomics</div>
     <div class="panel-plot">{div3}</div>
   </div>
@@ -267,35 +266,24 @@ html = f"""<!DOCTYPE html>
 
 <script>
 (function() {{
-  var panels = {{
-    all: ['panel-p1','panel-p2','panel-p3'],
-    p1:  ['panel-p1'],
-    p2:  ['panel-p2'],
-    p3:  ['panel-p3']
-  }};
-  function showView(view) {{
-    var all = ['panel-p1','panel-p2','panel-p3'];
-    var show = panels[view];
-    all.forEach(function(id) {{
-      var el = document.getElementById(id);
-      if (show.indexOf(id) >= 0) {{
+  function showPanel(targetId) {{
+    document.querySelectorAll('#plot-area .panel').forEach(function(el) {{
+      if (el.id === targetId) {{
         el.classList.remove('hidden');
+        setTimeout(function() {{
+          var plotDiv = el.querySelector('.js-plotly-plot');
+          if (plotDiv) Plotly.relayout(plotDiv, {{}});
+        }}, 50);
       }} else {{
         el.classList.add('hidden');
       }}
     }});
-    setTimeout(function() {{
-      show.forEach(function(id) {{
-        var plotDiv = document.getElementById(id).querySelector('.js-plotly-plot');
-        if (plotDiv) Plotly.relayout(plotDiv, {{}});
-      }});
-    }}, 50);
   }}
   document.querySelectorAll('.tab-btn').forEach(function(btn) {{
     btn.addEventListener('click', function() {{
       document.querySelectorAll('.tab-btn').forEach(function(b) {{ b.classList.remove('active'); }});
       btn.classList.add('active');
-      showView(btn.getAttribute('data-view'));
+      showPanel(btn.getAttribute('data-panel'));
     }});
   }});
 }})();
