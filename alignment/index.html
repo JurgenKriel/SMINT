@@ -16,14 +16,14 @@
         <link rel="prev" href="../segmentation/">
       
       
-        <link rel="next" href="../r_integration/">
+        <link rel="next" href="../xenium_metabolomics_alignment/">
       
       
         
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -568,6 +568,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -711,10 +715,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview-of-alignment-workflow" class="md-nav__link">
+  <a href="#coarse-pre-registration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview of Alignment Workflow
+        Coarse pre-registration
       
     </span>
   </a>
@@ -722,22 +726,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#input-data-requirements" class="md-nav__link">
+  <a href="#st-sm-registration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Input Data Requirements
+        ST-SM registration
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Input Data Requirements">
+    <nav class="md-nav" aria-label="ST-SM registration">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#supported-data-formats" class="md-nav__link">
+  <a href="#phase-1-prepare-landmark-inputs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Supported Data Formats
+        Phase 1 — prepare landmark inputs
       
     </span>
   </a>
@@ -745,10 +749,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#required-data-columns" class="md-nav__link">
+  <a href="#phase-2-annotate-then-register" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Required Data Columns
+        Phase 2 — annotate, then register
       
     </span>
   </a>
@@ -756,10 +760,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example-input-data" class="md-nav__link">
+  <a href="#coordinate-orientation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Example Input Data
+        Coordinate orientation
       
     </span>
   </a>
@@ -772,22 +776,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
+  <a href="#centroid-registration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Start
+        Centroid registration
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Quick Start">
+    <nav class="md-nav" aria-label="Centroid registration">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#basic-alignment" class="md-nav__link">
+  <a href="#measuring-quality-honestly" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic Alignment
+        Measuring quality honestly
       
     </span>
   </a>
@@ -795,10 +799,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#feature-based-alignment" class="md-nav__link">
+  <a href="#interpreting-the-result" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Feature-Based Alignment
+        Interpreting the result
       
     </span>
   </a>
@@ -811,44 +815,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#detailed-parameter-guide" class="md-nav__link">
+  <a href="#running-on-hpc" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Detailed Parameter Guide
+        Running on HPC
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Detailed Parameter Guide">
+    <nav class="md-nav" aria-label="Running on HPC">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#common-parameters" class="md-nav__link">
+  <a href="#gpu" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Common Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#advanced-parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Advanced Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#quality-control-parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quality Control Parameters
+        GPU
       
     </span>
   </a>
@@ -861,201 +843,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#alignment-api" class="md-nav__link">
+  <a href="#environments" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Alignment API
+        Environments
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#advanced-feature-based-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Advanced Feature-Based Alignment
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#transformation-methods-explained" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Transformation Methods Explained
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#output-files-and-formats" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Output Files and Formats
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#visualizing-alignment-results" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Visualizing Alignment Results
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#common-issues-and-troubleshooting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Common Issues and Troubleshooting
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Common Issues and Troubleshooting">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#poor-alignment-quality" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Poor Alignment Quality
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#flipped-or-rotated-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Flipped or Rotated Alignment
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slow-processing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Slow Processing
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#feature-mismatch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Feature Mismatch
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#performance-considerations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Performance Considerations
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tips-for-best-results" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tips for Best Results
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#xenium-to-metabolomics-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Xenium to Metabolomics Alignment
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Xenium to Metabolomics Alignment">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overview
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#quick-start_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick Start
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#advanced-usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Advanced Usage
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optimizing-alignment-quality" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Optimizing Alignment Quality
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1063,6 +857,62 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xenium_metabolomics_alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Xenium-Metabolomics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../napari_plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    napari Plugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1587,10 +1437,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview-of-alignment-workflow" class="md-nav__link">
+  <a href="#coarse-pre-registration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview of Alignment Workflow
+        Coarse pre-registration
       
     </span>
   </a>
@@ -1598,22 +1448,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#input-data-requirements" class="md-nav__link">
+  <a href="#st-sm-registration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Input Data Requirements
+        ST-SM registration
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Input Data Requirements">
+    <nav class="md-nav" aria-label="ST-SM registration">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#supported-data-formats" class="md-nav__link">
+  <a href="#phase-1-prepare-landmark-inputs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Supported Data Formats
+        Phase 1 — prepare landmark inputs
       
     </span>
   </a>
@@ -1621,10 +1471,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#required-data-columns" class="md-nav__link">
+  <a href="#phase-2-annotate-then-register" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Required Data Columns
+        Phase 2 — annotate, then register
       
     </span>
   </a>
@@ -1632,10 +1482,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example-input-data" class="md-nav__link">
+  <a href="#coordinate-orientation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Example Input Data
+        Coordinate orientation
       
     </span>
   </a>
@@ -1648,22 +1498,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
+  <a href="#centroid-registration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Start
+        Centroid registration
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Quick Start">
+    <nav class="md-nav" aria-label="Centroid registration">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#basic-alignment" class="md-nav__link">
+  <a href="#measuring-quality-honestly" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic Alignment
+        Measuring quality honestly
       
     </span>
   </a>
@@ -1671,10 +1521,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#feature-based-alignment" class="md-nav__link">
+  <a href="#interpreting-the-result" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Feature-Based Alignment
+        Interpreting the result
       
     </span>
   </a>
@@ -1687,44 +1537,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#detailed-parameter-guide" class="md-nav__link">
+  <a href="#running-on-hpc" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Detailed Parameter Guide
+        Running on HPC
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Detailed Parameter Guide">
+    <nav class="md-nav" aria-label="Running on HPC">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#common-parameters" class="md-nav__link">
+  <a href="#gpu" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Common Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#advanced-parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Advanced Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#quality-control-parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quality Control Parameters
+        GPU
       
     </span>
   </a>
@@ -1737,201 +1565,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#alignment-api" class="md-nav__link">
+  <a href="#environments" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Alignment API
+        Environments
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#advanced-feature-based-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Advanced Feature-Based Alignment
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#transformation-methods-explained" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Transformation Methods Explained
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#output-files-and-formats" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Output Files and Formats
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#visualizing-alignment-results" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Visualizing Alignment Results
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#common-issues-and-troubleshooting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Common Issues and Troubleshooting
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Common Issues and Troubleshooting">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#poor-alignment-quality" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Poor Alignment Quality
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#flipped-or-rotated-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Flipped or Rotated Alignment
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slow-processing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Slow Processing
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#feature-mismatch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Feature Mismatch
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#performance-considerations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Performance Considerations
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tips-for-best-results" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tips for Best Results
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#xenium-to-metabolomics-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Xenium to Metabolomics Alignment
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Xenium to Metabolomics Alignment">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overview
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#quick-start_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick Start
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#advanced-usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Advanced Usage
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optimizing-alignment-quality" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Optimizing Alignment Quality
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1956,517 +1596,233 @@
 
 
 <h1 id="spatial-alignment">Spatial Alignment<a class="headerlink" href="#spatial-alignment" title="Permanent link">&para;</a></h1>
-<p>SMINT provides a streamlined workflow for aligning different types of spatial omics data using the ST Align algorithm. This guide covers the complete alignment process, from data preparation to result validation.</p>
-<h2 id="overview-of-alignment-workflow">Overview of Alignment Workflow<a class="headerlink" href="#overview-of-alignment-workflow" title="Permanent link">&para;</a></h2>
-<p>The SMINT alignment pipeline consists of these key stages:</p>
-<ol>
-<li><strong>Data Preparation</strong> - Converting and preprocessing spatial data</li>
-<li><strong>Reference Selection</strong> - Choosing appropriate reference points</li>
-<li><strong>Alignment Computation</strong> - Calculating the optimal transformation</li>
-<li><strong>Transform Application</strong> - Applying the transformation to target data</li>
-<li><strong>Validation &amp; Quality Control</strong> - Assessing alignment accuracy</li>
-</ol>
-<h2 id="input-data-requirements">Input Data Requirements<a class="headerlink" href="#input-data-requirements" title="Permanent link">&para;</a></h2>
-<h3 id="supported-data-formats">Supported Data Formats<a class="headerlink" href="#supported-data-formats" title="Permanent link">&para;</a></h3>
-<p>SMINT's alignment module supports the following data formats:
-- <strong>CSV files</strong> (preferred) - Simple tabular format with spatial coordinates
-- <strong>AnnData objects</strong> - Python objects with spatial omics data
-- <strong>Pandas DataFrames</strong> - In-memory tabular data
-- <strong>10X Visium data</strong> - Spatial transcriptomics from 10X Genomics</p>
-<h3 id="required-data-columns">Required Data Columns<a class="headerlink" href="#required-data-columns" title="Permanent link">&para;</a></h3>
-<p>For optimal alignment, input data files should contain:
-- <strong>Spatial coordinates</strong>: Columns named 'x' and 'y' or similar ('X_position', 'Y_position')
-- <strong>Feature values</strong>: Gene expression or other features (optional, for feature-based alignment)
-- <strong>Cell/spot IDs</strong>: Unique identifiers for each point (optional, but recommended)</p>
-<h3 id="example-input-data">Example Input Data<a class="headerlink" href="#example-input-data" title="Permanent link">&para;</a></h3>
-<p>Reference data (<code>reference_data.csv</code>):
-<div class="highlight"><pre><span></span><code>spot_id,x,y,feature1,feature2
-1,100.5,200.3,0.8,0.2
-2,150.2,220.1,0.6,0.4
-...
-</code></pre></div></p>
-<p>Target data (<code>target_data.csv</code>):
-<div class="highlight"><pre><span></span><code>cell_id,x_position,y_position,marker1,marker2
-cell_1,1050.5,2200.3,0.9,0.1
-cell_2,1150.2,2220.1,0.7,0.3
-...
-</code></pre></div></p>
-<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
-<h3 id="basic-alignment">Basic Alignment<a class="headerlink" href="#basic-alignment" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>scripts.run_alignment<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--reference<span class="w"> </span>reference_data.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--target<span class="w"> </span>target_data.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--output-dir<span class="w"> </span>results/alignment<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--method<span class="w"> </span>affine<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--ref-x-col<span class="w"> </span>x<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--ref-y-col<span class="w"> </span>y<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--target-x-col<span class="w"> </span>x_position<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--target-y-col<span class="w"> </span>y_position
-</code></pre></div>
-<h3 id="feature-based-alignment">Feature-Based Alignment<a class="headerlink" href="#feature-based-alignment" title="Permanent link">&para;</a></h3>
-<p>For alignment based on matching gene/protein expression patterns:</p>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>scripts.run_alignment<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--reference<span class="w"> </span>reference_data.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--target<span class="w"> </span>target_data.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--output-dir<span class="w"> </span>results/alignment<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--method<span class="w"> </span>affine<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--use-features<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--ref-feature-cols<span class="w"> </span>feature1,feature2<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--target-feature-cols<span class="w"> </span>marker1,marker2<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--feature-weight<span class="w"> </span><span class="m">0</span>.7
-</code></pre></div>
-<h2 id="detailed-parameter-guide">Detailed Parameter Guide<a class="headerlink" href="#detailed-parameter-guide" title="Permanent link">&para;</a></h2>
-<h3 id="common-parameters">Common Parameters<a class="headerlink" href="#common-parameters" title="Permanent link">&para;</a></h3>
+<p>SMINT aligns spatial omics modalities in two quite different situations, and
+picking the right one matters more than any parameter you will tune afterwards.</p>
 <table>
 <thead>
 <tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Default</th>
-<th>Recommended Values</th>
+<th>Situation</th>
+<th>What is true</th>
+<th>Use</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>--reference</code></td>
-<td>Path to reference data</td>
-<td>Required</td>
-<td>-</td>
+<td><strong>Sequential sections</strong> — the modalities come from different physical sections</td>
+<td>The tissue genuinely differs between them; no cell corresponds one-to-one</td>
+<td>STalign LDDMM (<a href="#st-sm-registration"><code>register_sm_to_st</code></a>)</td>
 </tr>
 <tr>
-<td><code>--target</code></td>
-<td>Path to target data</td>
-<td>Required</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>--output-dir</code></td>
-<td>Directory to save results</td>
-<td>Required</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>--method</code></td>
-<td>Transformation method</td>
-<td>"affine"</td>
-<td>"rigid", "similarity", "affine", "projective"</td>
-</tr>
-<tr>
-<td><code>--ref-x-col</code></td>
-<td>X coordinate column in reference</td>
-<td>"x"</td>
-<td>Any column name</td>
-</tr>
-<tr>
-<td><code>--ref-y-col</code></td>
-<td>Y coordinate column in reference</td>
-<td>"y"</td>
-<td>Any column name</td>
-</tr>
-<tr>
-<td><code>--target-x-col</code></td>
-<td>X coordinate column in target</td>
-<td>"x"</td>
-<td>Any column name</td>
-</tr>
-<tr>
-<td><code>--target-y-col</code></td>
-<td>Y coordinate column in target</td>
-<td>"y"</td>
-<td>Any column name</td>
-</tr>
-<tr>
-<td><code>--visualize</code></td>
-<td>Generate visualizations</td>
-<td>False</td>
-<td>-</td>
+<td><strong>Same section, post-staining</strong> — a second modality is acquired on the <em>exact same</em> section</td>
+<td>Centroids really do correspond one-to-one</td>
+<td>Correspondence fitting (<a href="#centroid-registration"><code>register_centroids</code></a>)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="advanced-parameters">Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Default</th>
-<th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>--use-features</code></td>
-<td>Use features for alignment</td>
-<td>False</td>
-<td>Enables feature-based alignment</td>
-</tr>
-<tr>
-<td><code>--ref-feature-cols</code></td>
-<td>Feature columns in reference</td>
-<td>None</td>
-<td>Comma-separated column names</td>
-</tr>
-<tr>
-<td><code>--target-feature-cols</code></td>
-<td>Feature columns in target</td>
-<td>None</td>
-<td>Comma-separated column names</td>
-</tr>
-<tr>
-<td><code>--feature-weight</code></td>
-<td>Weight of features vs. spatial</td>
-<td>0.5</td>
-<td>0.0-1.0 (higher = more feature influence)</td>
-</tr>
-<tr>
-<td><code>--max-points</code></td>
-<td>Maximum points to use</td>
-<td>10000</td>
-<td>Lower for faster processing</td>
-</tr>
-<tr>
-<td><code>--ransac-threshold</code></td>
-<td>RANSAC inlier threshold</td>
-<td>10.0</td>
-<td>Lower for stricter matching</td>
-</tr>
-<tr>
-<td><code>--ransac-iterations</code></td>
-<td>RANSAC iterations</td>
-<td>1000</td>
-<td>Higher for better robustness</td>
-</tr>
-<tr>
-<td><code>--ransac-min-samples</code></td>
-<td>Min. samples for RANSAC</td>
-<td>Method-dependent</td>
-<td>2 (rigid), 3 (affine), 4 (projective)</td>
-</tr>
-<tr>
-<td><code>--scale-factor</code></td>
-<td>Scale factor for coordinates</td>
-<td>1.0</td>
-<td>Adjusts for different coordinate systems</td>
-</tr>
-<tr>
-<td><code>--pre-align</code></td>
-<td>Use simple pre-alignment</td>
-<td>False</td>
-<td>Helps with very different starting positions</td>
-</tr>
-</tbody>
-</table>
-<h3 id="quality-control-parameters">Quality Control Parameters<a class="headerlink" href="#quality-control-parameters" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Default</th>
-<th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>--validate</code></td>
-<td>Validate alignment quality</td>
-<td>False</td>
-<td>Enables quality assessment</td>
-</tr>
-<tr>
-<td><code>--holdout-fraction</code></td>
-<td>Fraction of points to hold out</td>
-<td>0.1</td>
-<td>0.05-0.2 recommended</td>
-</tr>
-<tr>
-<td><code>--min-confidence</code></td>
-<td>Minimum alignment confidence</td>
-<td>0.5</td>
-<td>0-1 range, higher = stricter</td>
-</tr>
-<tr>
-<td><code>--distance-threshold</code></td>
-<td>Max allowed point distance</td>
-<td>50.0</td>
-<td>Units same as coordinates</td>
-</tr>
-<tr>
-<td><code>--save-validation-plots</code></td>
-<td>Save validation plots</td>
-<td>False</td>
-<td>Requires matplotlib</td>
-</tr>
-</tbody>
-</table>
-<h2 id="alignment-api">Alignment API<a class="headerlink" href="#alignment-api" title="Permanent link">&para;</a></h2>
-<p>For programmatic usage within Python scripts:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_alignment</span><span class="p">,</span> <span class="n">transform_coordinates</span>
+<p>Using the same-section tools on sequential sections will happily produce a
+number, but it will be fitting noise: nearest-neighbour "correspondences"
+between different sections pair cells that are merely nearby, not the same.</p>
+<hr />
+<h2 id="coarse-pre-registration">Coarse pre-registration<a class="headerlink" href="#coarse-pre-registration" title="Permanent link">&para;</a></h2>
+<p>Spatial metabolomics arrives on its own pixel grid, frequently rotated or
+mirrored relative to the Xenium section and at a completely different scale.
+LDDMM will not recover from a gross orientation mismatch, so bring the datasets
+roughly together first.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_pretransform</span><span class="p">,</span> <span class="n">apply_pretransform</span><span class="p">,</span> <span class="n">overlap_score</span>
 
-<span class="c1"># Basic usage</span>
-<span class="n">alignment_result</span> <span class="o">=</span> <span class="n">run_alignment</span><span class="p">(</span>
-    <span class="n">source_data</span><span class="o">=</span><span class="s2">&quot;path/to/target_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">target_data</span><span class="o">=</span><span class="s2">&quot;path/to/reference_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;affine&quot;</span><span class="p">,</span>
-    <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;source_x_column&quot;</span><span class="p">:</span> <span class="s2">&quot;x_position&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;source_y_column&quot;</span><span class="p">:</span> <span class="s2">&quot;y_position&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;target_x_column&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;target_y_column&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;ransac_threshold&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
-        <span class="s2">&quot;ransac_max_iterations&quot;</span><span class="p">:</span> <span class="mi">1000</span>
-    <span class="p">}</span>
+<span class="n">matrix</span> <span class="o">=</span> <span class="n">build_pretransform</span><span class="p">(</span>
+    <span class="n">sm_xy</span><span class="p">,</span> <span class="n">xen_xy</span><span class="p">,</span>
+    <span class="n">scale_mode</span><span class="o">=</span><span class="s2">&quot;extent&quot;</span><span class="p">,</span>   <span class="c1"># match bounding-box spans</span>
+    <span class="n">rotation</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>           <span class="c1"># degrees counter-clockwise</span>
+    <span class="n">flip_x</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
-
-<span class="c1"># Access the transformation matrix</span>
-<span class="n">transform_matrix</span> <span class="o">=</span> <span class="n">alignment_result</span><span class="p">[</span><span class="s2">&quot;transformation_matrix&quot;</span><span class="p">]</span>
-<span class="n">quality_metrics</span> <span class="o">=</span> <span class="n">alignment_result</span><span class="p">[</span><span class="s2">&quot;quality_metrics&quot;</span><span class="p">]</span>
-
-<span class="c1"># Apply transformation to coordinates</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="n">data_to_transform</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;path/to/additional_data.csv&quot;</span><span class="p">)</span>
-<span class="n">transformed_coords</span> <span class="o">=</span> <span class="n">transform_coordinates</span><span class="p">(</span>
-    <span class="n">coordinates</span><span class="o">=</span><span class="n">data_to_transform</span><span class="p">[[</span><span class="s2">&quot;x_position&quot;</span><span class="p">,</span> <span class="s2">&quot;y_position&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-    <span class="n">transformation_matrix</span><span class="o">=</span><span class="n">transform_matrix</span>
-<span class="p">)</span>
-
-<span class="c1"># Save transformed coordinates</span>
-<span class="n">data_to_transform</span><span class="p">[</span><span class="s2">&quot;x_transformed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">transformed_coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
-<span class="n">data_to_transform</span><span class="p">[</span><span class="s2">&quot;y_transformed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">transformed_coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="n">data_to_transform</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;path/to/transformed_data.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">moved</span> <span class="o">=</span> <span class="n">apply_pretransform</span><span class="p">(</span><span class="n">sm_xy</span><span class="p">,</span> <span class="n">matrix</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">overlap_score</span><span class="p">(</span><span class="n">moved</span><span class="p">,</span> <span class="n">xen_xy</span><span class="p">))</span>     <span class="c1"># 0-1, higher is better</span>
 </code></pre></div>
-<h2 id="advanced-feature-based-alignment">Advanced Feature-Based Alignment<a class="headerlink" href="#advanced-feature-based-alignment" title="Permanent link">&para;</a></h2>
-<p>SMINT supports alignment based on matching gene/protein expression patterns:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_alignment</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<p>Operations are applied in a fixed order — <strong>flip → rotate → scale → translate</strong>
+— about the source centroid. The order is fixed because rotations and flips do
+not commute.</p>
+<div class="admonition note">
+<p class="admonition-title">Scale is fitted after orientation is corrected</p>
+<p>Bounding-box extents change under rotation, so fitting scale on the raw
+source bakes in an error. On a 30° rotated test shape, fitting first gave
+8.10 against a true 10.0. <code>build_pretransform</code> handles this for you by
+applying flip and rotation before fitting.</p>
+</div>
+<p><code>scale_mode</code> options:</p>
+<ul>
+<li><strong><code>"extent"</code></strong> (default) — match the bounding-box <em>span</em> per axis. Robust to
+  the two datasets having different origins.</li>
+<li><strong><code>"max"</code></strong> — match maximum coordinates directly. Literal, but wrong whenever
+  either dataset does not start near zero.</li>
+<li><strong><code>"none"</code></strong> — no scaling.</li>
+</ul>
+<p>Scaling is isotropic by default (<code>preserve_aspect=True</code>). Anisotropic scaling
+can force bounding boxes to agree while making the shapes match <em>worse</em>, which
+then misleads the landmark step.</p>
+<p>Use <code>describe_pretransform(matrix)</code> to decompose a transform into scale,
+rotation, shear and whether it reflects — a negative determinant means a
+reflection crept in, which is easy to introduce by combining a flip with a
+rotation.</p>
+<hr />
+<h2 id="st-sm-registration">ST-SM registration<a class="headerlink" href="#st-sm-registration" title="Permanent link">&para;</a></h2>
+<p>For sequential sections, using STalign's LDDMM. The workflow is deliberately
+split into two phases around a <strong>manual landmark step</strong>, because that step is
+where the biological judgement lives.</p>
+<h3 id="phase-1-prepare-landmark-inputs">Phase 1 — prepare landmark inputs<a class="headerlink" href="#phase-1-prepare-landmark-inputs" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_landmark_inputs</span>
 
-<span class="c1"># Load data</span>
-<span class="n">reference_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;reference_data.csv&quot;</span><span class="p">)</span>
-<span class="n">target_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;target_data.csv&quot;</span><span class="p">)</span>
-
-<span class="c1"># Run feature-based alignment</span>
-<span class="n">alignment_result</span> <span class="o">=</span> <span class="n">run_alignment</span><span class="p">(</span>
-    <span class="n">source_data</span><span class="o">=</span><span class="n">target_data</span><span class="p">,</span>
-    <span class="n">target_data</span><span class="o">=</span><span class="n">reference_data</span><span class="p">,</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;affine&quot;</span><span class="p">,</span>
-    <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;source_x_column&quot;</span><span class="p">:</span> <span class="s2">&quot;x_position&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;source_y_column&quot;</span><span class="p">:</span> <span class="s2">&quot;y_position&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;target_x_column&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;target_y_column&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;use_features&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="s2">&quot;source_feature_columns&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;marker1&quot;</span><span class="p">,</span> <span class="s2">&quot;marker2&quot;</span><span class="p">,</span> <span class="s2">&quot;marker3&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;target_feature_columns&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;feature1&quot;</span><span class="p">,</span> <span class="s2">&quot;feature2&quot;</span><span class="p">,</span> <span class="s2">&quot;feature3&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;feature_weight&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>  <span class="c1"># 70% features, 30% spatial</span>
-        <span class="s2">&quot;normalize_features&quot;</span><span class="p">:</span> <span class="kc">True</span>
-    <span class="p">}</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">prepare_landmark_inputs</span><span class="p">(</span>
+    <span class="n">st_file</span><span class="o">=</span><span class="s2">&quot;Z2_final_aligned_annos.csv&quot;</span><span class="p">,</span>
+    <span class="n">sm_file</span><span class="o">=</span><span class="s2">&quot;Ven5B_information_matrix_tissue_only_full_with_xy.csv&quot;</span><span class="p">,</span>
+    <span class="n">output_prefix</span><span class="o">=</span><span class="s2">&quot;/path/to/ven5_z2&quot;</span><span class="p">,</span>
+    <span class="n">dx</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
+    <span class="n">sm_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">scale_xy</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">rotate_left_90</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
 <span class="p">)</span>
 </code></pre></div>
-<h2 id="transformation-methods-explained">Transformation Methods Explained<a class="headerlink" href="#transformation-methods-explained" title="Permanent link">&para;</a></h2>
-<p>SMINT provides several transformation methods with different properties:</p>
+<p>This writes <code>&lt;prefix&gt;_st.npz</code> and <code>&lt;prefix&gt;_sm.npz</code>.</p>
+<h3 id="phase-2-annotate-then-register">Phase 2 — annotate, then register<a class="headerlink" href="#phase-2-annotate-then-register" title="Permanent link">&para;</a></h3>
+<p>Annotate both <code>.npz</code> files, picking the <strong>same anatomical features in the same
+order</strong> in each — correspondence is positional, so an ordering mismatch
+silently produces a wrong registration. Either use the
+<a href="../napari_plugin/">napari plugin</a> or the standalone annotator:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>point_annotator.py<span class="w"> </span>ven5_z2_st.npz<span class="w"> </span>ven5_z2_sm.npz
+</code></pre></div>
+<p>That writes <code>&lt;prefix&gt;_st_points.npy</code> and <code>&lt;prefix&gt;_sm_points.npy</code>. Then:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_sm_to_st</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">register_sm_to_st</span><span class="p">(</span>
+    <span class="n">st_file</span><span class="o">=...</span><span class="p">,</span> <span class="n">sm_file</span><span class="o">=...</span><span class="p">,</span>
+    <span class="n">st_points_file</span><span class="o">=</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;st_points&quot;</span><span class="p">],</span>
+    <span class="n">sm_points_file</span><span class="o">=</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;sm_points&quot;</span><span class="p">],</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;sm_transformed.csv&quot;</span><span class="p">,</span>
+    <span class="n">niter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">epV</span><span class="o">=</span><span class="mf">200.0</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="coordinate-orientation">Coordinate orientation<a class="headerlink" href="#coordinate-orientation" title="Permanent link">&para;</a></h3>
+<p>STalign works in <strong>row-column</strong> order throughout. <code>LDDMM</code> takes grids as
+<code>[Y, X]</code>, and <code>transform_points_source_to_target</code> both accepts and returns
+points as <code>(row, col)</code> — it applies the transform in place and does not
+transpose.</p>
+<p>Registering through STalign therefore returns coordinates whose axes are
+transposed relative to the source dataset. <code>transform_points</code> exposes this:</p>
+<ul>
+<li><strong><code>orientation="dataset"</code></strong> (default) — restores the original dataset's
+  orientation. This is what you want, and it reproduces historical outputs.</li>
+<li><strong><code>orientation="stalign"</code></strong> — true xy in the ST target frame.</li>
+</ul>
+<p>The two differ by a transpose. Mixing them silently produces a flipped overlay,
+so the choice is always explicit and is recorded on the output frame.</p>
+<hr />
+<h2 id="centroid-registration">Centroid registration<a class="headerlink" href="#centroid-registration" title="Permanent link">&para;</a></h2>
+<p>For post-staining on the same section, where centroids correspond one-to-one.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_centroids</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">register_centroids</span><span class="p">(</span>
+    <span class="n">nucleus_xy</span><span class="p">,</span> <span class="n">xenium_xy</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;ransac+tps&quot;</span><span class="p">,</span>
+    <span class="n">max_distance</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
+    <span class="n">validation_fraction</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;tre_validation&quot;</span><span class="p">])</span>    <span class="c1"># the number that matters</span>
+</code></pre></div>
 <table>
 <thead>
 <tr>
 <th>Method</th>
-<th>Degrees of Freedom</th>
-<th>Preserves</th>
-<th>Use Case</th>
+<th>What it does</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Rigid</strong></td>
-<td>3</td>
-<td>Distances, Angles</td>
-<td>Same-scale data with rotation/translation</td>
+<td><code>affine</code></td>
+<td>Least-squares affine on all matched pairs</td>
 </tr>
 <tr>
-<td><strong>Similarity</strong></td>
-<td>4</td>
-<td>Angles, Relative distances</td>
-<td>Similar data with uniform scaling</td>
+<td><code>ransac</code></td>
+<td>RANSAC-robust affine; rejects bad correspondences</td>
 </tr>
 <tr>
-<td><strong>Affine</strong></td>
-<td>6</td>
-<td>Parallel lines</td>
-<td>Different imaging modalities, tissue deformation</td>
+<td><code>tps</code></td>
+<td>Thin-plate spline after an affine pre-alignment</td>
 </tr>
 <tr>
-<td><strong>Projective</strong></td>
-<td>8</td>
-<td>Straight lines</td>
-<td>Significant perspective changes, severe distortion</td>
+<td><code>ransac+tps</code></td>
+<td>RANSAC affine, then TPS on the inliers</td>
 </tr>
 </tbody>
 </table>
-<h2 id="output-files-and-formats">Output Files and Formats<a class="headerlink" href="#output-files-and-formats" title="Permanent link">&para;</a></h2>
-<p>SMINT generates the following output files:</p>
-<table>
-<thead>
-<tr>
-<th>File</th>
-<th>Description</th>
-<th>Format</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>transformation_matrix.csv</code></td>
-<td>Transformation matrix</td>
-<td>CSV (3×3 matrix)</td>
-</tr>
-<tr>
-<td><code>transformed_coordinates.csv</code></td>
-<td>Transformed target coordinates</td>
-<td>CSV with original + transformed coordinates</td>
-</tr>
-<tr>
-<td><code>alignment_metrics.json</code></td>
-<td>Quality metrics</td>
-<td>JSON</td>
-</tr>
-<tr>
-<td><code>alignment_report.html</code></td>
-<td>Interactive visualization</td>
-<td>HTML (if <code>--visualize</code> is used)</td>
-</tr>
-<tr>
-<td><code>validation_plots/*.png</code></td>
-<td>Validation visualizations</td>
-<td>PNG (if validation enabled)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="visualizing-alignment-results">Visualizing Alignment Results<a class="headerlink" href="#visualizing-alignment-results" title="Permanent link">&para;</a></h2>
-<p>SMINT provides built-in visualization tools for alignment results:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">visualize_alignment</span>
-
-<span class="c1"># Generate interactive visualization</span>
-<span class="n">visualize_alignment</span><span class="p">(</span>
-    <span class="n">reference_data</span><span class="o">=</span><span class="s2">&quot;path/to/reference_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">target_data</span><span class="o">=</span><span class="s2">&quot;path/to/target_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">transformed_data</span><span class="o">=</span><span class="s2">&quot;path/to/transformed_coordinates.csv&quot;</span><span class="p">,</span>
-    <span class="n">output_html</span><span class="o">=</span><span class="s2">&quot;alignment_visualization.html&quot;</span><span class="p">,</span>
-    <span class="n">reference_name</span><span class="o">=</span><span class="s2">&quot;Spatial Transcriptomics&quot;</span><span class="p">,</span>
-    <span class="n">target_name</span><span class="o">=</span><span class="s2">&quot;IF Imaging&quot;</span><span class="p">,</span>
-    <span class="n">point_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-    <span class="n">opacity</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
-    <span class="n">colormap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span>
-<span class="p">)</span>
+<h3 id="measuring-quality-honestly">Measuring quality honestly<a class="headerlink" href="#measuring-quality-honestly" title="Permanent link">&para;</a></h3>
+<p>Target Registration Error is easy to compute in a way that is <strong>circular</strong>.
+Correspondences here are established by nearest neighbour, so a sufficiently
+flexible transform can drive TRE to ~0 on the pairs it was fitted to,
+regardless of whether those correspondences are correct. An unregularised TPS
+with as many control points as pairs will <em>always</em> report TRE ≈ 0 on those
+pairs — that is interpolation, not accuracy.</p>
+<p><code>register_centroids</code> therefore always holds out a fraction of pairs and reports
+TRE on both:</p>
+<div class="highlight"><pre><span></span><code>tre_initial      before any transform
+tre_fit          on the pairs used for fitting     &lt;- not evidence
+tre_validation   on held-out pairs                 &lt;- the real number
 </code></pre></div>
-<h2 id="common-issues-and-troubleshooting">Common Issues and Troubleshooting<a class="headerlink" href="#common-issues-and-troubleshooting" title="Permanent link">&para;</a></h2>
-<h3 id="poor-alignment-quality">Poor Alignment Quality<a class="headerlink" href="#poor-alignment-quality" title="Permanent link">&para;</a></h3>
+<p>A large gap between the two means the transform is memorising
+correspondences. The function warns when it detects this.</p>
+<div class="admonition warning">
+<p class="admonition-title">Matching is mutual by default</p>
+<p><code>mutual=True</code> keeps only pairs that are each other's nearest neighbour.
+One-directional matching lets many source points collapse onto a single
+popular target, inflating the pair count. On a real Venture 5 section this
+was the difference between 75,146 apparent pairs and 40,135 real ones.</p>
+</div>
+<h3 id="interpreting-the-result">Interpreting the result<a class="headerlink" href="#interpreting-the-result" title="Permanent link">&para;</a></h3>
+<p>If no method beats the initial TRE, the datasets are already as aligned as a
+global transform can make them, and the remaining distance is correspondence
+ambiguity rather than misregistration. Two useful diagnostics:</p>
 <ul>
-<li><strong>Problem</strong>: Points not properly aligned</li>
-<li><strong>Solution</strong>: Try different transformation methods (start with affine), adjust RANSAC parameters, use feature-based alignment if possible</li>
+<li>Compare against the target's own inter-cell spacing. If the residual is a
+  large fraction of that, many "matches" are neighbouring cells rather than the
+  same cell.</li>
+<li>Sweep <code>max_distance</code>. If TRE shrinks in proportion rather than reaching a
+  plateau, the threshold is setting the residual, not alignment error.</li>
 </ul>
-<h3 id="flipped-or-rotated-alignment">Flipped or Rotated Alignment<a class="headerlink" href="#flipped-or-rotated-alignment" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Problem</strong>: Alignment appears mirror-flipped or severely rotated</li>
-<li><strong>Solution</strong>: Use <code>--pre-align</code> option, or manually flip one dataset before alignment</li>
-</ul>
-<h3 id="slow-processing">Slow Processing<a class="headerlink" href="#slow-processing" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Problem</strong>: Alignment taking too long</li>
-<li><strong>Solution</strong>: Reduce number of points with <code>--max-points</code>, decrease RANSAC iterations, use simpler transformation method</li>
-</ul>
-<h3 id="feature-mismatch">Feature Mismatch<a class="headerlink" href="#feature-mismatch" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Problem</strong>: Feature-based alignment fails to converge</li>
-<li><strong>Solution</strong>: Verify matching features between datasets, adjust feature weights, normalize features</li>
-</ul>
-<h2 id="performance-considerations">Performance Considerations<a class="headerlink" href="#performance-considerations" title="Permanent link">&para;</a></h2>
-<p>Alignment performance depends on several factors:</p>
-<ul>
-<li><strong>Data size</strong>: Larger datasets (&gt;10,000 points) require more processing time</li>
-<li><strong>Transformation complexity</strong>: Projective &gt; Affine &gt; Similarity &gt; Rigid (in terms of computation)</li>
-<li><strong>Feature-based alignment</strong>: Using features increases computation time but may improve accuracy</li>
-<li><strong>RANSAC parameters</strong>: Higher iterations and lower thresholds increase computation time</li>
-</ul>
-<h2 id="tips-for-best-results">Tips for Best Results<a class="headerlink" href="#tips-for-best-results" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Start Simple</strong>: Begin with simpler transformations (rigid, similarity) before trying affine or projective</li>
-<li><strong>Preprocessing</strong>: Remove outliers and normalize coordinates before alignment</li>
-<li><strong>Use Features</strong>: When available, feature-based alignment often provides better results</li>
-<li><strong>Validation</strong>: Always validate alignment quality with holdout points</li>
-<li><strong>Visualization</strong>: Visually inspect alignment results to catch issues metrics might miss</li>
-<li><strong>Iterative Approach</strong>: For difficult cases, try iterative alignment with progressively more complex transformations</li>
-<li><strong>Common Markers</strong>: For multi-modal data, focus on features/markers present in both datasets</li>
-</ol>
-<h2 id="xenium-to-metabolomics-alignment">Xenium to Metabolomics Alignment<a class="headerlink" href="#xenium-to-metabolomics-alignment" title="Permanent link">&para;</a></h2>
-<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
-<p>Aligning 10X Xenium spatial transcriptomics data with spatial metabolomics data presents unique challenges:
-- Different resolution and sampling density
-- Different coordinate systems and scaling
-- Potential tissue deformation between modalities
-- Different feature types (genes vs. metabolites)</p>
-<p>SMINT provides a specialized module that leverages STalign's Large Deformation Diffeomorphic Metric Mapping (LDDMM) to perform this alignment.</p>
-<h3 id="quick-start_1">Quick Start<a class="headerlink" href="#quick-start_1" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">align_xenium_to_metabolomics</span>
+<hr />
+<h2 id="running-on-hpc">Running on HPC<a class="headerlink" href="#running-on-hpc" title="Permanent link">&para;</a></h2>
+<p>Registration can be submitted to SLURM or run locally through a job spec; see
+<a href="../hpc_deployment/">HPC Deployment</a> and the <a href="../napari_plugin/">napari plugin</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment.jobs</span><span class="w"> </span><span class="kn">import</span> <span class="n">JobSpec</span><span class="p">,</span> <span class="n">SlurmResources</span><span class="p">,</span> <span class="n">submit</span><span class="p">,</span> <span class="n">poll</span>
 
-<span class="c1"># Basic usage</span>
-<span class="n">aligned_data</span> <span class="o">=</span> <span class="n">align_xenium_to_metabolomics</span><span class="p">(</span>
-    <span class="n">xenium_file</span><span class="o">=</span><span class="s2">&quot;path/to/xenium_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">metabolomics_file</span><span class="o">=</span><span class="s2">&quot;path/to/metabolomics_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;alignment_results&quot;</span><span class="p">,</span>
-    <span class="n">pixel_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
-    <span class="n">visualize</span><span class="o">=</span><span class="kc">True</span>
+<span class="n">spec</span> <span class="o">=</span> <span class="n">JobSpec</span><span class="p">(</span>
+    <span class="nb">round</span><span class="o">=</span><span class="s2">&quot;st_sm&quot;</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;st_file&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;sm_file&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;st_points&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;sm_points&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">},</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;niter&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">},</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;/vast/scratch/you/run1&quot;</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;sbatch&quot;</span><span class="p">,</span>
+    <span class="n">resources</span><span class="o">=</span><span class="n">SlurmResources</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="s2">&quot;gpuq&quot;</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="s2">&quot;64G&quot;</span><span class="p">),</span>
 <span class="p">)</span>
+<span class="n">info</span> <span class="o">=</span> <span class="n">submit</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">poll</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)[</span><span class="s2">&quot;state&quot;</span><span class="p">])</span>
 </code></pre></div>
-<h3 id="advanced-usage">Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permanent link">&para;</a></h3>
-<p>For more complex alignment tasks, you can customize the parameters:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">align_xenium_to_metabolomics</span>
-
-<span class="c1"># Advanced usage with custom parameters</span>
-<span class="n">aligned_data</span> <span class="o">=</span> <span class="n">align_xenium_to_metabolomics</span><span class="p">(</span>
-    <span class="n">xenium_file</span><span class="o">=</span><span class="s2">&quot;path/to/xenium_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">metabolomics_file</span><span class="o">=</span><span class="s2">&quot;path/to/metabolomics_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;alignment_results&quot;</span><span class="p">,</span>
-    <span class="n">pixel_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
-    <span class="n">xenium_x_col</span><span class="o">=</span><span class="s2">&quot;x_centroid&quot;</span><span class="p">,</span>
-    <span class="n">xenium_y_col</span><span class="o">=</span><span class="s2">&quot;y_centroid&quot;</span><span class="p">,</span>
-    <span class="n">met_x_col</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
-    <span class="n">met_y_col</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
-    <span class="n">lddmm_params</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;niter&#39;</span><span class="p">:</span> <span class="mi">1500</span><span class="p">,</span>        <span class="c1"># More iterations for difficult alignments</span>
-        <span class="s1">&#39;sigmaM&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>        <span class="c1"># Smaller kernel for more local deformations</span>
-        <span class="s1">&#39;sigmaB&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>        <span class="c1"># Control smoothness of backward map</span>
-        <span class="s1">&#39;sigmaA&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>        <span class="c1"># Control smoothness of forward map</span>
-        <span class="s1">&#39;epV&#39;</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>           <span class="c1"># Regularization parameter</span>
-        <span class="s1">&#39;diffeo_start&#39;</span><span class="p">:</span> <span class="mi">30</span>    <span class="c1"># Start diffeomorphic transformation earlier</span>
-    <span class="p">},</span>
-    <span class="n">visualize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">save_intermediate</span><span class="o">=</span><span class="kc">True</span>    <span class="c1"># Save intermediate results for debugging</span>
-<span class="p">)</span>
+<div class="admonition danger">
+<p class="admonition-title">Batch jobs need shared storage</p>
+<p>An sbatch job runs on a different machine, so node-local paths (<code>/tmp</code>,
+<code>/var/tmp</code>, <code>/dev/shm</code>) are invisible to it — the job dies with no logs at
+all, because the log directory does not exist there. <code>JobSpec.validate()</code>
+rejects these up front. Use <code>/vast/scratch</code> or <code>/vast/projects</code>.</p>
+</div>
+<h3 id="gpu">GPU<a class="headerlink" href="#gpu" title="Permanent link">&para;</a></h3>
+<p>LDDMM runs on GPU automatically when one is available. Request it with
+<code>SlurmResources(partition="gpuq", gpus=1)</code>. GPU and CPU results are
+bit-identical; on a Venture 5 Z2 section the GPU run took 82 s against 112 s on
+8 CPU cores, so the benefit is modest at typical raster sizes.</p>
+<hr />
+<h2 id="environments">Environments<a class="headerlink" href="#environments" title="Permanent link">&para;</a></h2>
+<p>STalign requires <strong>numpy &lt; 2</strong> — the <code>nptyping</code> dependency it pulls in via
+<code>nrrd</code> uses <code>np.object0</code>, which numpy 2 removed. The centroid and
+pre-registration paths have no STalign dependency and run anywhere.</p>
+<p>If <code>stalign_available()</code> returns <code>False</code>, check numpy first:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">stalign_available</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stalign_available</span><span class="p">())</span>
 </code></pre></div>
-<h3 id="optimizing-alignment-quality">Optimizing Alignment Quality<a class="headerlink" href="#optimizing-alignment-quality" title="Permanent link">&para;</a></h3>
-<p>The alignment quality depends on several factors:</p>
-<ol>
-<li><strong>Pixel Size for Rasterization</strong>: </li>
-<li>Typically 20-50µm works well for Xenium data</li>
-<li>Too small: Results in sparse representation</li>
-<li>Too large: Loses spatial resolution</li>
-<li>
-<p>Start with 30µm and adjust based on results</p>
-</li>
-<li>
-<p><strong>LDDMM Parameters</strong>:</p>
-</li>
-<li><code>sigmaM</code>: Controls local deformation flexibility (smaller = more flexible)</li>
-<li><code>sigmaB/sigmaA</code>: Controls transformation smoothness</li>
-<li><code>epV</code>: Regularization strength (higher = smoother but less accurate)</li>
-<li>
-<p><code>niter</code>: Number of iterations (higher = potentially better but slower)</p>
-</li>
-<li>
-<p><strong>Pre-processing</strong>:</p>
-</li>
-<li>Ensure coordinates are in the same scale</li>
-<li>Remove outlier points that could distort alignment</li>
-<li>For very different orientations, consider manual pre-alignment</li>
-</ol>
-<p>For detailed guidance on alignment optimization, see the <a href="../xenium_metabolomics_alignment/">full Xenium-Metabolomics alignment documentation</a>.</p>
 
 
 
@@ -2541,7 +1897,7 @@ cell_2,1150.2,2220.1,0.7,0.3
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

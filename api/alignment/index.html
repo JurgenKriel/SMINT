@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -566,6 +566,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -656,6 +660,62 @@
     
   
     Alignment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../xenium_metabolomics_alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Xenium-Metabolomics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../napari_plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    napari Plugin
   
 
     
@@ -1140,10 +1200,309 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#pre-registration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        Pre-registration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pre-registration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#build_pretransform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        build_pretransform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_scale_to_reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_scale_to_reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#overlap_score" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        overlap_score
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#describe_pretransform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe_pretransform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save_transform-load_transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save_transform / load_transform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matrix-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matrix helpers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stsm-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ST↔SM registration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ST↔SM registration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prepare_landmark_inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prepare_landmark_inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register_sm_to_st" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        register_sm_to_st
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read_sm_matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        read_sm_matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transform_points" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        transform_points
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#landmarks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Landmarks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#centroid-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Centroid registration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Centroid registration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#register_centroids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        register_centroids
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register_centroid_files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        register_centroid_files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#match_centroids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        match_centroids
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_tps-apply_tps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_tps / apply_tps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jobs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Jobs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jobspec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JobSpec
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slurmresources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SlurmResources
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#submit-poll" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        submit / poll
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#worker-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Worker CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command line
       
     </span>
   </a>
@@ -1151,21 +1510,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#function-reference" class="md-nav__link">
+  <a href="#removed-in-this-release" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Function Reference
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dependency-handling" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Dependency Handling
+        Removed in this release
       
     </span>
   </a>
@@ -1271,10 +1619,309 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#pre-registration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        Pre-registration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pre-registration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#build_pretransform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        build_pretransform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_scale_to_reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_scale_to_reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#overlap_score" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        overlap_score
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#describe_pretransform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe_pretransform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save_transform-load_transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save_transform / load_transform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matrix-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matrix helpers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stsm-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ST↔SM registration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ST↔SM registration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prepare_landmark_inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prepare_landmark_inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register_sm_to_st" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        register_sm_to_st
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read_sm_matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        read_sm_matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transform_points" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        transform_points
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#landmarks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Landmarks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#centroid-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Centroid registration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Centroid registration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#register_centroids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        register_centroids
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register_centroid_files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        register_centroid_files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#match_centroids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        match_centroids
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_tps-apply_tps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_tps / apply_tps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jobs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Jobs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jobspec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JobSpec
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slurmresources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SlurmResources
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#submit-poll" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        submit / poll
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#worker-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Worker CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command line
       
     </span>
   </a>
@@ -1282,21 +1929,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#function-reference" class="md-nav__link">
+  <a href="#removed-in-this-release" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Function Reference
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dependency-handling" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Dependency Handling
+        Removed in this release
       
     </span>
   </a>
@@ -1324,253 +1960,292 @@
 
 
 <h1 id="alignment-api">Alignment API<a class="headerlink" href="#alignment-api" title="Permanent link">&para;</a></h1>
-<p>The alignment module provides functions for aligning spatial omics data using ST Align.</p>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>The alignment module includes the following key functionalities:</p>
-<ul>
-<li><strong>run_alignment</strong>: Run the ST Align algorithm to align spatial omics data</li>
-<li><strong>transform_coordinates</strong>: Apply transformation to coordinates based on alignment results</li>
-<li><strong>create_config</strong>: Create a configuration file for the ST Align algorithm</li>
-<li><strong>validate_alignment</strong>: Validate alignment results using quality metrics</li>
-<li><strong>align_xenium_to_metabolomics</strong>: Align 10X Xenium data to spatial metabolomics data using LDDMM</li>
-</ul>
-<h2 id="function-reference">Function Reference<a class="headerlink" href="#function-reference" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_alignment</span><span class="p">(</span><span class="n">source_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;similarity&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Run ST Align to align source data to target data.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    source_data : str or DataFrame</span>
-<span class="sd">        Path to source data CSV or DataFrame</span>
-<span class="sd">    target_data : str or DataFrame</span>
-<span class="sd">        Path to target data CSV or DataFrame</span>
-<span class="sd">    config : dict, optional</span>
-<span class="sd">        Configuration parameters for ST Align</span>
-<span class="sd">    method : str, optional</span>
-<span class="sd">        Transformation method, one of &quot;rigid&quot;, &quot;similarity&quot;, &quot;affine&quot;, &quot;projective&quot;</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        Dictionary containing transformation matrix and alignment metrics</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">transform_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">transformation_matrix</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Transform coordinates using a transformation matrix.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    coordinates : DataFrame or array-like</span>
-<span class="sd">        Coordinates to transform</span>
-<span class="sd">    transformation_matrix : array-like</span>
-<span class="sd">        Transformation matrix from alignment</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    DataFrame or array-like</span>
-<span class="sd">        Transformed coordinates</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">create_config</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create a configuration dictionary for ST Align.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    parameters : dict, optional</span>
-<span class="sd">        Custom parameters to override defaults</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        Configuration dictionary</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">validate_alignment</span><span class="p">(</span><span class="n">source_transformed</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Validate alignment results using quality metrics.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    source_transformed : DataFrame</span>
-<span class="sd">        Transformed source coordinates</span>
-<span class="sd">    target : DataFrame</span>
-<span class="sd">        Target coordinates</span>
-<span class="sd">    metrics : list, optional</span>
-<span class="sd">        Metrics to calculate</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        Dictionary of quality metrics</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span>
-
-<span class="c1"># Xenium-Metabolomics Alignment</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">align_xenium_to_metabolomics</span><span class="p">(</span><span class="n">xenium_file</span><span class="p">,</span> <span class="n">metabolomics_file</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;alignment_results&quot;</span><span class="p">,</span> 
-                                <span class="n">pixel_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">xenium_x_col</span><span class="o">=</span><span class="s2">&quot;x_centroid&quot;</span><span class="p">,</span> <span class="n">xenium_y_col</span><span class="o">=</span><span class="s2">&quot;y_centroid&quot;</span><span class="p">,</span> 
-                                <span class="n">met_x_col</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">met_y_col</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">lddmm_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-                                <span class="n">visualize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_intermediate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Align Xenium spatial transcriptomics data to spatial metabolomics data using LDDMM.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    xenium_file : str</span>
-<span class="sd">        Path to the Xenium coordinate file</span>
-<span class="sd">    metabolomics_file : str</span>
-<span class="sd">        Path to the metabolomics matrix file</span>
-<span class="sd">    output_dir : str, optional</span>
-<span class="sd">        Directory to save alignment results</span>
-<span class="sd">    pixel_size : float, optional</span>
-<span class="sd">        Size of pixels for rasterization</span>
-<span class="sd">    xenium_x_col : str, optional</span>
-<span class="sd">        Column name for Xenium x coordinates</span>
-<span class="sd">    xenium_y_col : str, optional</span>
-<span class="sd">        Column name for Xenium y coordinates</span>
-<span class="sd">    met_x_col : str, optional</span>
-<span class="sd">        Column name for metabolomics x coordinates</span>
-<span class="sd">    met_y_col : str, optional</span>
-<span class="sd">        Column name for metabolomics y coordinates</span>
-<span class="sd">    lddmm_params : dict, optional</span>
-<span class="sd">        Parameters for LDDMM algorithm</span>
-<span class="sd">    visualize : bool, optional</span>
-<span class="sd">        Whether to generate visualization plots</span>
-<span class="sd">    save_intermediate : bool, optional</span>
-<span class="sd">        Whether to save intermediate results</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    pandas.DataFrame</span>
-<span class="sd">        Metabolomics data with transformed coordinates added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">read_xenium_data</span><span class="p">(</span><span class="n">xenium_file</span><span class="p">,</span> <span class="n">x_col</span><span class="o">=</span><span class="s1">&#39;x_centroid&#39;</span><span class="p">,</span> <span class="n">y_col</span><span class="o">=</span><span class="s1">&#39;y_centroid&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Read 10X Xenium data and extract cell coordinates.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    xenium_file : str</span>
-<span class="sd">        Path to the Xenium coordinate file</span>
-<span class="sd">    x_col : str, optional</span>
-<span class="sd">        Column name for x coordinates</span>
-<span class="sd">    y_col : str, optional</span>
-<span class="sd">        Column name for y coordinates</span>
-<span class="sd">    verbose : bool, optional</span>
-<span class="sd">        Whether to print progress information</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    tuple</span>
-<span class="sd">        (coordinates, data)</span>
-<span class="sd">        coordinates: numpy.ndarray with shape (n, 2)</span>
-<span class="sd">        data: pandas.DataFrame with all data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">read_sm_matrix</span><span class="p">(</span><span class="n">mtx_file</span><span class="p">,</span> <span class="n">x_col</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">y_col</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Read a Spatial Metabolomics matrix file and extract coordinates and data.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    mtx_file : str</span>
-<span class="sd">        Path to the metabolomics matrix file</span>
-<span class="sd">    x_col : str, optional</span>
-<span class="sd">        Column name for x coordinates</span>
-<span class="sd">    y_col : str, optional</span>
-<span class="sd">        Column name for y coordinates</span>
-<span class="sd">    verbose : bool, optional</span>
-<span class="sd">        Whether to print progress information</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    tuple</span>
-<span class="sd">        (coordinates, data, numeric_columns)</span>
-<span class="sd">        coordinates: numpy.ndarray with shape (n, 2)</span>
-<span class="sd">        data: pandas.DataFrame with all data</span>
-<span class="sd">        numeric_columns: list of numeric column names (m/z values)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">visualize_alignment</span><span class="p">(</span><span class="n">xenium_coords</span><span class="p">,</span> <span class="n">transformed_met_coords</span><span class="p">,</span> 
-                       <span class="n">xenium_label</span><span class="o">=</span><span class="s2">&quot;Xenium&quot;</span><span class="p">,</span> <span class="n">met_label</span><span class="o">=</span><span class="s2">&quot;Metabolomics&quot;</span><span class="p">,</span> 
-                       <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Visualize the alignment between Xenium and transformed metabolomics data.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    xenium_coords : numpy.ndarray</span>
-<span class="sd">        Xenium cell coordinates (shape: n x 2)</span>
-<span class="sd">    transformed_met_coords : numpy.ndarray</span>
-<span class="sd">        Transformed metabolomics coordinates (shape: m x 2)</span>
-<span class="sd">    xenium_label : str, optional</span>
-<span class="sd">        Label for Xenium data in legend</span>
-<span class="sd">    met_label : str, optional</span>
-<span class="sd">        Label for metabolomics data in legend</span>
-<span class="sd">    output_path : str, optional</span>
-<span class="sd">        Path to save the visualization</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    matplotlib.figure.Figure</span>
-<span class="sd">        The created figure</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span>
+<p>Everything below is importable from <code>smint.alignment</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_sm_to_st</span><span class="p">,</span> <span class="n">register_centroids</span><span class="p">,</span> <span class="n">build_pretransform</span>
 </code></pre></div>
-<h2 id="dependency-handling">Dependency Handling<a class="headerlink" href="#dependency-handling" title="Permanent link">&para;</a></h2>
-<p>The alignment module has several optional dependencies:</p>
+<hr />
+<h2 id="pre-registration">Pre-registration<a class="headerlink" href="#pre-registration" title="Permanent link">&para;</a></h2>
+<p><code>smint.alignment.pretransform</code> — coarse scale, rotation and flips, composed
+into a single 3×3 affine so the transform is inspectable, savable and
+replayable.</p>
+<h3 id="build_pretransform"><code>build_pretransform</code><a class="headerlink" href="#build_pretransform" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">build_pretransform</span><span class="p">(</span>
+    <span class="n">source_xy</span><span class="p">,</span> <span class="n">reference_xy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scale_mode</span><span class="o">=</span><span class="s2">&quot;extent&quot;</span><span class="p">,</span>
+    <span class="n">preserve_aspect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">flip_x</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flip_y</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">align_centroids</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>            <span class="c1"># 3x3 affine</span>
+</code></pre></div>
+<p>Applies <strong>flip → rotate → scale → translate</strong> about the source centroid.
+Scale is fitted <em>after</em> orientation is corrected, because bounding-box extents
+change under rotation.</p>
 <table>
 <thead>
 <tr>
-<th>Dependency</th>
-<th>Required For</th>
-<th>Fallback Behavior</th>
+<th>Parameter</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>rpy2</td>
-<td>R bridge functionality</td>
-<td>Stub implementation with helpful error messages</td>
+<td><code>scale_mode</code></td>
+<td><code>"extent"</code> (match bounding-box spans), <code>"max"</code> (match maxima), <code>"none"</code></td>
 </tr>
 <tr>
-<td>pandas</td>
-<td>Data manipulation</td>
-<td>Required dependency</td>
+<td><code>preserve_aspect</code></td>
+<td>Isotropic scaling; avoids distorting tissue shape</td>
 </tr>
 <tr>
-<td>numpy</td>
-<td>Matrix operations</td>
-<td>Required dependency</td>
+<td><code>rotation</code></td>
+<td>Degrees counter-clockwise</td>
 </tr>
 <tr>
-<td>matplotlib</td>
-<td>Visualization</td>
-<td>Limited visualization capabilities</td>
-</tr>
-<tr>
-<td>torch</td>
-<td>GPU acceleration for LDDMM</td>
-<td>CPU-only operations (slower)</td>
-</tr>
-<tr>
-<td>STalign</td>
-<td>Xenium-Metabolomics alignment</td>
-<td>Functionality unavailable with informative error messages</td>
+<td><code>align_centroids</code></td>
+<td>Translate source centroid onto reference centroid</td>
 </tr>
 </tbody>
 </table>
-<p>When a dependency is missing, SMINT will log a warning but continue to operate with limited functionality. In the case of the Xenium-Metabolomics alignment, the <code>torch</code> and <code>STalign</code> packages are required, but their absence is gracefully handled so that other parts of the SMINT package can still function.</p>
+<h3 id="fit_scale_to_reference"><code>fit_scale_to_reference</code><a class="headerlink" href="#fit_scale_to_reference" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">fit_scale_to_reference</span><span class="p">(</span><span class="n">source_xy</span><span class="p">,</span> <span class="n">reference_xy</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;extent&quot;</span><span class="p">,</span>
+                       <span class="n">preserve_aspect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">)</span>
+</code></pre></div>
+<p>Bounding boxes are sensitive to outliers — a few stray points inflate the span
+and shrink the fitted factor. Check on a plot before trusting it.</p>
+<h3 id="overlap_score"><code>overlap_score</code><a class="headerlink" href="#overlap_score" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">overlap_score</span><span class="p">(</span><span class="n">source_xy</span><span class="p">,</span> <span class="n">reference_xy</span><span class="p">,</span> <span class="n">pixel_size</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+</code></pre></div>
+<p>Fraction of occupied reference bins the source also occupies, 0–1. Needs no
+correspondences, so it is fast enough to drive an interactive control.</p>
+<h3 id="describe_pretransform"><code>describe_pretransform</code><a class="headerlink" href="#describe_pretransform" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">describe_pretransform</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span>
+</code></pre></div>
+<p>Returns <code>scale_x</code>, <code>scale_y</code>, <code>rotation_deg</code>, <code>shear_deg</code>, <code>translation</code>,
+<code>determinant</code>, <code>reflects</code>. A negative determinant means the transform includes
+a reflection.</p>
+<h3 id="save_transform-load_transform"><code>save_transform</code> / <code>load_transform</code><a class="headerlink" href="#save_transform-load_transform" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">save_transform</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span>
+<span class="n">load_transform</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+</code></pre></div>
+<p>Persists a 3×3 affine as JSON together with its decomposition and any metadata
+worth recording, so a coarse transform can be reproduced later rather than
+being an unrepeatable manual step.</p>
+<h3 id="matrix-helpers">Matrix helpers<a class="headerlink" href="#matrix-helpers" title="Permanent link">&para;</a></h3>
+<p><code>compose</code>, <code>rotation_matrix</code>, <code>flip_matrix</code>, <code>scale_matrix</code>,
+<code>translation_matrix</code>, <code>apply_pretransform</code>. <code>compose(A, B)</code> applies <code>A</code> then
+<code>B</code>.</p>
+<hr />
+<h2 id="stsm-registration">ST↔SM registration<a class="headerlink" href="#stsm-registration" title="Permanent link">&para;</a></h2>
+<p><code>smint.alignment.st_sm_registration</code> — STalign LDDMM for sequential sections.</p>
+<h3 id="prepare_landmark_inputs"><code>prepare_landmark_inputs</code><a class="headerlink" href="#prepare_landmark_inputs" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">prepare_landmark_inputs</span><span class="p">(</span><span class="n">st_file</span><span class="p">,</span> <span class="n">sm_file</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
+                        <span class="n">st_x_col</span><span class="o">=</span><span class="s2">&quot;x_final&quot;</span><span class="p">,</span> <span class="n">st_y_col</span><span class="o">=</span><span class="s2">&quot;y_final&quot;</span><span class="p">,</span>
+                        <span class="n">sm_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span>
+</code></pre></div>
+<p>Phase 1. Rasterises both modalities and writes <code>&lt;prefix&gt;_st.npz</code> /
+<code>&lt;prefix&gt;_sm.npz</code> for annotation. Returns those paths plus the
+<code>&lt;prefix&gt;_*_points.npy</code> paths the annotator will produce.</p>
+<h3 id="register_sm_to_st"><code>register_sm_to_st</code><a class="headerlink" href="#register_sm_to_st" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">register_sm_to_st</span><span class="p">(</span><span class="n">st_file</span><span class="p">,</span> <span class="n">sm_file</span><span class="p">,</span> <span class="n">st_points_file</span><span class="p">,</span> <span class="n">sm_points_file</span><span class="p">,</span>
+                  <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">epV</span><span class="o">=</span><span class="mf">200.0</span><span class="p">,</span>
+                  <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
+                  <span class="n">sm_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lddmm_params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+</code></pre></div>
+<p>Phase 2. Rasterises, runs landmark-initialised LDDMM with SM as source and ST
+as target, transforms every SM pixel, and returns the SM table with
+<code>x_transformed</code> / <code>y_transformed</code> appended.</p>
+<p><code>device</code> defaults to CUDA when available.</p>
+<h3 id="read_sm_matrix"><code>read_sm_matrix</code><a class="headerlink" href="#read_sm_matrix" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">read_sm_matrix</span><span class="p">(</span><span class="n">mtx_file</span><span class="p">,</span> <span class="n">scale_xy</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">rotate_left_90</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+               <span class="n">keep_positive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+</code></pre></div>
+<p>Sniffs the delimiter, standardises <code>x</code>/<code>y</code>, prefixes numeric m/z headers with
+<code>X</code>, then scales, optionally rotates 90° CCW, and shifts to keep coordinates
+non-negative.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Pass <code>usecols=["x", "y"]</code> when you only need coordinates. On a 445 MB
+matrix this cuts load time to ~2 s.</p>
+</div>
+<h3 id="transform_points"><code>transform_points</code><a class="headerlink" href="#transform_points" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">transform_points</span><span class="p">(</span><span class="n">lddmm_output</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+</code></pre></div>
+<p><code>orientation="dataset"</code> restores the source dataset's frame (default);
+<code>"stalign"</code> returns true xy in the ST frame. The two differ by a transpose.</p>
+<h3 id="landmarks">Landmarks<a class="headerlink" href="#landmarks" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">load_landmarks</span><span class="p">(</span><span class="n">points_file</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>     <span class="c1"># (N, 2) row-col</span>
+<span class="n">check_landmark_pair</span><span class="p">(</span><span class="n">points_source</span><span class="p">,</span> <span class="n">points_target</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<span class="n">affine_from_landmarks</span><span class="p">(</span><span class="n">points_source</span><span class="p">,</span> <span class="n">points_target</span><span class="p">)</span>
+</code></pre></div>
+<p><code>load_landmarks</code> reads <code>point_annotator.py</code>'s <code>{label: [(x, y)]}</code> format and
+swaps to the row-col order STalign requires.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>affine_from_landmarks</code> is <strong>not</strong> needed for the standard workflow —
+<code>LDDMM</code> derives its own initialisation from <code>pointsI</code>/<code>pointsJ</code>.</p>
+</div>
+<h3 id="other">Other<a class="headerlink" href="#other" title="Permanent link">&para;</a></h3>
+<p><code>read_st_annotations</code>, <code>st_coordinates</code>, <code>sm_coordinates</code>,
+<code>rasterize_coordinates</code>, <code>save_rasterized</code>, <code>run_lddmm_alignment</code>,
+<code>save_transformed_data</code>, <code>find_sm_matrix_files</code>, <code>stalign_available</code>.</p>
+<p><code>rasterize_coordinates</code> always returns a 4-tuple <code>(X, Y, I, fig)</code>, with
+<code>fig=None</code> when <code>draw=0</code> — STalign's own function returns 3 or 4 values
+depending on that flag.</p>
+<hr />
+<h2 id="centroid-registration">Centroid registration<a class="headerlink" href="#centroid-registration" title="Permanent link">&para;</a></h2>
+<p><code>smint.alignment.centroid_registration</code> — correspondence fitting for
+post-staining on the same section.</p>
+<h3 id="register_centroids"><code>register_centroids</code><a class="headerlink" href="#register_centroids" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">register_centroids</span><span class="p">(</span><span class="n">source_xy</span><span class="p">,</span> <span class="n">target_xy</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;ransac+tps&quot;</span><span class="p">,</span>
+                   <span class="n">max_distance</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">mutual</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                   <span class="n">validation_fraction</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">residual_threshold</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+                   <span class="n">max_trials</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">tps_regularization</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                   <span class="n">n_control</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span>
+</code></pre></div>
+<p>Returns <code>transform</code> (callable), <code>affine</code>, <code>tps</code>, <code>source_idx</code>, <code>target_idx</code>,
+<code>match_distances</code>, <code>inliers</code>, <code>n_matched</code>, and <code>tre_initial</code>, <code>tre_fit</code>,
+<code>tre_validation</code> as <code>(mean, std)</code> tuples.</p>
+<p><strong>Only <code>tre_validation</code> is meaningful</strong> — see
+<a href="../../alignment/#measuring-quality-honestly">Measuring quality honestly</a>.</p>
+<h3 id="register_centroid_files"><code>register_centroid_files</code><a class="headerlink" href="#register_centroid_files" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">register_centroid_files</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span> <span class="n">target_file</span><span class="p">,</span>
+                        <span class="n">source_cols</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;centroid_x&quot;</span><span class="p">,</span> <span class="s2">&quot;centroid_y&quot;</span><span class="p">),</span>
+                        <span class="n">target_cols</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;x_centroid&quot;</span><span class="p">,</span> <span class="s2">&quot;y_centroid&quot;</span><span class="p">),</span>
+                        <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+</code></pre></div>
+<p>Every source row is transformed, not just matched ones — matching only selects
+the pairs used to <em>fit</em>.</p>
+<h3 id="match_centroids"><code>match_centroids</code><a class="headerlink" href="#match_centroids" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">match_centroids</span><span class="p">(</span><span class="n">source_xy</span><span class="p">,</span> <span class="n">target_xy</span><span class="p">,</span> <span class="n">max_distance</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
+                <span class="n">mutual</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">source_idx</span><span class="p">,</span> <span class="n">target_idx</span><span class="p">,</span> <span class="n">distances</span><span class="p">)</span>
+</code></pre></div>
+<p><code>mutual=True</code> keeps only reciprocal nearest neighbours.</p>
+<h3 id="fit_tps-apply_tps"><code>fit_tps</code> / <code>apply_tps</code><a class="headerlink" href="#fit_tps-apply_tps" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">fit_tps</span><span class="p">(</span><span class="n">source_xy</span><span class="p">,</span> <span class="n">target_xy</span><span class="p">,</span> <span class="n">regularization</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">n_control</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="o">|</span><span class="kc">None</span>
+<span class="n">apply_tps</span><span class="p">(</span><span class="n">points_xy</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">50000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Control points cost cubically</p>
+<p>TPS solves an <code>(n_control + 3)</code> square system. 74,000 control points needs
+a ~44 GB solve, plus as much again for the kernel. <code>n_control=1000</code> is a
+sane default; <code>regularization=0</code> gives exact interpolation, which is
+almost never what you want.</p>
+</div>
+<h3 id="other_1">Other<a class="headerlink" href="#other_1" title="Permanent link">&para;</a></h3>
+<p><code>estimate_affine</code>, <code>estimate_affine_ransac</code>, <code>apply_affine</code>,
+<code>target_registration_error</code>, <code>split_pairs</code>.</p>
+<hr />
+<h2 id="jobs">Jobs<a class="headerlink" href="#jobs" title="Permanent link">&para;</a></h2>
+<p><code>smint.alignment.jobs</code> — run registration in a separate process, locally or via
+SLURM.</p>
+<h3 id="jobspec"><code>JobSpec</code><a class="headerlink" href="#jobspec" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">JobSpec</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{},</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;sbatch&quot;</span><span class="p">,</span>
+        <span class="n">resources</span><span class="o">=</span><span class="n">SlurmResources</span><span class="p">(),</span> <span class="n">worker_python</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<p><code>round</code> is <code>"st_sm"</code> or <code>"centroid"</code>. Required <code>inputs</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Round</th>
+<th>Keys</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>st_sm</code></td>
+<td><code>st_file</code>, <code>sm_file</code>, <code>st_points</code>, <code>sm_points</code></td>
+</tr>
+<tr>
+<td><code>centroid</code></td>
+<td><code>source_file</code>, <code>target_file</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>worker_python</code> defaults to <code>SMINT_WORKER_PYTHON</code>, then an <code>STalign_env</code>
+beside the package, then the current interpreter.</p>
+<p><code>validate()</code> checks required keys exist on disk and — for sbatch — rejects
+node-local paths a compute node cannot see.</p>
+<h3 id="slurmresources"><code>SlurmResources</code><a class="headerlink" href="#slurmresources" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">SlurmResources</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="s2">&quot;regular&quot;</span><span class="p">,</span> <span class="n">cpus_per_task</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="s2">&quot;64G&quot;</span><span class="p">,</span>
+               <span class="n">time_limit</span><span class="o">=</span><span class="s2">&quot;04:00:00&quot;</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s2">&quot;smint_register&quot;</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div>
+<p><code>check()</code> warns when <code>gpus &gt; 0</code> on a non-GPU partition (the job would sit
+pending rather than fail) and vice versa.</p>
+<h3 id="submit-poll"><code>submit</code> / <code>poll</code><a class="headerlink" href="#submit-poll" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">submit</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span>      <span class="c1"># job_id (sbatch) or pid (local)</span>
+<span class="n">poll</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span>  <span class="c1"># state, message, metrics, outputs</span>
+</code></pre></div>
+<p><code>poll</code> reconciles the worker's status file with SLURM, so a job killed by OOM
+or timeout is reported as failed rather than appearing to run forever.</p>
+<p>States: <code>submitted</code>, <code>queued</code>, <code>running</code>, <code>completed</code>, <code>failed</code>, <code>cancelled</code>,
+<code>unknown</code>.</p>
+<h3 id="worker-cli">Worker CLI<a class="headerlink" href="#worker-cli" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>smint-register<span class="w"> </span>/path/to/job_spec.json
+python<span class="w"> </span>-m<span class="w"> </span>smint.cli.register<span class="w"> </span>/path/to/job_spec.json
+</code></pre></div>
+<p>The only place STalign is imported — which is what lets a napari front end in
+a numpy≥2 environment drive a registration that needs numpy&lt;2.</p>
+<hr />
+<h2 id="command-line">Command line<a class="headerlink" href="#command-line" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>smint-alignment<span class="w"> </span>pretransform<span class="w"> </span>--source<span class="w"> </span>sm.csv<span class="w"> </span>--target<span class="w"> </span>xen.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output<span class="w"> </span>sm_pre.csv<span class="w"> </span>--search
+
+smint-alignment<span class="w"> </span>centroid<span class="w"> </span>--source<span class="w"> </span>nuc.csv<span class="w"> </span>--target<span class="w"> </span>xen.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-dir<span class="w"> </span>./run<span class="w"> </span>--method<span class="w"> </span>ransac<span class="w"> </span>--watch
+
+smint-alignment<span class="w"> </span>st-sm<span class="w"> </span>--st<span class="w"> </span>Z2.csv<span class="w"> </span>--sm<span class="w"> </span>Ven5B.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--st-points<span class="w"> </span>z2_st_points.npy<span class="w"> </span>--sm-points<span class="w"> </span>z2_sm_points.npy<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-dir<span class="w"> </span>/vast/scratch/you/run<span class="w"> </span>--submit<span class="w"> </span>--watch
+</code></pre></div>
+<p><code>--submit</code> sends the work to SLURM; <code>--watch</code> blocks until it finishes.
+<code>smint-register &lt;job_spec.json&gt;</code> runs a spec directly and is what the batch
+script invokes.</p>
+<hr />
+<h2 id="removed-in-this-release">Removed in this release<a class="headerlink" href="#removed-in-this-release" title="Permanent link">&para;</a></h2>
+<p><code>st_align_wrapper</code> has been deleted. Its <code>align_spatial_transcriptomics</code>
+shelled out to a <code>stalign</code> command-line tool that does not exist — STalign is a
+Python library — so every call returned None. <code>load_alignment</code> and
+<code>save_alignment</code> read and wrote a <code>transformation.json</code> /
+<code>aligned_coordinates.csv</code> format that nothing in the package produced.</p>
+<table>
+<thead>
+<tr>
+<th>Removed</th>
+<th>Use instead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>align_spatial_transcriptomics</code></td>
+<td><code>register_sm_to_st</code> or <code>register_centroids</code></td>
+</tr>
+<tr>
+<td><code>run_alignment</code></td>
+<td><code>register_centroids</code></td>
+</tr>
+<tr>
+<td><code>transform_coordinates</code></td>
+<td><code>apply_affine</code> / <code>apply_pretransform</code></td>
+</tr>
+<tr>
+<td><code>save_alignment</code> / <code>load_alignment</code></td>
+<td><code>save_transform</code> / <code>load_transform</code></td>
+</tr>
+<tr>
+<td><code>apply_transformation</code></td>
+<td><code>apply_affine</code></td>
+</tr>
+<tr>
+<td><code>prepare_visium_data</code></td>
+<td>— (the project uses Xenium/CosMx, not Visium)</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>smint-alignment</code> console script now points at <code>smint.cli.align</code>. It
+previously referenced <code>scripts.run_alignment</code>, which is not part of the
+installed package, so it failed with <code>ModuleNotFoundError</code>. <code>smint-segmentation</code>
+had the same defect and has been withdrawn until it has a real implementation.</p>
+<p><code>smint.alignment.xenium_metabolomics</code> remains, deprecated, superseded by
+<code>st_sm_registration</code>.</p>
 
 
 
@@ -1645,7 +2320,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "content.code.copy", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

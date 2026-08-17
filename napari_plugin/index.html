@@ -13,28 +13,28 @@
       
       
       
-        <link rel="prev" href="../../visualizations/">
+        <link rel="prev" href="../xenium_metabolomics_alignment/">
       
       
-        <link rel="next" href="../preprocessing/">
+        <link rel="next" href="../r_integration/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
-        <title>Segmentation - SMINT Documentation</title>
+        <title>napari Plugin - SMINT Documentation</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,7 +53,7 @@
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#segmentation-api" class="md-skip">
+        <a href="#napari-plugin" class="md-skip">
           Skip to content
         </a>
       
@@ -94,7 +94,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="SMINT Documentation" class="md-header__button md-logo" aria-label="SMINT Documentation" data-md-component="logo">
+    <a href=".." title="SMINT Documentation" class="md-header__button md-logo" aria-label="SMINT Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Segmentation
+              napari Plugin
             
           </span>
         </div>
@@ -199,7 +199,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href=".." class="md-tabs__link">
         
   
   
@@ -220,7 +220,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../installation/" class="md-tabs__link">
+        <a href="../installation/" class="md-tabs__link">
           
   
   
@@ -238,11 +238,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../segmentation/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../segmentation/" class="md-tabs__link">
           
   
   
@@ -264,7 +266,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../examples/" class="md-tabs__link">
+        <a href="../examples/" class="md-tabs__link">
           
   
   
@@ -286,7 +288,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../visualizations/" class="md-tabs__link">
+        <a href="../visualizations/" class="md-tabs__link">
           
   
   
@@ -304,13 +306,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../api/segmentation/" class="md-tabs__link">
           
   
   
@@ -346,7 +346,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="SMINT Documentation" class="md-nav__button md-logo" aria-label="SMINT Documentation" data-md-component="logo">
+    <a href=".." title="SMINT Documentation" class="md-nav__button md-logo" aria-label="SMINT Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -376,7 +376,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -465,7 +465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../installation/" class="md-nav__link">
+      <a href="../installation/" class="md-nav__link">
         
   
   
@@ -493,7 +493,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dependency_handling/" class="md-nav__link">
+      <a href="../dependency_handling/" class="md-nav__link">
         
   
   
@@ -521,7 +521,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configuration/" class="md-nav__link">
+      <a href="../configuration/" class="md-nav__link">
         
   
   
@@ -553,8 +553,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -574,21 +576,22 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -606,7 +609,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -624,7 +627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../segmentation/" class="md-nav__link">
+      <a href="../segmentation/" class="md-nav__link">
         
   
   
@@ -652,7 +655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../alignment/" class="md-nav__link">
+      <a href="../alignment/" class="md-nav__link">
         
   
   
@@ -680,7 +683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../xenium_metabolomics_alignment/" class="md-nav__link">
+      <a href="../xenium_metabolomics_alignment/" class="md-nav__link">
         
   
   
@@ -705,10 +708,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../napari_plugin/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    napari Plugin
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -724,6 +754,109 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-load-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Load datasets
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-pre-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pre-register
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-landmarks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Landmarks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Register
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPU
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -736,7 +869,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../r_integration/" class="md-nav__link">
+      <a href="../r_integration/" class="md-nav__link">
         
   
   
@@ -764,7 +897,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../hpc_deployment/" class="md-nav__link">
+      <a href="../hpc_deployment/" class="md-nav__link">
         
   
   
@@ -857,7 +990,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/" class="md-nav__link">
+      <a href="../examples/" class="md-nav__link">
         
   
   
@@ -950,7 +1083,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../visualizations/" class="md-nav__link">
+      <a href="../visualizations/" class="md-nav__link">
         
   
   
@@ -982,10 +1115,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -1005,22 +1136,21 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
   
@@ -1038,7 +1168,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1053,37 +1183,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Segmentation
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../api/segmentation/" class="md-nav__link">
         
   
   
@@ -1099,70 +1202,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#core-segmentation-functions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Core Segmentation Functions
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cell-utilities" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Cell Utilities
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#post-processing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Post-processing
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#optional-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Optional Dependencies
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1175,7 +1214,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../preprocessing/" class="md-nav__link">
+      <a href="../api/preprocessing/" class="md-nav__link">
         
   
   
@@ -1203,7 +1242,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../visualization/" class="md-nav__link">
+      <a href="../api/visualization/" class="md-nav__link">
         
   
   
@@ -1231,7 +1270,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../alignment/" class="md-nav__link">
+      <a href="../api/alignment/" class="md-nav__link">
         
   
   
@@ -1259,7 +1298,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../r_integration/" class="md-nav__link">
+      <a href="../api/r_integration/" class="md-nav__link">
         
   
   
@@ -1287,7 +1326,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../utils/" class="md-nav__link">
+      <a href="../api/utils/" class="md-nav__link">
         
   
   
@@ -1342,10 +1381,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#core-segmentation-functions" class="md-nav__link">
+  <a href="#architecture" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Core Segmentation Functions
+        Architecture
       
     </span>
   </a>
@@ -1353,10 +1392,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cell-utilities" class="md-nav__link">
+  <a href="#1-load-datasets" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cell Utilities
+        1. Load datasets
       
     </span>
   </a>
@@ -1364,10 +1403,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#post-processing" class="md-nav__link">
+  <a href="#2-pre-register" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Post-processing
+        2. Pre-register
       
     </span>
   </a>
@@ -1375,10 +1414,49 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#optional-dependencies" class="md-nav__link">
+  <a href="#3-landmarks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Optional Dependencies
+        3. Landmarks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Register
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPU
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
       
     </span>
   </a>
@@ -1405,80 +1483,139 @@
   
 
 
-<h1 id="segmentation-api">Segmentation API<a class="headerlink" href="#segmentation-api" title="Permanent link">&para;</a></h1>
-<p>The segmentation module provides functions for segmenting cells and nuclei in whole-slide images.</p>
-<h2 id="core-segmentation-functions">Core Segmentation Functions<a class="headerlink" href="#core-segmentation-functions" title="Permanent link">&para;</a></h2>
-<p>::: smint.segmentation.process_large_image
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true</p>
-<p>::: smint.segmentation.run_distributed_segmentation
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true</p>
-<h2 id="cell-utilities">Cell Utilities<a class="headerlink" href="#cell-utilities" title="Permanent link">&para;</a></h2>
-<p>::: smint.segmentation.get_cell_outlines
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true</p>
-<p>::: smint.segmentation.segment_chunk
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true</p>
-<h2 id="post-processing">Post-processing<a class="headerlink" href="#post-processing" title="Permanent link">&para;</a></h2>
-<p>::: smint.segmentation.extract_contours
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true</p>
-<p>::: smint.segmentation.save_masks
-    options:
-      show_root_heading: true
-      show_source: true
-      show_signature_annotations: true</p>
-<h2 id="optional-dependencies">Optional Dependencies<a class="headerlink" href="#optional-dependencies" title="Permanent link">&para;</a></h2>
-<p>The segmentation module has several optional dependencies:</p>
+<h1 id="napari-plugin">napari Plugin<a class="headerlink" href="#napari-plugin" title="Permanent link">&para;</a></h1>
+<p>SMINT ships a napari plugin for the interactive parts of registration: loading
+datasets, pre-registering them by eye, placing landmarks, and launching the
+registration itself as a batch or local job.</p>
+<p>Launch napari from an environment that has both napari and SMINT, then open
+<strong>Plugins → SMINT Registration</strong>.</p>
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<p>The plugin <strong>never imports STalign</strong>. Registration is handed to a separate
+worker interpreter through a job spec on disk:</p>
+<div class="highlight"><pre><span></span><code>┌─ napari process ─────────────────────────────┐
+│  load → pre-register → landmarks → submit     │
+│  writes *_points.npy + job_spec.json          │
+└───────────────┬───────────────────────────────┘
+                │  sbatch  │  or  local subprocess
+┌───────────────▼───────────────────────────────┐
+│  worker (STalign_env)                         │
+│  smint-register → registration → status.json  │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<p>This is not incidental. napari and <code>napari_spatialdata</code> need numpy ≥ 2, while
+STalign requires numpy &lt; 2 — they cannot share a process. Passing a job spec
+between them sidesteps that entirely, keeps the viewer responsive during a
+multi-minute LDDMM, and means a failed registration cannot take napari down.</p>
+<p>Point the worker at a suitable interpreter with:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">SMINT_WORKER_PYTHON</span><span class="o">=</span>/path/to/STalign_env/bin/python
+</code></pre></div>
+<p>Otherwise SMINT looks for an <code>STalign_env</code> beside the installed package, then
+falls back to the current interpreter.</p>
+<hr />
+<h2 id="1-load-datasets">1. Load datasets<a class="headerlink" href="#1-load-datasets" title="Permanent link">&para;</a></h2>
+<p>Reads a source/target pair into Points layers, optionally with a smoothed
+density Image for anatomical context.</p>
+<p>Coordinate columns are auto-detected across the conventions in use —
+<code>x_final</code>/<code>y_final</code> (ST annotations), <code>x_centroid</code>/<code>y_centroid</code> (Xenium),
+<code>centroid_x</code>/<code>centroid_y</code> (segmented nuclei), or plain <code>x</code>/<code>y</code>.</p>
+<p>Only coordinate columns are read, and display is capped at 200,000 points.
+Neither affects registration, which always reads the full file in the worker.</p>
+<hr />
+<h2 id="2-pre-register">2. Pre-register<a class="headerlink" href="#2-pre-register" title="Permanent link">&para;</a></h2>
+<p>Scale, rotate and flip the source onto the target's coordinate system before
+landmarking. Adjustments update a preview layer live.</p>
+<ul>
+<li><strong>Rotation</strong> — slider, degrees counter-clockwise</li>
+<li><strong>Flip horizontally / vertically</strong></li>
+<li><strong>Scale</strong> — <code>extent</code> (match bounding-box spans), <code>max</code> (match maxima),
+  <code>none</code>, or <code>manual</code></li>
+<li><strong>Search rotation/flip</strong> — grid search over orientations, scored by overlap</li>
+</ul>
+<p>The status line reports an <strong>overlap score</strong> (0–1, fraction of occupied target
+bins the source also occupies). It needs no correspondences, so it is fast
+enough to update as you drag a slider — a full registration per adjustment
+would not be.</p>
+<p><strong>Apply and save</strong> writes the transformed CSV plus a <code>.pretransform.json</code>
+recording the matrix and its decomposition, so a coarse transform can be
+reproduced later instead of being an unrecorded manual step.</p>
+<hr />
+<h2 id="3-landmarks">3. Landmarks<a class="headerlink" href="#3-landmarks" title="Permanent link">&para;</a></h2>
+<p>Creates paired <code>SM landmarks</code> / <code>ST landmarks</code> Points layers. Place landmarks
+with napari's native Points tool directly on the data, in real-world units —
+there is no raster grid and so no pixel-to-micron conversion in the
+registration path.</p>
+<div class="admonition warning">
+<p class="admonition-title">Order is the correspondence</p>
+<p>Pick the <strong>same anatomical features in the same order</strong> in both layers.
+Correspondence is positional; an ordering mismatch silently produces a
+wrong registration rather than an error.</p>
+</div>
+<p><strong>Check pairing</strong> validates counts and the three-pair minimum an affine needs.
+<strong>Save landmark pair</strong> writes <code>&lt;prefix&gt;_sm_points.npy</code> and
+<code>&lt;prefix&gt;_st_points.npy</code> in exactly the format <code>point_annotator.py</code> uses, so
+plugin output and existing landmark files are interchangeable.</p>
+<hr />
+<h2 id="4-register">4. Register<a class="headerlink" href="#4-register" title="Permanent link">&para;</a></h2>
+<p>Builds a job spec and submits it.</p>
 <table>
 <thead>
 <tr>
-<th>Dependency</th>
-<th>Required For</th>
-<th>Fallback Behavior</th>
+<th>Field</th>
+<th>Applies to</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Cellpose</td>
-<td>Cell segmentation models</td>
-<td>Stub implementation with helpful error messages</td>
+<td><strong>Round</strong></td>
+<td><code>st_sm</code> (needs landmarks) or <code>centroid</code></td>
 </tr>
 <tr>
-<td>OpenCV (cv2)</td>
-<td>Image I/O and contour extraction</td>
-<td>Limited visualization, no mask saving/loading</td>
+<td><strong>Run via</strong></td>
+<td><code>sbatch</code> or <code>local</code></td>
 </tr>
 <tr>
-<td>Dask</td>
-<td>Distributed processing</td>
-<td>Single-process implementation only</td>
+<td><strong>Method</strong>, <strong>Max match distance</strong></td>
+<td>centroid round</td>
 </tr>
 <tr>
-<td>Distributed</td>
-<td>Multi-node computation</td>
-<td>Single-node implementation only</td>
+<td><strong>LDDMM iterations</strong></td>
+<td>st_sm round</td>
 </tr>
 <tr>
-<td>CUDA</td>
-<td>GPU acceleration</td>
-<td>CPU-only implementation</td>
+<td><strong>Partition / CPUs / Memory / Time limit</strong></td>
+<td>sbatch only</td>
 </tr>
 </tbody>
 </table>
-<p>When a dependency is missing, SMINT will log a warning but continue to operate with limited functionality.</p>
+<p>Progress is polled in a background thread, so the viewer stays usable. On
+completion the transformed points are added as a new layer and the held-out TRE
+is reported; on failure the error is surfaced as a notification.</p>
+<div class="admonition danger">
+<p class="admonition-title">Batch jobs need shared storage</p>
+<p>An sbatch job runs on a different machine, so node-local paths (<code>/tmp</code>,
+<code>/var/tmp</code>, <code>/dev/shm</code>) are unreachable — the job dies with no logs at all,
+because the log directory does not exist there. SMINT rejects these before
+submitting. Use <code>/vast/scratch</code> or <code>/vast/projects</code>.</p>
+</div>
+<h3 id="gpu">GPU<a class="headerlink" href="#gpu" title="Permanent link">&para;</a></h3>
+<p>Request a GPU with a GPU partition and <code>gpus=1</code>. LDDMM uses CUDA automatically
+when available, and GPU results are bit-identical to CPU. The speedup is modest
+at typical raster sizes — 82 s versus 112 s on 8 CPU cores for a Venture 5
+section — so CPU is a perfectly reasonable default.</p>
+<hr />
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<p><strong>Widget fails with <code>missing 1 required positional argument: 'viewer'</code></strong>
+napari only injects the viewer into <code>QWidget</code>/magicgui <code>Widget</code> subclasses and
+<code>MagicFactory</code> instances. A plain function contribution is called with no
+arguments. Widgets needing the viewer must be classes.</p>
+<p><strong>Plugin does not appear in the Plugins menu</strong>
+Reinstall so the <code>napari.manifest</code> entry point is registered:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="w"> </span>--no-deps<span class="w"> </span>--no-build-isolation
+</code></pre></div>
+<p><strong><code>stalign_available()</code> is False in the napari environment</strong>
+Expected — napari environments run numpy ≥ 2. The worker interpreter is what
+needs STalign, not napari. The centroid and pre-registration paths work in
+either.</p>
 
 
 
@@ -1550,10 +1687,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "content.code.copy", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
