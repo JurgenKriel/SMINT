@@ -64,6 +64,17 @@ Returns `scale_x`, `scale_y`, `rotation_deg`, `shear_deg`, `translation`,
 `determinant`, `reflects`. A negative determinant means the transform includes
 a reflection.
 
+### `save_transform` / `load_transform`
+
+```python
+save_transform(matrix, path, **metadata) -> Path
+load_transform(path) -> np.ndarray
+```
+
+Persists a 3×3 affine as JSON together with its decomposition and any metadata
+worth recording, so a coarse transform can be reproduced later rather than
+being an unrepeatable manual step.
+
 ### Matrix helpers
 
 `compose`, `rotation_matrix`, `flip_matrix`, `scale_matrix`,
@@ -278,9 +289,47 @@ a numpy≥2 environment drive a registration that needs numpy<2.
 
 ---
 
-## Deprecated
+## Command line
 
-`smint.alignment.xenium_metabolomics` is superseded by `st_sm_registration`,
-which adds the manual landmark stage. `st_align_wrapper`'s
-`align_spatial_transcriptomics` shells out to a `stalign` command-line tool
-that does not exist; STalign is a Python library.
+```bash
+smint-alignment pretransform --source sm.csv --target xen.csv \
+    --output sm_pre.csv --search
+
+smint-alignment centroid --source nuc.csv --target xen.csv \
+    --output-dir ./run --method ransac --watch
+
+smint-alignment st-sm --st Z2.csv --sm Ven5B.csv \
+    --st-points z2_st_points.npy --sm-points z2_sm_points.npy \
+    --output-dir /vast/scratch/you/run --submit --watch
+```
+
+`--submit` sends the work to SLURM; `--watch` blocks until it finishes.
+`smint-register <job_spec.json>` runs a spec directly and is what the batch
+script invokes.
+
+---
+
+## Removed in this release
+
+`st_align_wrapper` has been deleted. Its `align_spatial_transcriptomics`
+shelled out to a `stalign` command-line tool that does not exist — STalign is a
+Python library — so every call returned None. `load_alignment` and
+`save_alignment` read and wrote a `transformation.json` /
+`aligned_coordinates.csv` format that nothing in the package produced.
+
+| Removed | Use instead |
+|---|---|
+| `align_spatial_transcriptomics` | `register_sm_to_st` or `register_centroids` |
+| `run_alignment` | `register_centroids` |
+| `transform_coordinates` | `apply_affine` / `apply_pretransform` |
+| `save_alignment` / `load_alignment` | `save_transform` / `load_transform` |
+| `apply_transformation` | `apply_affine` |
+| `prepare_visium_data` | — (the project uses Xenium/CosMx, not Visium) |
+
+The `smint-alignment` console script now points at `smint.cli.align`. It
+previously referenced `scripts.run_alignment`, which is not part of the
+installed package, so it failed with `ModuleNotFoundError`. `smint-segmentation`
+had the same defect and has been withdrawn until it has a real implementation.
+
+`smint.alignment.xenium_metabolomics` remains, deprecated, superseded by
+`st_sm_registration`.

@@ -26,7 +26,9 @@ rotate 90" is not "rotate 90 then flip x". Composing your own matrices with
 :func:`compose` lets you depart from this order deliberately.
 """
 
+import json
 import logging
+from pathlib import Path
 from typing import Optional, Sequence, Tuple
 
 import numpy as np
@@ -301,6 +303,60 @@ def describe_pretransform(matrix: np.ndarray) -> dict:
         "determinant": determinant,
         "reflects": determinant < 0,
     }
+
+
+def save_transform(matrix: np.ndarray, path: str, **metadata) -> Path:
+    """
+    Save an affine transform as JSON, with its decomposition alongside.
+
+    A coarse transform that cannot be reproduced is of little use when
+    revisiting a registration months later, so the matrix is stored together
+    with the human-readable parameters it corresponds to and any extra
+    metadata worth recording (source files, rotation/flip settings).
+
+    Parameters
+    ----------
+    matrix : numpy.ndarray
+        3x3 homogeneous affine.
+    path : str
+        Destination ``.json``.
+    **metadata
+        Additional JSON-serialisable fields to record.
+
+    Returns
+    -------
+    pathlib.Path
+        The path written.
+    """
+    matrix = np.asarray(matrix, dtype=float)
+    if matrix.shape != (3, 3):
+        raise ValueError(f"Expected a 3x3 affine matrix, got {matrix.shape}")
+
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    payload = {"matrix": matrix.tolist(), "described": describe_pretransform(matrix)}
+    payload.update(metadata)
+    target.write_text(json.dumps(payload, indent=2))
+    logger.info("Saved transform to %s", target)
+    return target
+
+
+def load_transform(path: str) -> np.ndarray:
+    """
+    Load a 3x3 affine saved by :func:`save_transform`.
+
+    Returns
+    -------
+    numpy.ndarray
+        The 3x3 matrix. Read the file directly if you also want the metadata.
+    """
+    payload = json.loads(Path(path).read_text())
+    if "matrix" not in payload:
+        raise ValueError(f"No 'matrix' key in {path}; not a SMINT transform file")
+    matrix = np.asarray(payload["matrix"], dtype=float)
+    if matrix.shape != (3, 3):
+        raise ValueError(f"Expected a 3x3 affine in {path}, got {matrix.shape}")
+    return matrix
 
 
 def overlap_score(source_xy, reference_xy, pixel_size: float = 50.0) -> float:

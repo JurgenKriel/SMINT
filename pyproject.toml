@@ -37,10 +37,9 @@ Homepage = "https://github.com/JurgenKriel/SMINT"
 Documentation = "https://jurgenkriel.github.io/SMINT/"
 
 [project.scripts]
-smint-segmentation = "scripts.run_segmentation:main"
-smint-alignment = "scripts.run_alignment:main"
-smint-viewer = "smint.visualization.live_scan_viewer:main"
+smint-alignment = "smint.cli.align:main"
 smint-register = "smint.cli.register:main"
+smint-viewer = "smint.visualization.live_scan_viewer:main"
 
 # Registration worker, invoked by smint.alignment.jobs in a separate process.
 [project.entry-points."napari.manifest"]

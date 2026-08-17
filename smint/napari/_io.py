@@ -20,31 +20,13 @@ from typing import Optional, Sequence, Tuple
 import numpy as np
 import pandas as pd
 
+from smint.alignment.columns import (  # re-exported for plugin callers
+    X_CANDIDATES,
+    Y_CANDIDATES,
+    detect_coordinate_columns,
+)
+
 logger = logging.getLogger(__name__)
-
-#: Column-name candidates, in priority order, for auto-detecting coordinates.
-X_CANDIDATES = ("x_final", "x_centroid", "centroid_x", "x_transformed", "x", "X")
-Y_CANDIDATES = ("y_final", "y_centroid", "centroid_y", "y_transformed", "y", "Y")
-
-
-def detect_coordinate_columns(columns: Sequence[str]) -> Tuple[Optional[str], Optional[str]]:
-    """
-    Guess the ``(x, y)`` column names in a table.
-
-    The project uses several conventions -- ``x_final``/``y_final`` for ST
-    annotations, ``x_centroid``/``y_centroid`` for Xenium, ``centroid_x``/
-    ``centroid_y`` for segmented nuclei -- so try them in priority order rather
-    than assuming one.
-
-    Returns
-    -------
-    (x_col, y_col)
-        Either may be None if nothing matched.
-    """
-    lookup = {str(c).lower(): c for c in columns}
-    x_col = next((lookup[c.lower()] for c in X_CANDIDATES if c.lower() in lookup), None)
-    y_col = next((lookup[c.lower()] for c in Y_CANDIDATES if c.lower() in lookup), None)
-    return x_col, y_col
 
 
 def load_points_table(
