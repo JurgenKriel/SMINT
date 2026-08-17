@@ -7,12 +7,67 @@ and for registering images using ST Align.
 
 from .st_align_wrapper import align_spatial_transcriptomics, load_alignment, save_alignment
 
-# Import Xenium-Metabolomics alignment functionality
+# ST <-> SM registration (STalign LDDMM, with a manual landmark stage).
+# This is the supported entry point for registering spatial metabolomics onto
+# spatial transcriptomics; see smint.alignment.st_sm_registration.
+from .st_sm_registration import (
+    prepare_landmark_inputs,
+    register_sm_to_st,
+    read_sm_matrix,
+    read_st_annotations,
+    sm_coordinates,
+    st_coordinates,
+    rasterize_coordinates,
+    save_rasterized,
+    load_landmarks,
+    check_landmark_pair,
+    affine_from_landmarks,
+    run_lddmm_alignment,
+    transform_points,
+    save_transformed_data,
+    find_sm_matrix_files,
+    stalign_available,
+)
+
+# Coarse pre-registration: scale to a reference coordinate system, plus
+# rotation and flips, so datasets start roughly aligned before STalign runs.
+from .pretransform import (
+    build_pretransform,
+    apply_pretransform,
+    fit_scale_to_reference,
+    describe_pretransform,
+    overlap_score,
+    compose,
+    rotation_matrix,
+    flip_matrix,
+    scale_matrix,
+    translation_matrix,
+)
+
+# Centroid-to-centroid registration for post-staining on the SAME section,
+# where centroids correspond one-to-one (RANSAC / affine / TPS, scored by TRE).
+# For sequential sections use the STalign LDDMM path above instead.
+from .centroid_registration import (
+    match_centroids,
+    split_pairs,
+    target_registration_error,
+    estimate_affine,
+    estimate_affine_ransac,
+    apply_affine,
+    fit_tps,
+    apply_tps,
+    register_centroids,
+    register_centroid_files,
+)
+
+# Deprecated Xenium-Metabolomics module, superseded by st_sm_registration.
+# Note `read_sm_matrix` is intentionally NOT re-exported here: the newer one
+# above returns a DataFrame and applies the scale/rotate/prefix steps the
+# registration workflow depends on.
 try:
     from .xenium_metabolomics import (
         align_xenium_to_metabolomics,
         read_xenium_data,
-        read_sm_matrix,
         visualize_alignment
     )
     XENIUM_METABOLOMICS_AVAILABLE = True
@@ -126,16 +181,54 @@ __all__ = [
     'align_spatial_transcriptomics',
     'load_alignment',
     'save_alignment',
+    # ST <-> SM registration
+    'prepare_landmark_inputs',
+    'register_sm_to_st',
+    'read_sm_matrix',
+    'read_st_annotations',
+    'sm_coordinates',
+    'st_coordinates',
+    'rasterize_coordinates',
+    'save_rasterized',
+    'load_landmarks',
+    'check_landmark_pair',
+    'affine_from_landmarks',
+    'run_lddmm_alignment',
+    'transform_points',
+    'save_transformed_data',
+    'find_sm_matrix_files',
+    'stalign_available',
+    # Coarse pre-registration
+    'build_pretransform',
+    'apply_pretransform',
+    'fit_scale_to_reference',
+    'describe_pretransform',
+    'overlap_score',
+    'compose',
+    'rotation_matrix',
+    'flip_matrix',
+    'scale_matrix',
+    'translation_matrix',
+    # Centroid-to-centroid registration (same section)
+    'match_centroids',
+    'split_pairs',
+    'target_registration_error',
+    'estimate_affine',
+    'estimate_affine_ransac',
+    'apply_affine',
+    'fit_tps',
+    'apply_tps',
+    'register_centroids',
+    'register_centroid_files',
     # Backward compatibility
     'run_alignment',
     'transform_coordinates'
 ]
 
-# Add Xenium-Metabolomics alignment if available
+# Add deprecated Xenium-Metabolomics helpers if available
 if XENIUM_METABOLOMICS_AVAILABLE:
     __all__.extend([
         'align_xenium_to_metabolomics',
         'read_xenium_data',
-        'read_sm_matrix',
         'visualize_alignment'
     ])

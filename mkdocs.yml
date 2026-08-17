@@ -53,6 +53,8 @@ nav:
   - User Guide:
     - Segmentation: segmentation.md
     - Alignment: alignment.md
+    - Xenium-Metabolomics: xenium_metabolomics_alignment.md
+    - napari Plugin: napari_plugin.md
     - R Integration: r_integration.md
     - HPC Deployment: hpc_deployment.md
   - Examples:

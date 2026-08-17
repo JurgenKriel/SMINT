@@ -9,12 +9,12 @@ SMINT provides a comprehensive toolkit for processing and analyzing spatial omic
 - Multi-GPU cell segmentation for whole-slide images
 - Distributed segmentation using Dask for improved performance
 - Live segmentation monitoring with intuitive visualization tools
-- Streamlined alignment workflow using ST Align
+- Registration of spatial transcriptomics with metabolomics and post-stain imaging
 - Integration with R analysis scripts
 - Comprehensive documentation with step-by-step guides
 - HPC deployment scripts for SLURM-based clusters
 
-![SMINT Workflow](SpatialSegPaper_v2.png)
+![SMINT Workflow](https://github.com/JurgenKriel/SMINT/raw/main/SpatialSegPaper_v2.png)
 
 ## Key Features
 
@@ -26,11 +26,16 @@ SMINT provides a comprehensive toolkit for processing and analyzing spatial omic
 - **Adaptive Segmentation**: Automatically adjust segmentation parameters for optimal results
 - **Dual-Model Segmentation**: Simultaneously segment cells and nuclei with specialized models
 
-### Streamlined Alignment
+### Registration
 
-- **ST Align Integration**: Seamlessly align spatial transcriptomics data with the ST Align tool
-- **Multiple Transformation Types**: Support for affine, rigid, similarity, and projective transformations
-- **Multiple Data Types**: Compatible with Visium, Slide-seq, and custom spatial data formats
+- **Two Regimes**: STalign LDDMM for sequential sections; correspondence fitting
+  (RANSAC / affine / TPS) for post-staining on the same section
+- **Coarse Pre-registration**: Scale to a reference coordinate system, rotate and flip
+  before fine registration
+- **Manual Landmarks**: Interactive landmark annotation, in napari or standalone
+- **Honest Metrics**: Target Registration Error on held-out pairs, so a transform
+  cannot flatter itself by memorising correspondences
+- **HPC Native**: Submit to SLURM (CPU or GPU) or run locally, from Python or napari
 
 ### R Integration
 

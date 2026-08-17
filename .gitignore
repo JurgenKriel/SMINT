@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environments
+.venv/
+venv/
+env/
+
+# MkDocs build output
+site/
+
+# Local scaffolding not intended for the repo
+pyproject.toml.backup
+setup.py.disabled

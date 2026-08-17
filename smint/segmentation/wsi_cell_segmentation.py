@@ -16,16 +16,16 @@ import importlib
 import logging
 import sys
 
-# Check if cellpose is available
-CELLPOSE_AVAILABLE = False
+# Check if cellpose is available. find_spec only proves the module can be
+# located; a broken dependency chain still raises on import, so import for real.
 try:
-    import importlib.util
-    CELLPOSE_AVAILABLE = importlib.util.find_spec("cellpose") is not None
-except ImportError:
+    import cellpose  # noqa: F401
+    CELLPOSE_AVAILABLE = True
+except Exception as exc:
     CELLPOSE_AVAILABLE = False
-
-if not CELLPOSE_AVAILABLE:
-    logging.warning("Cellpose package not available. Some functionality will be limited.")
+    logging.warning(
+        "Cellpose package unavailable (%s). Some functionality will be limited.", exc
+    )
 
 from datetime import datetime
 import matplotlib.pyplot as plt
