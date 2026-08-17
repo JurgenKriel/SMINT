@@ -1,15 +1,17 @@
 """
 napari dock widgets for SMINT registration.
 
-Three widgets covering the workflow:
+Four widgets covering the workflow:
 
 ``load_datasets``
     Read ST/SM (or source/target centroid) tables into Points layers, with an
     optional density Image for anatomical context.
-``landmark_widget``
+``LandmarkWidget``
     Create paired landmark layers, validate them, and save in the format
     ``point_annotator.py`` uses.
-``registration_widget``
+``PreRegisterWidget``
+    Coarse scale / rotate / flip onto the target's coordinate system.
+``RegistrationWidget``
     Build a :class:`~smint.alignment.jobs.JobSpec`, submit it to SLURM or a
     local subprocess, poll for completion, and load the result back as a layer.
 
@@ -438,108 +440,201 @@ class PreRegisterWidget(Container):
             self._status.value = f"Failed: {exc}"
 
 
-@magic_factory(
-    call_button="Submit registration",
-    round_type={
-        "label": "Round",
-        "choices": [ROUND_ST_SM, ROUND_CENTROID],
-        "tooltip": (
-            "st_sm: STalign LDDMM for sequential sections (needs landmarks). "
-            "centroid: correspondence fitting for post-staining on the same section."
-        ),
-    },
-    backend={"label": "Run via", "choices": ["sbatch", "local"]},
-    source_file={"label": "Source file", "mode": "r", "filter": "*.csv"},
-    target_file={"label": "Target file", "mode": "r", "filter": "*.csv"},
-    source_points={"label": "Source landmarks (st_sm)", "mode": "r", "filter": "*.npy"},
-    target_points={"label": "Target landmarks (st_sm)", "mode": "r", "filter": "*.npy"},
-    output_dir={"label": "Output directory", "mode": "d"},
-    method={"label": "Method (centroid)", "choices": ["affine", "ransac", "tps", "ransac+tps"]},
-    max_distance={"label": "Max match distance (centroid)", "min": 0.1, "max": 1000.0},
-    niter={"label": "LDDMM iterations (st_sm)", "min": 1, "max": 20000},
-    partition={"label": "SLURM partition"},
-    cpus={"label": "CPUs", "min": 1, "max": 64},
-    memory={"label": "Memory"},
-    time_limit={"label": "Time limit"},
-)
-def registration_widget(
-    viewer: Viewer,
-    round_type: str = ROUND_ST_SM,
-    backend: str = "sbatch",
-    source_file: Optional[Path] = None,
-    target_file: Optional[Path] = None,
-    source_points: Optional[Path] = None,
-    target_points: Optional[Path] = None,
-    output_dir: Optional[Path] = None,
-    method: str = "affine",
-    max_distance: float = 100.0,
-    niter: int = 1000,
-    partition: str = "regular",
-    cpus: int = 8,
-    memory: str = "64G",
-    time_limit: str = "04:00:00",
-) -> None:
+class RegistrationWidget(Container):
     """
     Submit a registration job and watch it to completion.
 
-    Runs in a worker process, so the viewer stays usable and a registration
-    crash cannot take napari down. Results are added as a Points layer when the
-    job finishes.
+    A ``Container`` subclass rather than a ``magic_factory`` so the coordinate
+    column dropdowns can repopulate from whichever CSV you pick. Which columns
+    get registered is an explicit choice here: ST tables routinely carry
+    several coordinate pairs from successive processing stages (``x_centroid``
+    beside ``x_new`` and ``x_new_add``), and the wrong pair misregisters
+    silently rather than raising.
+
+    Work runs in a worker process, so the viewer stays usable and a
+    registration crash cannot take napari down.
     """
-    from napari.utils.notifications import show_error, show_info
 
-    if not source_file or not target_file or not output_dir:
-        show_error("Source file, target file and output directory are all required.")
-        return
+    def __init__(self, viewer: Viewer):
+        from magicgui.widgets import (
+            CheckBox, ComboBox, FileEdit, FloatSpinBox, SpinBox,
+        )
 
-    if round_type == ROUND_ST_SM:
-        if not source_points or not target_points:
-            show_error(
-                "The st_sm round needs a landmark pair. Save one with the "
-                "landmark widget first, or switch to the centroid round."
-            )
+        self._viewer = viewer
+
+        self._round = ComboBox(
+            label="Round", choices=[ROUND_ST_SM, ROUND_CENTROID], value=ROUND_ST_SM,
+            tooltip="st_sm: STalign LDDMM for sequential sections (needs landmarks). "
+                    "centroid: correspondence fitting for post-staining on one section.",
+        )
+        self._backend = ComboBox(label="Run via", choices=["sbatch", "local"], value="sbatch")
+
+        self._source_file = FileEdit(label="Source (moving)", mode="r", filter="*.csv")
+        self._source_x = ComboBox(label="  source x", choices=(), tooltip="Column to register")
+        self._source_y = ComboBox(label="  source y", choices=())
+
+        self._target_file = FileEdit(label="Target (fixed)", mode="r", filter="*.csv")
+        self._target_x = ComboBox(label="  target x", choices=())
+        self._target_y = ComboBox(label="  target y", choices=())
+
+        self._source_points = FileEdit(label="Source landmarks", mode="r", filter="*.npy")
+        self._target_points = FileEdit(label="Target landmarks", mode="r", filter="*.npy")
+        self._output_dir = FileEdit(label="Output directory", mode="d")
+
+        self._method = ComboBox(
+            label="Method (centroid)",
+            choices=["affine", "ransac", "tps", "ransac+tps"], value="ransac+tps",
+        )
+        self._max_distance = FloatSpinBox(label="Max match distance", value=100.0, min=0.1, max=10000.0)
+        self._niter = SpinBox(label="LDDMM iterations", value=1000, min=1, max=20000)
+
+        self._partition = ComboBox(label="Partition", choices=self._partitions)
+        self._cpus = SpinBox(label="CPUs", value=8, min=1, max=64)
+        self._memory = ComboBox(
+            label="Memory", choices=["16G", "32G", "64G", "128G", "256G"], value="64G"
+        )
+        self._time_limit = ComboBox(
+            label="Time limit", choices=["00:30:00", "02:00:00", "04:00:00", "12:00:00", "1-00:00:00"],
+            value="04:00:00",
+        )
+        self._gpus = SpinBox(label="GPUs", value=0, min=0, max=4)
+
+        self._submit_button = PushButton(text="Submit registration")
+        self._status = Label(value="Choose input files.")
+
+        self._source_file.changed.connect(self._on_source_changed)
+        self._target_file.changed.connect(self._on_target_changed)
+        self._round.changed.connect(self._on_round_changed)
+        self._submit_button.changed.connect(self._on_submit)
+
+        super().__init__(widgets=[
+            self._round, self._backend,
+            self._source_file, self._source_x, self._source_y,
+            self._target_file, self._target_x, self._target_y,
+            self._source_points, self._target_points, self._output_dir,
+            self._method, self._max_distance, self._niter,
+            self._partition, self._cpus, self._memory, self._time_limit, self._gpus,
+            self._submit_button, self._status,
+        ])
+        self._on_round_changed()
+
+    # -- helpers ----------------------------------------------------------
+    def _partitions(self, _widget=None):
+        """Offer the cluster's real partitions, so a typo cannot reach sbatch."""
+        from smint.alignment.jobs import available_partitions
+
+        found = available_partitions()
+        return found or ["regular", "gpuq", "long", "bigmem"]
+
+    def _populate(self, path, x_widget, y_widget):
+        """Fill coordinate dropdowns from a CSV header, preselecting a guess."""
+        from smint.alignment.columns import detect_coordinate_columns
+        from smint.alignment.st_sm_registration import list_columns
+
+        if not path or not Path(str(path)).exists():
             return
-        inputs = {
-            "st_file": str(target_file),
-            "sm_file": str(source_file),
-            "st_points": str(target_points),
-            "sm_points": str(source_points),
-        }
-        params = {"niter": int(niter)}
-    else:
-        inputs = {"source_file": str(source_file), "target_file": str(target_file)}
-        params = {"method": method, "max_distance": float(max_distance)}
+        try:
+            columns = list_columns(str(path))
+        except Exception as exc:
+            self._status.value = f"Could not read columns: {exc}"
+            return
 
-    spec = JobSpec(
-        round=round_type,
-        inputs=inputs,
-        params=params,
-        output_dir=str(output_dir),
-        backend=backend,
-        resources=SlurmResources(
-            partition=partition, cpus_per_task=int(cpus),
-            memory=memory, time_limit=time_limit,
-            job_name=f"smint_{round_type}",
-        ),
-    )
+        guess_x, guess_y = detect_coordinate_columns(columns)
+        for widget, guess in ((x_widget, guess_x), (y_widget, guess_y)):
+            widget.choices = columns
+            if guess in columns:
+                widget.value = guess
+        self._status.value = (
+            f"{Path(str(path)).name}: {len(columns)} columns. "
+            "Check the coordinate columns before submitting."
+        )
 
-    try:
-        spec.validate()
-    except (ValueError, FileNotFoundError) as exc:
-        # Surface bad paths now rather than after a queue wait.
-        show_error(str(exc))
-        return
+    def _on_source_changed(self):
+        self._populate(self._source_file.value, self._source_x, self._source_y)
 
-    try:
-        info = submit(spec)
-    except RuntimeError as exc:
-        show_error(f"Submission failed: {exc}")
-        return
+    def _on_target_changed(self):
+        self._populate(self._target_file.value, self._target_x, self._target_y)
 
-    handle = info.get("job_id") or info.get("pid")
-    show_info(f"Submitted {round_type} via {backend} ({handle}). Watching for results...")
+    def _on_round_changed(self):
+        """Show only the fields the selected round actually uses."""
+        is_st_sm = self._round.value == ROUND_ST_SM
+        self._source_points.visible = is_st_sm
+        self._target_points.visible = is_st_sm
+        self._niter.visible = is_st_sm
+        self._method.visible = not is_st_sm
+        self._max_distance.visible = not is_st_sm
 
-    _watch_job(viewer, spec.output_dir, round_type)
+    # -- submit -----------------------------------------------------------
+    def _on_submit(self):
+        from napari.utils.notifications import show_error, show_info
+        from smint.alignment.jobs import JobSpec, SlurmResources, submit
+
+        source, target = self._source_file.value, self._target_file.value
+        output_dir = self._output_dir.value
+        if not source or not target or not output_dir:
+            show_error("Source file, target file and output directory are all required.")
+            return
+
+        round_type = self._round.value
+        if round_type == ROUND_ST_SM:
+            if not self._source_points.value or not self._target_points.value:
+                show_error(
+                    "The st_sm round needs a landmark pair. Save one with the "
+                    "landmark widget first, or switch to the centroid round."
+                )
+                return
+            inputs = {
+                "st_file": str(target), "sm_file": str(source),
+                "st_points": str(self._target_points.value),
+                "sm_points": str(self._source_points.value),
+            }
+            params = {
+                "niter": int(self._niter.value),
+                "st_x_col": self._target_x.value or None,
+                "st_y_col": self._target_y.value or None,
+                "sm_kwargs": {
+                    "x_col": self._source_x.value or None,
+                    "y_col": self._source_y.value or None,
+                },
+            }
+        else:
+            inputs = {"source_file": str(source), "target_file": str(target)}
+            params = {
+                "method": self._method.value,
+                "max_distance": float(self._max_distance.value),
+                "source_cols": (self._source_x.value, self._source_y.value),
+                "target_cols": (self._target_x.value, self._target_y.value),
+            }
+
+        spec = JobSpec(
+            round=round_type, inputs=inputs, params=params,
+            output_dir=str(output_dir),
+            backend=self._backend.value,
+            resources=SlurmResources(
+                partition=self._partition.value, cpus_per_task=int(self._cpus.value),
+                memory=self._memory.value, time_limit=self._time_limit.value,
+                gpus=int(self._gpus.value), job_name=f"smint_{round_type}",
+            ),
+        )
+
+        try:
+            spec.validate()
+        except (ValueError, FileNotFoundError) as exc:
+            show_error(str(exc))
+            self._status.value = str(exc)
+            return
+
+        try:
+            info = submit(spec)
+        except RuntimeError as exc:
+            show_error(f"Submission failed: {exc}")
+            self._status.value = str(exc)
+            return
+
+        handle = info.get("job_id") or info.get("pid")
+        self._status.value = f"Submitted {round_type} via {self._backend.value} ({handle})."
+        show_info(f"Submitted {round_type} ({handle}). Watching for results...")
+        _watch_job(self._viewer, spec.output_dir, round_type)
 
 
 def _watch_job(viewer, output_dir: str, round_type: str) -> None:

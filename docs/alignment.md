@@ -110,6 +110,37 @@ df = register_sm_to_st(
 )
 ```
 
+### Choosing which columns to register
+
+ST tables routinely carry several coordinate pairs from successive processing
+stages — `x_centroid` alongside `x_new` and `x_new_add`, say. Which one you
+register against is a real choice, and the wrong one **misregisters silently
+rather than raising**.
+
+Inspect first:
+
+```bash
+smint-alignment columns Ven5_z2_pre_aligned_1.csv
+```
+
+Then be explicit:
+
+```python
+register_sm_to_st(
+    ..., st_x_col="x_new_add", st_y_col="y_new_add",
+    sm_kwargs=dict(x_col="x", y_col="y"),
+)
+```
+
+```bash
+smint-alignment st-sm ... --st-x-col x_new_add --st-y-col y_new_add
+```
+
+Omitting them auto-detects in the priority order `x_final`, `x_centroid`,
+`centroid_x`, `x_transformed`, `x` — and logs the choice, so it appears in the
+job log. In the napari plugin the columns are dropdowns populated from the file
+you pick, with the detected pair preselected.
+
 ### Coordinate orientation
 
 STalign works in **row-column** order throughout. `LDDMM` takes grids as

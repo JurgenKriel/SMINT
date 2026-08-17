@@ -70,6 +70,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--orientation", default="dataset", choices=["dataset", "stalign"],
         help="Output frame; 'dataset' restores the source dataset's orientation",
     )
+    st_sm.add_argument("--st-x-col", default=None,
+                       help="ST column to register (default: auto-detect)")
+    st_sm.add_argument("--st-y-col", default=None)
+    st_sm.add_argument("--sm-x-col", default=None,
+                       help="SM column to register (default: the column named 'x')")
+    st_sm.add_argument("--sm-y-col", default=None)
     st_sm.add_argument("--scale-xy", type=float, default=10.0, help="SM coordinate scaling")
     st_sm.add_argument("--rotate-left-90", action="store_true", help="Rotate SM 90 deg CCW")
     st_sm.add_argument("--submit", action="store_true", help="Submit to SLURM")
@@ -118,6 +124,10 @@ def build_parser() -> argparse.ArgumentParser:
                      help="Allow per-axis scaling (may distort tissue shape)")
     pre.add_argument("--search", action="store_true",
                      help="Grid-search rotation and flips by overlap score")
+
+    # -- columns ----------------------------------------------------------
+    cols = sub.add_parser("columns", help="List a CSV's columns and the auto-detected pair")
+    cols.add_argument("file", help="CSV to inspect")
 
     return parser
 
@@ -241,6 +251,20 @@ def main(argv=None) -> int:
         format="%(levelname)s %(name)s: %(message)s",
     )
 
+    if args.command == "columns":
+        from smint.alignment.columns import detect_coordinate_columns
+        from smint.alignment.st_sm_registration import list_columns
+
+        columns = list_columns(args.file)
+        guess_x, guess_y = detect_coordinate_columns(columns)
+        print(f"{len(columns)} columns in {args.file}:")
+        for name in columns:
+            mark = "  <- auto-detected" if name in (guess_x, guess_y) else ""
+            print(f"  {name}{mark}")
+        if guess_x is None:
+            print("\nNo coordinate columns auto-detected; pass them explicitly.")
+        return 0
+
     if args.command == "pretransform":
         return _run_pretransform(args)
 
@@ -254,9 +278,13 @@ def main(argv=None) -> int:
             params={
                 "dx": args.dx, "niter": args.niter, "epV": args.epv,
                 "orientation": args.orientation,
+                "st_x_col": args.st_x_col,
+                "st_y_col": args.st_y_col,
                 "sm_kwargs": {
                     "scale_xy": args.scale_xy,
                     "rotate_left_90": args.rotate_left_90,
+                    "x_col": args.sm_x_col,
+                    "y_col": args.sm_y_col,
                 },
             },
         )

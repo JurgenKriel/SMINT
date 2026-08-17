@@ -11,7 +11,7 @@ compute nodes with no display.
 
 import importlib
 
-_WIDGETS = ("load_datasets", "PreRegisterWidget", "LandmarkWidget", "registration_widget")
+_WIDGETS = ("load_datasets", "PreRegisterWidget", "LandmarkWidget", "RegistrationWidget")
 
 __all__ = list(_WIDGETS)
 

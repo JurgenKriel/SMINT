@@ -114,6 +114,17 @@ as target, transforms every SM pixel, and returns the SM table with
 
 `device` defaults to CUDA when available.
 
+### `resolve_st_columns` / `list_columns`
+
+```python
+resolve_st_columns(st_file, x_col=None, y_col=None) -> (x_col, y_col)
+list_columns(csv_file) -> list
+```
+
+Decide which ST columns to register. Explicit names win; otherwise columns are
+auto-detected and the choice is logged. `list_columns` reads only the header,
+so it is cheap on a 450 MB matrix.
+
 ### `read_sm_matrix`
 
 ```python
@@ -261,8 +272,11 @@ SlurmResources(partition="regular", cpus_per_task=8, memory="64G",
                time_limit="04:00:00", job_name="smint_register", gpus=0)
 ```
 
-`check()` warns when `gpus > 0` on a non-GPU partition (the job would sit
-pending rather than fail) and vice versa.
+`check()` **raises** if the partition does not exist on this cluster — turning
+SLURM's terse "Invalid partition name specified" into a message listing the
+valid options — and warns when `gpus > 0` on a non-GPU partition (the job would
+sit pending rather than fail) and vice versa. `available_partitions()` returns
+the cluster's partitions via `sinfo`, or an empty list off-cluster.
 
 ### `submit` / `poll`
 

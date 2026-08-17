@@ -45,6 +45,27 @@ VALID_BACKENDS = ("sbatch", "local")
 TERMINAL_STATES = ("completed", "failed", "cancelled")
 
 
+def available_partitions() -> list:
+    """
+    Partition names this cluster accepts, via ``sinfo``.
+
+    Returns an empty list when SLURM is unavailable, so callers can fall back
+    rather than blocking on a check they cannot perform.
+    """
+    if not shutil.which("sinfo"):
+        return []
+    try:
+        result = subprocess.run(
+            ["sinfo", "-h", "-o", "%P"], capture_output=True, text=True, timeout=30
+        )
+    except (subprocess.SubprocessError, OSError):
+        return []
+    if result.returncode != 0:
+        return []
+    # sinfo marks the default partition with a trailing '*'
+    return sorted({line.strip().rstrip("*") for line in result.stdout.split() if line.strip()})
+
+
 def default_worker_python() -> str:
     """
     Best guess at an interpreter that can run registration.
@@ -88,7 +109,23 @@ class SlurmResources:
     GPU_PARTITION_HINTS = ("gpu", "a100", "a30", "p100", "a10")
 
     def check(self) -> None:
-        """Warn about resource requests that will not schedule as intended."""
+        """
+        Validate the resource request before anything reaches ``sbatch``.
+
+        Raises
+        ------
+        ValueError
+            If the partition is not one this cluster offers. Catching it here
+            turns SLURM's terse "Invalid partition name specified" into a
+            message naming the valid options.
+        """
+        partitions = available_partitions()
+        if partitions and self.partition not in partitions:
+            raise ValueError(
+                f"Partition {self.partition!r} does not exist on this cluster. "
+                f"Available: {', '.join(partitions)}"
+            )
+
         if self.gpus and not any(
             hint in self.partition.lower() for hint in self.GPU_PARTITION_HINTS
         ):
