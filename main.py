@@ -95,7 +95,7 @@ DOCUMENTATION = {
         "description": "Tools for aligning spatial omics data",
         "functions": [
             {
-                "name": "run_alignment",
+                "name": "register_centroids",
                 "description": "Align spatial transcriptomics data",
                 "parameters": [
                     {"name": "source_data", "type": "DataFrame", "description": "Source data"},
@@ -104,7 +104,7 @@ DOCUMENTATION = {
                 ]
             },
             {
-                "name": "transform_coordinates",
+                "name": "build_pretransform",
                 "description": "Transform coordinates using alignment matrix",
                 "parameters": [
                     {"name": "coordinates", "type": "DataFrame", "description": "Coordinates to transform"},
@@ -159,26 +159,22 @@ process_large_image(
         "title": "Spatial Transcriptomics Alignment",
         "description": "Align spatial transcriptomics data from different modalities",
         "code": """
-import smint
 import pandas as pd
-from smint.alignment import run_alignment, transform_coordinates
-
-# Load spatial data
-source_data = pd.read_csv("source_spots.csv")
-target_data = pd.read_csv("target_spots.csv")
-
-# Run alignment
-alignment_result = run_alignment(
-    source_data=source_data,
-    target_data=target_data,
-    method="similarity"
+from smint.alignment import (
+    build_pretransform, apply_pretransform, register_centroids,
 )
 
-# Transform coordinates
-transformed_coords = transform_coordinates(
-    coordinates=source_data,
-    transformation_matrix=alignment_result["transformation_matrix"]
-)
+source = pd.read_csv("nuclei_centroids.csv")[["centroid_x", "centroid_y"]].to_numpy()
+target = pd.read_csv("xenium_cells.csv")[["x_centroid", "y_centroid"]].to_numpy()
+
+# Coarse pre-registration: scale onto the target frame, rotate, flip
+matrix = build_pretransform(source, target, rotation=30, flip_x=True)
+source = apply_pretransform(source, matrix)
+
+# Fine registration, scored on held-out pairs
+result = register_centroids(source, target, method="ransac+tps")
+print(result["tre_validation"])   # only the held-out number is meaningful
+registered = result["transform"](source)
         """
     },
     {

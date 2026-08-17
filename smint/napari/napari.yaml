@@ -1,0 +1,27 @@
+name: smint
+display_name: SMINT Registration
+
+contributions:
+  commands:
+    - id: smint.load_datasets
+      title: Load ST / SM datasets
+      python_name: smint.napari._widgets:load_datasets
+    - id: smint.preregister_widget
+      title: Pre-registration (scale / rotate / flip)
+      python_name: smint.napari._widgets:PreRegisterWidget
+    - id: smint.landmark_widget
+      title: Landmark annotation
+      python_name: smint.napari._widgets:LandmarkWidget
+    - id: smint.registration_widget
+      title: Run registration
+      python_name: smint.napari._widgets:registration_widget
+
+  widgets:
+    - command: smint.load_datasets
+      display_name: 1. Load datasets
+    - command: smint.preregister_widget
+      display_name: 2. Pre-register
+    - command: smint.landmark_widget
+      display_name: 3. Landmarks
+    - command: smint.registration_widget
+      display_name: 4. Register

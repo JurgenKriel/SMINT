@@ -14,13 +14,28 @@ import logging
 # Set up logger
 logger = logging.getLogger(__name__)
 
-# Optional imports - STalign and torch
+# DEPRECATED: prefer smint.alignment.st_sm_registration, which supports the
+# manual landmark stage this module lacks. Kept for backward compatibility.
+#
+# The installed STalign ships an empty __init__.py with the implementation in
+# STalign/STalign.py, so a bare `import STalign` succeeds but yields an empty
+# namespace -- every call then failed with AttributeError while STALIGN_AVAILABLE
+# reported True. Import the submodule and verify it before claiming availability.
 try:
     import torch
-    import STalign
-    STALIGN_AVAILABLE = True
-except ImportError:
-    logger.warning("STalign or torch not available. Xenium-Metabolomics alignment functionality will be limited.")
+    from STalign import STalign
+    STALIGN_AVAILABLE = hasattr(STalign, "rasterize")
+    if not STALIGN_AVAILABLE:
+        logger.warning(
+            "Imported STalign but it exposes no `rasterize`; alignment "
+            "functionality will be unavailable."
+        )
+except Exception as exc:
+    logger.warning(
+        "STalign or torch not available (%r). Xenium-Metabolomics alignment "
+        "functionality will be limited. Note that numpy>=2 breaks STalign's "
+        "`nptyping` dependency; use an environment with numpy<2.", exc
+    )
     STALIGN_AVAILABLE = False
 
 

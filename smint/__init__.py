@@ -7,19 +7,34 @@ and streamlined workflow.
 
 __version__ = '0.1.0'
 
-# Import sub-packages to make them available at the top level
-from . import segmentation
-from . import preprocessing
-from . import visualization
-from . import utils
-from . import alignment
-from . import r_integration
+import importlib
 
-__all__ = [
+# Sub-packages are imported lazily (PEP 562). Importing them eagerly meant
+# `import smint` -- or even `from smint.alignment import ...` -- pulled in the
+# segmentation stack (cellpose -> segment_anything -> torchvision -> torch),
+# so a broken or absent optional dependency in any one environment made the
+# whole package unimportable. Attribute access still works exactly as before:
+# `smint.alignment` resolves on first use.
+_SUBPACKAGES = (
     'segmentation',
     'preprocessing',
     'visualization',
     'utils',
     'alignment',
     'r_integration',
-]
+)
+
+
+def __getattr__(name):
+    if name in _SUBPACKAGES:
+        module = importlib.import_module(f'.{name}', __name__)
+        globals()[name] = module
+        return module
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+def __dir__():
+    return sorted(set(globals()) | set(_SUBPACKAGES))
+
+
+__all__ = list(_SUBPACKAGES)

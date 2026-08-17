@@ -17,27 +17,41 @@ import tifffile
 import matplotlib.pyplot as plt
 import importlib.util
 
-# Check for required dependencies
-DISTRIBUTED_AVAILABLE = importlib.util.find_spec("distributed") is not None
-DASK_CUDA_AVAILABLE = importlib.util.find_spec("dask_cuda") is not None
-CELLPOSE_AVAILABLE = importlib.util.find_spec("cellpose") is not None
-
-# Log availability of optional dependencies
 logger = logging.getLogger(__name__)
-if not DISTRIBUTED_AVAILABLE:
-    logger.warning("'distributed' package not available. Distributed processing will be limited.")
-if not DASK_CUDA_AVAILABLE:
-    logger.warning("'dask_cuda' package not available. GPU acceleration will not be available.")
-if not CELLPOSE_AVAILABLE:
-    logger.warning("'cellpose' package not available. Cell segmentation functionality will be limited.")
 
-# Import optional dependencies only if available
-if DISTRIBUTED_AVAILABLE:
+# Optional dependencies.
+#
+# `importlib.util.find_spec` only proves a module can be *located*, not that it
+# can be *imported*: a package whose own dependency chain is broken (e.g. a
+# cellpose installed against a mismatched torch/torchvision) passes find_spec
+# and then raises on import, taking the whole `import smint` down with it.
+# Attempt the real import and let success be the availability signal.
+try:
     from distributed import Client, LocalCluster
-if DASK_CUDA_AVAILABLE:
+    DISTRIBUTED_AVAILABLE = True
+except Exception as exc:
+    DISTRIBUTED_AVAILABLE = False
+    logger.warning(
+        "'distributed' package unavailable (%s). Distributed processing will be limited.", exc
+    )
+
+try:
     from dask_cuda import LocalCUDACluster
-if CELLPOSE_AVAILABLE:
+    DASK_CUDA_AVAILABLE = True
+except Exception as exc:
+    DASK_CUDA_AVAILABLE = False
+    logger.warning(
+        "'dask_cuda' package unavailable (%s). GPU acceleration will not be available.", exc
+    )
+
+try:
     from cellpose import models
+    CELLPOSE_AVAILABLE = True
+except Exception as exc:
+    CELLPOSE_AVAILABLE = False
+    logger.warning(
+        "'cellpose' package unavailable (%s). Cell segmentation functionality will be limited.", exc
+    )
 from pathlib import Path
 
 from ..utils.config import load_config

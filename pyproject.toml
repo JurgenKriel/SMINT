@@ -4,12 +4,15 @@ version = "0.1.0"
 description = "SMINT - Spatial Multi-Omics Integration Toolkit"
 readme = "README.md"
 requires-python = ">=3.8"
-license = "MIT"
+# Table form rather than the PEP 639 string form: the string form requires
+# setuptools>=77, which excludes environments such as STalign_env (75.1.0).
+license = {text = "MIT"}
 authors = [
     {name = "Jurgen Kriel"}
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
@@ -34,9 +37,13 @@ Homepage = "https://github.com/JurgenKriel/SMINT"
 Documentation = "https://jurgenkriel.github.io/SMINT/"
 
 [project.scripts]
-smint-segmentation = "scripts.run_segmentation:main"
-smint-alignment = "scripts.run_alignment:main"
+smint-alignment = "smint.cli.align:main"
+smint-register = "smint.cli.register:main"
 smint-viewer = "smint.visualization.live_scan_viewer:main"
+
+# Registration worker, invoked by smint.alignment.jobs in a separate process.
+[project.entry-points."napari.manifest"]
+smint = "smint.napari:napari.yaml"
 
 [project.optional-dependencies]
 r_integration = ["rpy2>=3.4.0"]
@@ -47,11 +54,15 @@ docs = ["mkdocs", "mkdocs-material"]
 dev = ["pytest", "flake8", "black"]
 all = ["rpy2>=3.4.0", "mkdocs", "mkdocs-material", "pytest", "flake8", "black"]
 
-[tool.setuptools]
-packages = ["smint"]
+# Discover subpackages (smint.alignment, smint.segmentation, ...) rather than
+# declaring only the top-level `smint`, which left them out of the install.
+[tool.setuptools.packages.find]
+include = ["smint*"]
 
 [tool.setuptools.package-data]
 smint = ["**/*"]
+# napari discovers the plugin through this manifest, so it must ship.
+"smint.napari" = ["napari.yaml"]
 
 
 [[tool.uv.index]]

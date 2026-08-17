@@ -15,7 +15,7 @@ from pathlib import Path
 
 from smint.preprocessing import preprocess_ome_tiff, combine_channels
 from smint.segmentation import process_large_image, run_distributed_segmentation
-from smint.alignment import align_spatial_transcriptomics
+from smint.alignment import register_centroid_files
 from smint.r_integration import run_r_script
 
 def setup_logger(log_file=None):
@@ -282,18 +282,21 @@ def main():
             # Run alignment
             start_time = time.time()
             
-            alignment_results = align_spatial_transcriptomics(
-                reference_file=args.reference_data,
-                target_file=args.target_data,
-                output_dir=align_dir,
-                method='affine'
+            _, alignment_results = register_centroid_files(
+                source_file=args.target_data,      # the moving dataset
+                target_file=args.reference_data,   # the fixed reference
+                output_path=os.path.join(align_dir, "aligned_coordinates.csv"),
+                method="ransac+tps",
             )
-            
-            if alignment_results is None:
-                logger.error("Alignment failed")
-                sys.exit(1)
-                
-            logger.info(f"Alignment completed successfully")
+
+            # Only the held-out figure says anything about accuracy; the fitted
+            # one can be driven to ~0 by a flexible enough transform.
+            logger.info(
+                "Alignment completed: %d pairs, TRE %.3f -> %.3f (held out)",
+                alignment_results["n_matched"],
+                alignment_results["tre_initial"][0],
+                alignment_results["tre_validation"][0],
+            )
             
             # Calculate elapsed time
             elapsed_time = time.time() - start_time

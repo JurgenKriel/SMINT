@@ -10,11 +10,13 @@ from skimage import measure
 import logging
 import sys
 
-# Simple check for cellpose availability without importing it
+# Check cellpose availability. find_spec only proves the module can be located;
+# a package with a broken dependency chain passes that check and then raises on
+# import, so attempt the real import and treat success as the signal.
 try:
-    import importlib.util
-    CELLPOSE_AVAILABLE = importlib.util.find_spec("cellpose") is not None
-except ImportError:
+    import cellpose  # noqa: F401
+    CELLPOSE_AVAILABLE = True
+except Exception:
     CELLPOSE_AVAILABLE = False
 
 def get_cell_outlines(masks):

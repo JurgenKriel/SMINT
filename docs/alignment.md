@@ -1,357 +1,242 @@
 # Spatial Alignment
 
-SMINT provides a streamlined workflow for aligning different types of spatial omics data using the ST Align algorithm. This guide covers the complete alignment process, from data preparation to result validation.
+SMINT aligns spatial omics modalities in two quite different situations, and
+picking the right one matters more than any parameter you will tune afterwards.
 
-## Overview of Alignment Workflow
+| Situation | What is true | Use |
+|---|---|---|
+| **Sequential sections** — the modalities come from different physical sections | The tissue genuinely differs between them; no cell corresponds one-to-one | STalign LDDMM ([`register_sm_to_st`](#st-sm-registration)) |
+| **Same section, post-staining** — a second modality is acquired on the *exact same* section | Centroids really do correspond one-to-one | Correspondence fitting ([`register_centroids`](#centroid-registration)) |
 
-The SMINT alignment pipeline consists of these key stages:
+Using the same-section tools on sequential sections will happily produce a
+number, but it will be fitting noise: nearest-neighbour "correspondences"
+between different sections pair cells that are merely nearby, not the same.
 
-1. **Data Preparation** - Converting and preprocessing spatial data
-2. **Reference Selection** - Choosing appropriate reference points
-3. **Alignment Computation** - Calculating the optimal transformation
-4. **Transform Application** - Applying the transformation to target data
-5. **Validation & Quality Control** - Assessing alignment accuracy
+---
 
-## Input Data Requirements
+## Coarse pre-registration
 
-### Supported Data Formats
+Spatial metabolomics arrives on its own pixel grid, frequently rotated or
+mirrored relative to the Xenium section and at a completely different scale.
+LDDMM will not recover from a gross orientation mismatch, so bring the datasets
+roughly together first.
 
-SMINT's alignment module supports the following data formats:
-- **CSV files** (preferred) - Simple tabular format with spatial coordinates
-- **AnnData objects** - Python objects with spatial omics data
-- **Pandas DataFrames** - In-memory tabular data
-- **10X Visium data** - Spatial transcriptomics from 10X Genomics
+```python
+from smint.alignment import build_pretransform, apply_pretransform, overlap_score
 
-### Required Data Columns
-
-For optimal alignment, input data files should contain:
-- **Spatial coordinates**: Columns named 'x' and 'y' or similar ('X_position', 'Y_position')
-- **Feature values**: Gene expression or other features (optional, for feature-based alignment)
-- **Cell/spot IDs**: Unique identifiers for each point (optional, but recommended)
-
-### Example Input Data
-
-Reference data (`reference_data.csv`):
-```
-spot_id,x,y,feature1,feature2
-1,100.5,200.3,0.8,0.2
-2,150.2,220.1,0.6,0.4
-...
+matrix = build_pretransform(
+    sm_xy, xen_xy,
+    scale_mode="extent",   # match bounding-box spans
+    rotation=30,           # degrees counter-clockwise
+    flip_x=True,
+)
+moved = apply_pretransform(sm_xy, matrix)
+print(overlap_score(moved, xen_xy))     # 0-1, higher is better
 ```
 
-Target data (`target_data.csv`):
-```
-cell_id,x_position,y_position,marker1,marker2
-cell_1,1050.5,2200.3,0.9,0.1
-cell_2,1150.2,2220.1,0.7,0.3
-...
+Operations are applied in a fixed order — **flip → rotate → scale → translate**
+— about the source centroid. The order is fixed because rotations and flips do
+not commute.
+
+!!! note "Scale is fitted after orientation is corrected"
+    Bounding-box extents change under rotation, so fitting scale on the raw
+    source bakes in an error. On a 30° rotated test shape, fitting first gave
+    8.10 against a true 10.0. `build_pretransform` handles this for you by
+    applying flip and rotation before fitting.
+
+`scale_mode` options:
+
+- **`"extent"`** (default) — match the bounding-box *span* per axis. Robust to
+  the two datasets having different origins.
+- **`"max"`** — match maximum coordinates directly. Literal, but wrong whenever
+  either dataset does not start near zero.
+- **`"none"`** — no scaling.
+
+Scaling is isotropic by default (`preserve_aspect=True`). Anisotropic scaling
+can force bounding boxes to agree while making the shapes match *worse*, which
+then misleads the landmark step.
+
+Use `describe_pretransform(matrix)` to decompose a transform into scale,
+rotation, shear and whether it reflects — a negative determinant means a
+reflection crept in, which is easy to introduce by combining a flip with a
+rotation.
+
+---
+
+## ST-SM registration
+
+For sequential sections, using STalign's LDDMM. The workflow is deliberately
+split into two phases around a **manual landmark step**, because that step is
+where the biological judgement lives.
+
+### Phase 1 — prepare landmark inputs
+
+```python
+from smint.alignment import prepare_landmark_inputs
+
+out = prepare_landmark_inputs(
+    st_file="Z2_final_aligned_annos.csv",
+    sm_file="Ven5B_information_matrix_tissue_only_full_with_xy.csv",
+    output_prefix="/path/to/ven5_z2",
+    dx=30.0,
+    sm_kwargs=dict(scale_xy=10.0, rotate_left_90=True),
+)
 ```
 
-## Quick Start
+This writes `<prefix>_st.npz` and `<prefix>_sm.npz`.
 
-### Basic Alignment
+### Phase 2 — annotate, then register
+
+Annotate both `.npz` files, picking the **same anatomical features in the same
+order** in each — correspondence is positional, so an ordering mismatch
+silently produces a wrong registration. Either use the
+[napari plugin](napari_plugin.md) or the standalone annotator:
 
 ```bash
-python -m scripts.run_alignment \
-    --reference reference_data.csv \
-    --target target_data.csv \
-    --output-dir results/alignment \
-    --method affine \
-    --ref-x-col x \
-    --ref-y-col y \
-    --target-x-col x_position \
-    --target-y-col y_position
+python point_annotator.py ven5_z2_st.npz ven5_z2_sm.npz
 ```
 
-### Feature-Based Alignment
-
-For alignment based on matching gene/protein expression patterns:
-
-```bash
-python -m scripts.run_alignment \
-    --reference reference_data.csv \
-    --target target_data.csv \
-    --output-dir results/alignment \
-    --method affine \
-    --use-features \
-    --ref-feature-cols feature1,feature2 \
-    --target-feature-cols marker1,marker2 \
-    --feature-weight 0.7
-```
-
-## Detailed Parameter Guide
-
-### Common Parameters
-
-| Parameter | Description | Default | Recommended Values |
-|-----------|-------------|---------|-------------------|
-| `--reference` | Path to reference data | Required | - |
-| `--target` | Path to target data | Required | - |
-| `--output-dir` | Directory to save results | Required | - |
-| `--method` | Transformation method | "affine" | "rigid", "similarity", "affine", "projective" |
-| `--ref-x-col` | X coordinate column in reference | "x" | Any column name |
-| `--ref-y-col` | Y coordinate column in reference | "y" | Any column name |
-| `--target-x-col` | X coordinate column in target | "x" | Any column name |
-| `--target-y-col` | Y coordinate column in target | "y" | Any column name |
-| `--visualize` | Generate visualizations | False | - |
-
-### Advanced Parameters
-
-| Parameter | Description | Default | Notes |
-|-----------|-------------|---------|-------|
-| `--use-features` | Use features for alignment | False | Enables feature-based alignment |
-| `--ref-feature-cols` | Feature columns in reference | None | Comma-separated column names |
-| `--target-feature-cols` | Feature columns in target | None | Comma-separated column names |
-| `--feature-weight` | Weight of features vs. spatial | 0.5 | 0.0-1.0 (higher = more feature influence) |
-| `--max-points` | Maximum points to use | 10000 | Lower for faster processing |
-| `--ransac-threshold` | RANSAC inlier threshold | 10.0 | Lower for stricter matching |
-| `--ransac-iterations` | RANSAC iterations | 1000 | Higher for better robustness |
-| `--ransac-min-samples` | Min. samples for RANSAC | Method-dependent | 2 (rigid), 3 (affine), 4 (projective) |
-| `--scale-factor` | Scale factor for coordinates | 1.0 | Adjusts for different coordinate systems |
-| `--pre-align` | Use simple pre-alignment | False | Helps with very different starting positions |
-
-### Quality Control Parameters
-
-| Parameter | Description | Default | Notes |
-|-----------|-------------|---------|-------|
-| `--validate` | Validate alignment quality | False | Enables quality assessment |
-| `--holdout-fraction` | Fraction of points to hold out | 0.1 | 0.05-0.2 recommended |
-| `--min-confidence` | Minimum alignment confidence | 0.5 | 0-1 range, higher = stricter |
-| `--distance-threshold` | Max allowed point distance | 50.0 | Units same as coordinates |
-| `--save-validation-plots` | Save validation plots | False | Requires matplotlib |
-
-## Alignment API
-
-For programmatic usage within Python scripts:
+That writes `<prefix>_st_points.npy` and `<prefix>_sm_points.npy`. Then:
 
 ```python
-from smint.alignment import run_alignment, transform_coordinates
+from smint.alignment import register_sm_to_st
 
-# Basic usage
-alignment_result = run_alignment(
-    source_data="path/to/target_data.csv",
-    target_data="path/to/reference_data.csv",
-    method="affine",
-    config={
-        "source_x_column": "x_position",
-        "source_y_column": "y_position",
-        "target_x_column": "x",
-        "target_y_column": "y",
-        "ransac_threshold": 10.0,
-        "ransac_max_iterations": 1000
-    }
+df = register_sm_to_st(
+    st_file=..., sm_file=...,
+    st_points_file=out["st_points"],
+    sm_points_file=out["sm_points"],
+    output_path="sm_transformed.csv",
+    niter=1000, epV=200.0,
 )
-
-# Access the transformation matrix
-transform_matrix = alignment_result["transformation_matrix"]
-quality_metrics = alignment_result["quality_metrics"]
-
-# Apply transformation to coordinates
-import pandas as pd
-data_to_transform = pd.read_csv("path/to/additional_data.csv")
-transformed_coords = transform_coordinates(
-    coordinates=data_to_transform[["x_position", "y_position"]].values,
-    transformation_matrix=transform_matrix
-)
-
-# Save transformed coordinates
-data_to_transform["x_transformed"] = transformed_coords[:, 0]
-data_to_transform["y_transformed"] = transformed_coords[:, 1]
-data_to_transform.to_csv("path/to/transformed_data.csv", index=False)
 ```
 
-## Advanced Feature-Based Alignment
+### Coordinate orientation
 
-SMINT supports alignment based on matching gene/protein expression patterns:
+STalign works in **row-column** order throughout. `LDDMM` takes grids as
+`[Y, X]`, and `transform_points_source_to_target` both accepts and returns
+points as `(row, col)` — it applies the transform in place and does not
+transpose.
+
+Registering through STalign therefore returns coordinates whose axes are
+transposed relative to the source dataset. `transform_points` exposes this:
+
+- **`orientation="dataset"`** (default) — restores the original dataset's
+  orientation. This is what you want, and it reproduces historical outputs.
+- **`orientation="stalign"`** — true xy in the ST target frame.
+
+The two differ by a transpose. Mixing them silently produces a flipped overlay,
+so the choice is always explicit and is recorded on the output frame.
+
+---
+
+## Centroid registration
+
+For post-staining on the same section, where centroids correspond one-to-one.
 
 ```python
-from smint.alignment import run_alignment
-import pandas as pd
+from smint.alignment import register_centroids
 
-# Load data
-reference_data = pd.read_csv("reference_data.csv")
-target_data = pd.read_csv("target_data.csv")
-
-# Run feature-based alignment
-alignment_result = run_alignment(
-    source_data=target_data,
-    target_data=reference_data,
-    method="affine",
-    config={
-        "source_x_column": "x_position",
-        "source_y_column": "y_position",
-        "target_x_column": "x",
-        "target_y_column": "y",
-        "use_features": True,
-        "source_feature_columns": ["marker1", "marker2", "marker3"],
-        "target_feature_columns": ["feature1", "feature2", "feature3"],
-        "feature_weight": 0.7,  # 70% features, 30% spatial
-        "normalize_features": True
-    }
+result = register_centroids(
+    nucleus_xy, xenium_xy,
+    method="ransac+tps",
+    max_distance=100.0,
+    validation_fraction=0.25,
 )
+print(result["tre_validation"])    # the number that matters
 ```
 
-## Transformation Methods Explained
+| Method | What it does |
+|---|---|
+| `affine` | Least-squares affine on all matched pairs |
+| `ransac` | RANSAC-robust affine; rejects bad correspondences |
+| `tps` | Thin-plate spline after an affine pre-alignment |
+| `ransac+tps` | RANSAC affine, then TPS on the inliers |
 
-SMINT provides several transformation methods with different properties:
+### Measuring quality honestly
 
-| Method | Degrees of Freedom | Preserves | Use Case |
-|--------|-------------------|-----------|----------|
-| **Rigid** | 3 | Distances, Angles | Same-scale data with rotation/translation |
-| **Similarity** | 4 | Angles, Relative distances | Similar data with uniform scaling |
-| **Affine** | 6 | Parallel lines | Different imaging modalities, tissue deformation |
-| **Projective** | 8 | Straight lines | Significant perspective changes, severe distortion |
+Target Registration Error is easy to compute in a way that is **circular**.
+Correspondences here are established by nearest neighbour, so a sufficiently
+flexible transform can drive TRE to ~0 on the pairs it was fitted to,
+regardless of whether those correspondences are correct. An unregularised TPS
+with as many control points as pairs will *always* report TRE ≈ 0 on those
+pairs — that is interpolation, not accuracy.
 
-## Output Files and Formats
+`register_centroids` therefore always holds out a fraction of pairs and reports
+TRE on both:
 
-SMINT generates the following output files:
+```
+tre_initial      before any transform
+tre_fit          on the pairs used for fitting     <- not evidence
+tre_validation   on held-out pairs                 <- the real number
+```
 
-| File | Description | Format |
-|------|-------------|--------|
-| `transformation_matrix.csv` | Transformation matrix | CSV (3×3 matrix) |
-| `transformed_coordinates.csv` | Transformed target coordinates | CSV with original + transformed coordinates |
-| `alignment_metrics.json` | Quality metrics | JSON |
-| `alignment_report.html` | Interactive visualization | HTML (if `--visualize` is used) |
-| `validation_plots/*.png` | Validation visualizations | PNG (if validation enabled) |
+A large gap between the two means the transform is memorising
+correspondences. The function warns when it detects this.
 
-## Visualizing Alignment Results
+!!! warning "Matching is mutual by default"
+    `mutual=True` keeps only pairs that are each other's nearest neighbour.
+    One-directional matching lets many source points collapse onto a single
+    popular target, inflating the pair count. On a real Venture 5 section this
+    was the difference between 75,146 apparent pairs and 40,135 real ones.
 
-SMINT provides built-in visualization tools for alignment results:
+### Interpreting the result
+
+If no method beats the initial TRE, the datasets are already as aligned as a
+global transform can make them, and the remaining distance is correspondence
+ambiguity rather than misregistration. Two useful diagnostics:
+
+- Compare against the target's own inter-cell spacing. If the residual is a
+  large fraction of that, many "matches" are neighbouring cells rather than the
+  same cell.
+- Sweep `max_distance`. If TRE shrinks in proportion rather than reaching a
+  plateau, the threshold is setting the residual, not alignment error.
+
+---
+
+## Running on HPC
+
+Registration can be submitted to SLURM or run locally through a job spec; see
+[HPC Deployment](hpc_deployment.md) and the [napari plugin](napari_plugin.md).
 
 ```python
-from smint.visualization import visualize_alignment
+from smint.alignment.jobs import JobSpec, SlurmResources, submit, poll
 
-# Generate interactive visualization
-visualize_alignment(
-    reference_data="path/to/reference_data.csv",
-    target_data="path/to/target_data.csv",
-    transformed_data="path/to/transformed_coordinates.csv",
-    output_html="alignment_visualization.html",
-    reference_name="Spatial Transcriptomics",
-    target_name="IF Imaging",
-    point_size=5,
-    opacity=0.7,
-    colormap="viridis"
+spec = JobSpec(
+    round="st_sm",
+    inputs={"st_file": ..., "sm_file": ..., "st_points": ..., "sm_points": ...},
+    params={"niter": 1000},
+    output_dir="/vast/scratch/you/run1",
+    backend="sbatch",
+    resources=SlurmResources(partition="gpuq", gpus=1, memory="64G"),
 )
+info = submit(spec)
+print(poll(spec.output_dir)["state"])
 ```
 
-## Common Issues and Troubleshooting
+!!! danger "Batch jobs need shared storage"
+    An sbatch job runs on a different machine, so node-local paths (`/tmp`,
+    `/var/tmp`, `/dev/shm`) are invisible to it — the job dies with no logs at
+    all, because the log directory does not exist there. `JobSpec.validate()`
+    rejects these up front. Use `/vast/scratch` or `/vast/projects`.
 
-### Poor Alignment Quality
+### GPU
 
-- **Problem**: Points not properly aligned
-- **Solution**: Try different transformation methods (start with affine), adjust RANSAC parameters, use feature-based alignment if possible
+LDDMM runs on GPU automatically when one is available. Request it with
+`SlurmResources(partition="gpuq", gpus=1)`. GPU and CPU results are
+bit-identical; on a Venture 5 Z2 section the GPU run took 82 s against 112 s on
+8 CPU cores, so the benefit is modest at typical raster sizes.
 
-### Flipped or Rotated Alignment
+---
 
-- **Problem**: Alignment appears mirror-flipped or severely rotated
-- **Solution**: Use `--pre-align` option, or manually flip one dataset before alignment
+## Environments
 
-### Slow Processing
+STalign requires **numpy < 2** — the `nptyping` dependency it pulls in via
+`nrrd` uses `np.object0`, which numpy 2 removed. The centroid and
+pre-registration paths have no STalign dependency and run anywhere.
 
-- **Problem**: Alignment taking too long
-- **Solution**: Reduce number of points with `--max-points`, decrease RANSAC iterations, use simpler transformation method
-
-### Feature Mismatch
-
-- **Problem**: Feature-based alignment fails to converge
-- **Solution**: Verify matching features between datasets, adjust feature weights, normalize features
-
-## Performance Considerations
-
-Alignment performance depends on several factors:
-
-- **Data size**: Larger datasets (>10,000 points) require more processing time
-- **Transformation complexity**: Projective > Affine > Similarity > Rigid (in terms of computation)
-- **Feature-based alignment**: Using features increases computation time but may improve accuracy
-- **RANSAC parameters**: Higher iterations and lower thresholds increase computation time
-
-## Tips for Best Results
-
-1. **Start Simple**: Begin with simpler transformations (rigid, similarity) before trying affine or projective
-2. **Preprocessing**: Remove outliers and normalize coordinates before alignment
-3. **Use Features**: When available, feature-based alignment often provides better results
-4. **Validation**: Always validate alignment quality with holdout points
-5. **Visualization**: Visually inspect alignment results to catch issues metrics might miss
-6. **Iterative Approach**: For difficult cases, try iterative alignment with progressively more complex transformations
-7. **Common Markers**: For multi-modal data, focus on features/markers present in both datasets
-
-## Xenium to Metabolomics Alignment
-
-### Overview
-
-Aligning 10X Xenium spatial transcriptomics data with spatial metabolomics data presents unique challenges:
-- Different resolution and sampling density
-- Different coordinate systems and scaling
-- Potential tissue deformation between modalities
-- Different feature types (genes vs. metabolites)
-
-SMINT provides a specialized module that leverages STalign's Large Deformation Diffeomorphic Metric Mapping (LDDMM) to perform this alignment.
-
-### Quick Start
+If `stalign_available()` returns `False`, check numpy first:
 
 ```python
-from smint.alignment import align_xenium_to_metabolomics
-
-# Basic usage
-aligned_data = align_xenium_to_metabolomics(
-    xenium_file="path/to/xenium_data.csv",
-    metabolomics_file="path/to/metabolomics_data.csv",
-    output_dir="alignment_results",
-    pixel_size=30,
-    visualize=True
-)
+from smint.alignment import stalign_available
+print(stalign_available())
 ```
-
-### Advanced Usage
-
-For more complex alignment tasks, you can customize the parameters:
-
-```python
-from smint.alignment import align_xenium_to_metabolomics
-
-# Advanced usage with custom parameters
-aligned_data = align_xenium_to_metabolomics(
-    xenium_file="path/to/xenium_data.csv",
-    metabolomics_file="path/to/metabolomics_data.csv",
-    output_dir="alignment_results",
-    pixel_size=30,
-    xenium_x_col="x_centroid",
-    xenium_y_col="y_centroid",
-    met_x_col="x",
-    met_y_col="y",
-    lddmm_params={
-        'niter': 1500,        # More iterations for difficult alignments
-        'sigmaM': 0.3,        # Smaller kernel for more local deformations
-        'sigmaB': 1.0,        # Control smoothness of backward map
-        'sigmaA': 1.0,        # Control smoothness of forward map
-        'epV': 600,           # Regularization parameter
-        'diffeo_start': 30    # Start diffeomorphic transformation earlier
-    },
-    visualize=True,
-    save_intermediate=True    # Save intermediate results for debugging
-)
-```
-
-### Optimizing Alignment Quality
-
-The alignment quality depends on several factors:
-
-1. **Pixel Size for Rasterization**: 
-   - Typically 20-50µm works well for Xenium data
-   - Too small: Results in sparse representation
-   - Too large: Loses spatial resolution
-   - Start with 30µm and adjust based on results
-
-2. **LDDMM Parameters**:
-   - `sigmaM`: Controls local deformation flexibility (smaller = more flexible)
-   - `sigmaB/sigmaA`: Controls transformation smoothness
-   - `epV`: Regularization strength (higher = smoother but less accurate)
-   - `niter`: Number of iterations (higher = potentially better but slower)
-
-3. **Pre-processing**:
-   - Ensure coordinates are in the same scale
-   - Remove outlier points that could distort alignment
-   - For very different orientations, consider manual pre-alignment
-
-For detailed guidance on alignment optimization, see the [full Xenium-Metabolomics alignment documentation](xenium_metabolomics_alignment.md).
