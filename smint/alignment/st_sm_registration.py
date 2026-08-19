@@ -39,6 +39,7 @@ overlay, so the choice is always explicit and always recorded in the output.
 import os
 import glob
 import logging
+from pathlib import Path
 from typing import Iterable, Optional, Sequence, Set, Tuple
 
 import numpy as np
@@ -104,13 +105,54 @@ def stalign_available() -> bool:
         return False
 
 
+def _preload_cuda_linalg() -> None:
+    """
+    Load torch's CUDA linalg backend eagerly, by absolute path.
+
+    ``torch.linalg.inv`` -- which STalign's LDDMM calls once per iteration to
+    invert the affine -- lazily ``dlopen``s ``libtorch_cuda_linalg.so`` by
+    *bare name*, so the loader has to find it on a search path. Whether it does
+    depends on which object's RPATH the dynamic loader attributes the call to,
+    which in turn depends on the environment the worker inherited. A job
+    submitted from the napari GUI can therefore die several minutes in with::
+
+        RuntimeError: Error in dlopen: libtorch_cuda_linalg.so:
+        cannot open shared object file: No such file or directory
+
+    on the same node and the same install where an identical run from a shell
+    succeeds. Loading the library here by absolute path puts it in the link map
+    under its SONAME, so torch's later bare-name ``dlopen`` matches the open
+    handle and never touches the filesystem search path.
+
+    Best effort: a failure here is logged, not raised, so that CPU runs and any
+    future torch layout keep working.
+    """
+    import ctypes
+    import torch
+
+    lib = Path(torch.__file__).parent / "lib" / "libtorch_cuda_linalg.so"
+    if not lib.exists():
+        logger.debug("No CUDA linalg backend to preload at %s", lib)
+        return
+    try:
+        ctypes.CDLL(str(lib), mode=ctypes.RTLD_GLOBAL)
+        logger.debug("Preloaded %s", lib)
+    except OSError as exc:
+        logger.warning(
+            "Could not preload %s (%s); torch.linalg on CUDA may fail with a "
+            "dlopen error.", lib, exc
+        )
+
+
 def _resolve_device(device=None) -> str:
     """Return an explicit torch device string, preferring CUDA when present."""
     import torch
 
-    if device is not None:
-        return device
-    return "cuda:0" if torch.cuda.is_available() else "cpu"
+    if device is None:
+        device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    if str(device).startswith("cuda"):
+        _preload_cuda_linalg()
+    return device
 
 
 # --------------------------------------------------------------------------
