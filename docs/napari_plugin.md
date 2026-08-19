@@ -124,6 +124,11 @@ when available, and GPU results are bit-identical to CPU. The speedup is modest
 at typical raster sizes — 82 s versus 112 s on 8 CPU cores for a Venture 5
 section — so CPU is a perfectly reasonable default.
 
+**GPU type** picks the card. `gpuq` holds a mix of A30, A100 and P100, and
+"any" takes whichever is free, so a run can land on a much older card than the
+one it was timed on. It defaults to the A30, which registration is validated
+against. The dropdown lists what the cluster actually advertises.
+
 ---
 
 ## Troubleshooting

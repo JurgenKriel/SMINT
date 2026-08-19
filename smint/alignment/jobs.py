@@ -84,6 +84,38 @@ def available_partitions() -> list:
     return sorted({line.strip().rstrip("*") for line in result.stdout.split() if line.strip()})
 
 
+def available_gpu_types(partition: Optional[str] = None) -> list:
+    """
+    GPU types this cluster advertises, via ``sinfo``.
+
+    ``sinfo`` reports gres as ``gpu:A30:4(S:0-1)``; the middle field is the
+    type name ``--gres=gpu:<type>:<n>`` expects. Pass ``partition`` to list
+    only the types that partition offers.
+
+    Returns an empty list when SLURM is unavailable, so callers can fall back
+    rather than blocking on a check they cannot perform.
+    """
+    if not shutil.which("sinfo"):
+        return []
+    cmd = ["sinfo", "-h", "-o", "%G"]
+    if partition:
+        cmd += ["-p", partition]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+    except (subprocess.SubprocessError, OSError):
+        return []
+    if result.returncode != 0:
+        return []
+
+    types = set()
+    for line in result.stdout.split():
+        # "gpu:A30:4(S:0-1)" -> "A30"; nodes without GPUs report "(null)"
+        fields = line.strip().split(":")
+        if len(fields) >= 3 and fields[0] == "gpu":
+            types.add(fields[1])
+    return sorted(types)
+
+
 def default_worker_python() -> str:
     """
     Best guess at an interpreter that can run registration.
@@ -114,6 +146,12 @@ class SlurmResources:
     that actually has them -- asking for a GPU on a CPU partition leaves the
     job pending indefinitely rather than failing, which is easy to mistake for
     a slow queue. :meth:`check` warns about that combination.
+
+    ``gpu_type`` pins which card the job gets. A bare ``--gres=gpu:N`` is a
+    lottery across every model the partition holds -- on this cluster ``gpuq``
+    mixes A30, A100 and P100 -- so a run can land on a card generations older
+    than the one it was timed on. Registration is validated on the A30, which
+    is why that is the default. Set it to ``None`` to accept any card.
     """
 
     partition: str = "regular"
@@ -122,6 +160,7 @@ class SlurmResources:
     time_limit: str = "04:00:00"
     job_name: str = "smint_register"
     gpus: int = 0
+    gpu_type: Optional[str] = "A30"
 
     #: Substrings that identify a GPU partition on this cluster.
     GPU_PARTITION_HINTS = ("gpu", "a100", "a30", "p100", "a10")
@@ -162,6 +201,17 @@ class SlurmResources:
                 self.partition,
             )
 
+        if self.gpus and self.gpu_type:
+            # An unknown type is rejected by sbatch outright, so name the real
+            # options rather than let "Invalid generic resource" stand alone.
+            types = available_gpu_types(self.partition)
+            if types and self.gpu_type not in types:
+                raise ValueError(
+                    f"GPU type {self.gpu_type!r} is not offered by partition "
+                    f"{self.partition!r}. Available: {', '.join(types)}. "
+                    "Set gpu_type=None to accept any card."
+                )
+
     def sbatch_directives(self, log_dir: Path) -> str:
         lines = [
             f"#SBATCH --job-name={self.job_name}",
@@ -173,7 +223,8 @@ class SlurmResources:
             f"#SBATCH --error={log_dir / (self.job_name + '_%j.err')}",
         ]
         if self.gpus:
-            lines.append(f"#SBATCH --gres=gpu:{self.gpus}")
+            gres = f"gpu:{self.gpu_type}:{self.gpus}" if self.gpu_type else f"gpu:{self.gpus}"
+            lines.append(f"#SBATCH --gres={gres}")
         return "\n".join(lines)
 
 

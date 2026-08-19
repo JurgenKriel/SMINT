@@ -455,6 +455,9 @@ class RegistrationWidget(Container):
     registration crash cannot take napari down.
     """
 
+    #: Card registration is validated on; preselected wherever it is offered.
+    DEFAULT_GPU_TYPE = "A30"
+
     def __init__(self, viewer: Viewer):
         from magicgui.widgets import (
             CheckBox, ComboBox, FileEdit, FloatSpinBox, SpinBox,
@@ -498,6 +501,8 @@ class RegistrationWidget(Container):
             value="04:00:00",
         )
         self._gpus = SpinBox(label="GPUs", value=0, min=0, max=4)
+        self._gpu_type = ComboBox(label="GPU type", choices=self._gpu_types)
+        self._prefer_default_gpu()
 
         self._submit_button = PushButton(text="Submit registration")
         self._status = Label(value="Choose input files.")
@@ -505,6 +510,7 @@ class RegistrationWidget(Container):
         self._source_file.changed.connect(self._on_source_changed)
         self._target_file.changed.connect(self._on_target_changed)
         self._round.changed.connect(self._on_round_changed)
+        self._partition.changed.connect(self._on_partition_changed)
         self._submit_button.changed.connect(self._on_submit)
 
         super().__init__(widgets=[
@@ -513,7 +519,8 @@ class RegistrationWidget(Container):
             self._target_file, self._target_x, self._target_y,
             self._source_points, self._target_points, self._output_dir,
             self._method, self._max_distance, self._niter,
-            self._partition, self._cpus, self._memory, self._time_limit, self._gpus,
+            self._partition, self._cpus, self._memory, self._time_limit,
+            self._gpus, self._gpu_type,
             self._submit_button, self._status,
         ])
         self._on_round_changed()
@@ -525,6 +532,32 @@ class RegistrationWidget(Container):
 
         found = available_partitions()
         return found or ["regular", "gpuq", "long", "bigmem"]
+
+    def _gpu_types(self, _widget=None):
+        """
+        Offer the GPU types the selected partition actually has.
+
+        "any" maps to a bare ``--gres=gpu:N``, which takes whichever card is
+        free -- on a mixed partition that can be one several generations older
+        than the run was timed on.
+        """
+        from smint.alignment.jobs import available_gpu_types
+
+        partition = getattr(self, "_partition", None)
+        found = available_gpu_types(partition.value if partition else None)
+        return ["any"] + (found or ["A30", "A100", "P100", "A10"])
+
+    def _prefer_default_gpu(self):
+        """Select the A30 when the partition offers it, else fall back to "any"."""
+        choices = list(self._gpu_type.choices)
+        self._gpu_type.value = (
+            self.DEFAULT_GPU_TYPE if self.DEFAULT_GPU_TYPE in choices else "any"
+        )
+
+    def _on_partition_changed(self, _event=None):
+        """Re-offer GPU types for the newly chosen partition."""
+        self._gpu_type.reset_choices()
+        self._prefer_default_gpu()
 
     def _populate(self, path, x_widget, y_widget):
         """Fill coordinate dropdowns from a CSV header, preselecting a guess."""
@@ -614,6 +647,7 @@ class RegistrationWidget(Container):
                 partition=self._partition.value, cpus_per_task=int(self._cpus.value),
                 memory=self._memory.value, time_limit=self._time_limit.value,
                 gpus=int(self._gpus.value), job_name=f"smint_{round_type}",
+                gpu_type=None if self._gpu_type.value == "any" else self._gpu_type.value,
             ),
         )
 

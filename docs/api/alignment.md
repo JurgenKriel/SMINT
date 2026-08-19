@@ -269,7 +269,8 @@ node-local paths a compute node cannot see.
 
 ```python
 SlurmResources(partition="regular", cpus_per_task=8, memory="64G",
-               time_limit="04:00:00", job_name="smint_register", gpus=0)
+               time_limit="04:00:00", job_name="smint_register", gpus=0,
+               gpu_type="A30")
 ```
 
 `check()` **raises** if the partition does not exist on this cluster — turning
@@ -277,6 +278,12 @@ SLURM's terse "Invalid partition name specified" into a message listing the
 valid options — and warns when `gpus > 0` on a non-GPU partition (the job would
 sit pending rather than fail) and vice versa. `available_partitions()` returns
 the cluster's partitions via `sinfo`, or an empty list off-cluster.
+
+`gpu_type` selects the card. It renders as `--gres=gpu:<type>:<n>`; setting it
+to `None` renders a bare `--gres=gpu:<n>`, which takes whichever model happens
+to be free. `check()` raises if the type is not one the chosen partition
+offers. `available_gpu_types(partition=None)` lists the cluster's GPU types via
+`sinfo`, or an empty list off-cluster.
 
 ### `submit` / `poll`
 
