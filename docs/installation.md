@@ -19,17 +19,19 @@ SMINT requires the following:
 
 ## Installation Methods
 
-### Option 1: Install from PyPI (Recommended)
+SMINT is not published on PyPI — the `smint` name there is an unrelated
+placeholder, so `pip install smint` will not install this package. Install from
+GitHub instead.
 
-The simplest way to install SMINT is using pip:
+### Option 1: Install from GitHub
 
 ```bash
-pip install smint
+pip install "git+https://github.com/JurgenKriel/SMINT.git"
 ```
 
 ### Option 2: Install from Source
 
-For the latest development version or to contribute to the project:
+For development or to contribute to the project:
 
 ```bash
 git clone https://github.com/JurgenKriel/SMINT.git
@@ -51,22 +53,12 @@ These dependencies are automatically installed when you install SMINT:
 - **dask**: For parallel computing (base package)
 - **scikit-image**: For image processing
 - **tifffile**: For reading/writing OME-TIFF files
+- **cellpose**: For cell segmentation models
+- **opencv-python**: For image processing and contour extraction
 
 ### Optional Dependencies
 
 These dependencies enable additional features but are not required for core functionality:
-
-#### Cell Segmentation
-
-- **cellpose**: For cell segmentation models
-  ```bash
-  pip install cellpose
-  ```
-
-- **opencv-python**: For image processing and contour extraction
-  ```bash
-  pip install opencv-python
-  ```
 
 #### Distributed Processing
 
@@ -92,15 +84,22 @@ These dependencies enable additional features but are not required for core func
 To install SMINT with all optional dependencies:
 
 ```bash
-pip install "smint[all]"
+pip install "smint[all] @ git+https://github.com/JurgenKriel/SMINT.git"
 ```
 
-Or selectively:
+Or selectively, from a source checkout:
 
 ```bash
-pip install "smint[segmentation]"  # For cell segmentation features
-pip install "smint[distributed]"   # For distributed computing features
-pip install "smint[r]"             # For R integration features
+pip install -e ".[r_integration]"  # For R integration features
+pip install -e ".[docs]"           # To build this documentation
+pip install -e ".[dev]"            # pytest, flake8, black
+```
+
+Registration with STalign also needs STalign itself, which is installed
+separately and requires numpy < 2 (see [Alignment](alignment.md#environments)):
+
+```bash
+pip install --upgrade "git+https://github.com/JEFworks-Lab/STalign.git"
 ```
 
 ## Graceful Dependency Handling

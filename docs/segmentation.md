@@ -19,7 +19,7 @@ The SMINT segmentation pipeline consists of several key stages:
 SMINT supports the following image formats:
 - **OME-TIFF** (preferred) - Multi-channel, multi-resolution format with metadata
 - **TIFF** - Standard format, single or multi-channel
-- **CZI** - Carl Zeiss format, requires additional processing
+- **CZI** - Carl Zeiss format; export tiles first (see `segmentation/export_czi_tile_coordinates.ipynb`)
 
 ### Required Image Properties
 
@@ -33,78 +33,56 @@ For optimal segmentation results, input images should have:
 
 ## Quick Start
 
+Segmentation is run with `scripts/run_segmentation.py` from a source checkout.
+Model parameters (thresholds, channels, adaptive nuclei settings) come from a
+YAML config — see [Configuration](configuration.md) and
+`configs/segmentation_config.yaml`.
+
 ### Single-Process Segmentation
 
-For standard whole-slide images that fit in memory:
-
 ```bash
-python -m scripts.run_segmentation \
+python scripts/run_segmentation.py \
     --image path/to/image.ome.tiff \
     --output-dir results/segmentation \
-    --cell-channel 0 \
-    --nuclei-channel 1 \
+    --config configs/segmentation_config.yaml \
     --cell-diameter 60 \
     --nuclei-diameter 30 \
     --visualize
 ```
 
-### Multi-GPU Distributed Segmentation
+### Distributed Segmentation
 
-For very large images requiring multiple GPUs:
+Add `--distributed` to process chunks in parallel with Dask, and `--use-gpu`
+to run on the available GPUs:
 
 ```bash
-python -m scripts.run_distributed_segmentation \
+python scripts/run_segmentation.py \
     --image path/to/large_image.ome.tiff \
     --output-dir results/segmentation \
-    --cell-channel 0 \
-    --nuclei-channel 1 \
-    --cell-diameter 60 \
-    --nuclei-diameter 30 \
-    --chunk-size 2048 2048 \
-    --gpus 0 1 2 3 \
-    --visualize
+    --config configs/segmentation_config.yaml \
+    --distributed \
+    --use-gpu \
+    --chunk-size 2048 2048
 ```
 
-## Detailed Parameter Guide
+## Command-Line Options
 
-### Common Parameters
-
-| Parameter | Description | Default | Recommended Range |
-|-----------|-------------|---------|------------------|
-| `--image` | Path to input image | Required | - |
-| `--output-dir` | Directory to save results | Required | - |
-| `--cell-channel` | Channel index for cell segmentation | 0 | Depends on staining |
-| `--nuclei-channel` | Channel index for nuclei segmentation | 1 | Depends on staining |
-| `--cell-diameter` | Expected cell diameter in pixels | 80 | 40-120 |
-| `--nuclei-diameter` | Expected nuclei diameter in pixels | 40 | 20-60 |
-| `--flow-threshold` | Flow threshold for Cellpose | 0.4 | 0.2-0.8 |
-| `--cellprob-threshold` | Cell probability threshold | -1.0 | -3.0-0.0 |
-| `--visualize` | Generate visualizations | False | - |
-| `--chunk-size` | Size of image chunks to process | 2048 2048 | Depends on GPU memory |
-
-### Advanced Parameters
-
-| Parameter | Description | Default | Notes |
-|-----------|-------------|---------|-------|
-| `--pretrained-model` | Path to custom Cellpose model | None | Use for specialized cell types |
-| `--model-type` | Cellpose model type | "cyto" | Options: "cyto", "nuclei", "cyto2", or custom path |
-| `--min-cell-size` | Minimum cell size in pixels | 15 | Filters out small objects |
-| `--omit-overlap` | Remove overlapping cell masks | False | Useful for densely packed cells |
-| `--adaptive-threshold` | Use adaptive thresholding | False | Helps with variable image intensity |
-| `--normalize-channels` | Normalize channel intensities | True | Improves segmentation quality |
-| `--save-zarr` | Save results in Zarr format | False | Useful for very large datasets |
-| `--no-nuclei` | Skip nuclei segmentation | False | Speeds up processing |
-
-### Distributed Processing Parameters
-
-| Parameter | Description | Default | Notes |
-|-----------|-------------|---------|-------|
-| `--gpus` | GPU device IDs to use | None | Space-separated list of GPU IDs |
-| `--workers-per-gpu` | Dask workers per GPU | 1 | Increase for CPU-bound tasks |
-| `--memory-limit` | Memory limit per worker | "10GB" | Adjust based on available RAM |
-| `--scheduler-address` | Dask scheduler address | None | For connecting to existing cluster |
-| `--overlap` | Overlap between chunks | 64 | Prevents boundary artifacts |
-| `--batch-size` | Number of chunks per batch | 4 | Adjust based on GPU memory |
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--image` | Path to input image | Required |
+| `--output-dir` | Directory to save results | Required |
+| `--config` | YAML configuration file | Built-in defaults |
+| `--distributed` | Run in distributed mode using Dask | Off |
+| `--use-gpu` | Use GPU for computation (distributed mode; single-process uses the GPU when Cellpose finds one) | Off |
+| `--cell-model` | Cell model: built-in name (e.g. `cyto`) or path to a custom model | From config |
+| `--nuclei-model` | Nuclei model: built-in name (e.g. `nuclei`) or path to a custom model | From config |
+| `--cell-diameter` | Expected cell diameter in pixels | From config |
+| `--nuclei-diameter` | Expected nuclei diameter in pixels | From config |
+| `--chunk-size` | Chunk height and width | `2048 2048` |
+| `--visualize` | Generate visualizations | Off |
+| `--live-viewer` | Write live-view images for the live viewer | Off |
+| `--save-config` | Save the effective configuration to the output directory | Off |
+| `--debug` | Enable debug logging | Off |
 
 ## Segmentation API
 
@@ -138,29 +116,23 @@ results = process_large_image(
 )
 
 # Access the results
-cell_outlines = results["cell_outlines"]
-nuclei_outlines = results["nuclei_outlines"]
+print(results["total_cells"], results["total_nuclei"])
+cells_csv = results["cells_csv_path"]     # <csv_base_path>_cells.csv
+nuclei_csv = results["nuclei_csv_path"]   # <csv_base_path>_nuclei.csv
 ```
 
 For distributed processing:
 
 ```python
-from smint.segmentation.distributed_seg import process_large_image_distributed
+from smint.segmentation import run_distributed_segmentation
 
-# Basic distributed usage
-results = process_large_image_distributed(
+results = run_distributed_segmentation(
     image_path="path/to/large_image.ome.tiff",
-    output_zarr_path="results/segmentation.zarr",
-    csv_path="results/segmentation.csv",
-    blocksize=(2048, 2048),
-    channel=0,  # Main channel for segmentation
-    gpus=[0, 1, 2, 3],  # List of GPU IDs
-    overlap=64,  # Overlap between chunks
-    batch_size=4,  # Number of chunks per batch
-    model_type="cyto",  # Cellpose model type
-    diameter=80.0,  # Expected cell diameter
-    flow_threshold=0.4,
-    cellprob_threshold=-1.5
+    output_dir="results/segmentation",
+    config_path="configs/segmentation_config.yaml",
+    n_workers=None,          # None = use all available workers
+    use_gpu=True,
+    chunk_size=(2048, 2048),
 )
 ```
 
@@ -174,48 +146,47 @@ from smint.segmentation import process_large_image
 results = process_large_image(
     # Basic parameters as above, plus:
     enable_adaptive_nuclei=True,
-    nuclei_adaptive_flow_min=0.1,
-    nuclei_adaptive_flow_step_decrement=0.1,
-    nuclei_max_adaptive_attempts=5,
+    nuclei_adaptive_cellprob_lower_limit=-6.0,
+    nuclei_adaptive_cellprob_step_decrement=0.2,
+    nuclei_max_adaptive_attempts=3,
     adaptive_nuclei_trigger_ratio=0.05  # Retry if nuclei count < 5% of cells
 )
 ```
 
 ## Output Files and Formats
 
-SMINT generates the following output files:
+`process_large_image` writes:
 
 | File | Description | Format |
 |------|-------------|--------|
-| `cells_outlines.csv` | Cell outline coordinates | CSV with columns: `cell_id,x,y,chunk_id` |
-| `nuclei_outlines.csv` | Nuclei outline coordinates | CSV with columns: `nuclei_id,x,y,chunk_id` |
-| `cell_features.csv` | Extracted cell features | CSV with measurements for each cell |
-| `segmentation_metadata.json` | Segmentation parameters and stats | JSON |
-| `visualization/*.png` | Visualization images | PNG |
-| `chunks/*.npy` | Raw segmentation masks (if saved) | NumPy arrays |
-| `*.zarr` | Zarr store (for distributed processing) | Zarr directory structure |
+| `<csv_base_path>_cells.csv` | Cell outline coordinates | CSV with `global_cell_id`, `x`, `y` |
+| `<csv_base_path>_nuclei.csv` | Nuclei outline coordinates | CSV with `global_cell_id`, `x`, `y` |
+| `chunk_<y>_<x>.png` | Per-chunk visualizations (with `visualize=True`) | PNG |
+| `live_update.png` | Latest chunk, for the live viewer | PNG |
+
+`run_distributed_segmentation` writes per-chunk `outlines_<y>_<x>_<model>.csv`
+files and merges them into `combined_cell_outlines.csv`.
 
 ## Live Segmentation Viewer
 
-SMINT includes a live segmentation viewer for monitoring the segmentation process in real-time:
+SMINT includes a Tkinter viewer for monitoring segmentation in real time. From
+the command line:
+
+```bash
+smint-viewer path/to/image.ome.tiff results/segmentation results/segmentation/current_tile_info.txt --interval 1000
+```
+
+Or from Python:
 
 ```python
-from smint.visualization.live_scan_viewer import LiveScanViewer
-import tkinter as tk
+from smint.visualization import run_viewer
 
-# Initialize the viewer
-root = tk.Tk()
-viewer = LiveScanViewer(
-    master=root,
+run_viewer(
     full_scan_path="path/to/image.ome.tiff",
     segmentation_history_dir="results/segmentation",
-    tile_info_path="results/tile_info.json",
-    update_interval_ms=1000  # Update every 1 second
+    tile_info_path="results/segmentation/current_tile_info.txt",
+    update_interval_ms=1000,  # Update every 1 second
 )
-
-# Start the viewer
-viewer.pack(fill=tk.BOTH, expand=True)
-root.mainloop()
 ```
 
 ## Common Issues and Troubleshooting
@@ -228,7 +199,7 @@ root.mainloop()
 ### Memory Errors
 
 - **Problem**: "CUDA out of memory" or other memory-related errors
-- **Solution**: Reduce chunk_size, increase overlap, or use distributed processing with multiple GPUs.
+- **Solution**: Reduce chunk_size, or use distributed processing with multiple GPUs.
 
 ### Processing Speed
 
@@ -238,7 +209,7 @@ root.mainloop()
 ### Boundary Artifacts
 
 - **Problem**: Cell masks cut off at chunk boundaries
-- **Solution**: Increase overlap between chunks or post-process with stitch_masks=True.
+- **Solution**: Use larger chunks so fewer cells straddle a boundary.
 
 ## Performance Benchmarks
 

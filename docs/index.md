@@ -47,19 +47,19 @@ SMINT provides a comprehensive toolkit for processing and analyzing spatial omic
 
 - **Live Viewer**: Monitor segmentation progress with a live viewer
 - **Segmentation Overlays**: Visualize segmentation results overlaid on the original image
-- **Feature Plots**: Generate feature plots and spatial heatmaps
+- **RGB Composites**: Combine channels into composite images for review
 
 ### HPC Deployment
 
 - **SLURM Integration**: Ready-to-use SLURM submission scripts for HPC deployment
-- **Resource Management**: Optimized resource allocation for different processing stages
-- **Checkpointing**: Resume processing from checkpoints after interruptions
+- **Registration Jobs**: Submit registration to SLURM (CPU or GPU) from Python or napari
 
 ## Getting Started
 
 - [Installation](installation.md): Install SMINT and its dependencies
 - [Segmentation](segmentation.md): Run cell segmentation on whole-slide images
 - [Alignment](alignment.md): Align spatial transcriptomics data
+- [napari Plugin](napari_plugin.md): Interactive pre-registration, landmarks and job submission
 - [R Integration](r_integration.md): Use R scripts and functions with SMINT
 - [Examples](examples.md): Complete examples of SMINT workflows
 - [Configuration](configuration.md): Configure SMINT for your specific needs

@@ -90,7 +90,7 @@ registration path.
 
 **Check pairing** validates counts and the three-pair minimum an affine needs.
 **Save landmark pair** writes `<prefix>_sm_points.npy` and
-`<prefix>_st_points.npy` in exactly the format `point_annotator.py` uses, so
+`<prefix>_st_points.npy` in exactly the format STalign's `point_annotator.py` uses, so
 plugin output and existing landmark files are interchangeable.
 
 ---

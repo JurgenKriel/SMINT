@@ -20,13 +20,13 @@ Most HPC systems use environment modules. Load the required modules and install 
 
 ```bash
 # Load required modules
-module load python/3.8
+module load python/3.11
 module load cuda/11.3
 module load miniconda3
 
 # Create a conda environment
-conda create -n smint python=3.8
+conda create -n smint python=3.11
 conda activate smint
 
 # Install SMINT
-pip install smint
+pip install "git+https://github.com/JurgenKriel/SMINT.git"
