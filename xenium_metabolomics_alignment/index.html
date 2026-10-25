@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -295,28 +295,6 @@
     
   
   Visualizations
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../api/segmentation/" class="md-tabs__link">
-          
-  
-  
-    
-  
-  API Reference
 
         </a>
       </li>
@@ -1272,249 +1250,6 @@
   
 
     
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    API Reference
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    API Reference
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/segmentation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Segmentation
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/preprocessing/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Preprocessing
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/visualization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Visualization
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/alignment/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Alignment
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/r_integration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    R Integration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/utils/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Utilities
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -1833,11 +1568,11 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">read_sm_matrix</span><span class="p">(</span><span class="n">mtx_file</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Read a Spatial Metabolomics matrix file and extract coordinates and data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading matrix file...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Reading matrix file..."</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">mtx_file</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -1848,54 +1583,54 @@
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">continue</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error reading matrix file: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error reading matrix file: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s1">'x'</span><span class="p">,</span> <span class="s1">'y'</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span><span class="si">}</span><span class="s2"> coordinate pairs&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">numeric_cols</span><span class="p">)</span><span class="si">}</span><span class="s2"> m/z values&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span><span class="si">}</span><span class="s2"> coordinate pairs"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">numeric_cols</span><span class="p">)</span><span class="si">}</span><span class="s2"> m/z values"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">numeric_cols</span>
 </code></pre></div>
 <h3 id="xenium-data">Xenium Data<a class="headerlink" href="#xenium-data" title="Permanent link">&para;</a></h3>
 <p>Xenium data should be processed to extract cell centroids:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_xenium_data</span><span class="p">(</span><span class="n">xenium_file</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Read 10X Xenium data and extract cell coordinates</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading Xenium cell coordinates...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Reading Xenium cell coordinates..."</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">xenium_file</span><span class="p">)</span>
         <span class="c1"># Ensure the necessary columns exist</span>
-        <span class="n">required_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x_centroid&#39;</span><span class="p">,</span> <span class="s1">&#39;y_centroid&#39;</span><span class="p">]</span>
+        <span class="n">required_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'x_centroid'</span><span class="p">,</span> <span class="s1">'y_centroid'</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">required_cols</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Required column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39; not found in Xenium data&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Required column '</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">' not found in Xenium data"</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error reading Xenium file: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error reading Xenium file: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s1">&#39;x_centroid&#39;</span><span class="p">,</span> <span class="s1">&#39;y_centroid&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s1">'x_centroid'</span><span class="p">,</span> <span class="s1">'y_centroid'</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span><span class="si">}</span><span class="s2"> cell coordinates&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span><span class="si">}</span><span class="s2"> cell coordinates"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">data</span>
 </code></pre></div>
 <h2 id="step-2-visualizing-data-before-alignment">Step 2: Visualizing Data Before Alignment<a class="headerlink" href="#step-2-visualizing-data-before-alignment" title="Permanent link">&para;</a></h2>
 <p>Visualizing both datasets before alignment helps assess the initial misalignment and identify potential challenges:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">plot_non_zero_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Coordinates Plot&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">plot_non_zero_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Coordinates Plot"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Plot the coordinates of all non-zero m/z ratios for spatial metabolomics</span>
 <span class="sd">    or all cell coordinates for Xenium data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 
     <span class="c1"># For spatial metabolomics data</span>
-    <span class="k">if</span> <span class="s1">&#39;mz_values&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">mz_values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="s1">'mz_values'</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">mz_values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'.'</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()]</span>
         <span class="k">for</span> <span class="n">mz</span> <span class="ow">in</span> <span class="n">mz_values</span><span class="p">:</span>
             <span class="n">column_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mz</span><span class="p">)</span>
             <span class="n">intensities</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
@@ -1906,19 +1641,19 @@
 
             <span class="c1"># Plot non-zero coordinates</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">filtered_coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">filtered_coordinates</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> 
-                        <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+                        <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'blue'</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># For Xenium data, plot all coordinates</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> 
-                    <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+                    <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'red'</span><span class="p">)</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;X coordinate&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Y coordinate&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'X coordinate'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Y coordinate'</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">title</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span><span class="w"> </span><span class="s1">'_'</span><span class="p">)</span><span class="si">}</span><span class="s2">.png"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="step-3-rasterization">Step 3: Rasterization<a class="headerlink" href="#step-3-rasterization" title="Permanent link">&para;</a></h2>
@@ -1926,7 +1661,7 @@
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">STalign</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">rasterize_coordinates</span><span class="p">(</span><span class="n">x_coords</span><span class="p">,</span> <span class="n">y_coords</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert point coordinates to a rasterized grid</span>
 
 <span class="sd">    Parameters:</span>
@@ -1944,16 +1679,16 @@
 <span class="sd">    --------</span>
 <span class="sd">    tuple</span>
 <span class="sd">        (X grid, Y grid, intensity values, figure if verbose=True)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rasterizing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">x_coords</span><span class="p">)</span><span class="si">}</span><span class="s2"> points with pixel size </span><span class="si">{</span><span class="n">pixel_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rasterizing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">x_coords</span><span class="p">)</span><span class="si">}</span><span class="s2"> points with pixel size </span><span class="si">{</span><span class="n">pixel_size</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Perform rasterization</span>
     <span class="n">X_grid</span><span class="p">,</span> <span class="n">Y_grid</span><span class="p">,</span> <span class="n">intensity</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">STalign</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span><span class="n">x_coords</span><span class="p">,</span> <span class="n">y_coords</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">pixel_size</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rasterized grid shape: </span><span class="si">{</span><span class="n">intensity</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rasterized_grid_size_</span><span class="si">{</span><span class="n">pixel_size</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rasterized grid shape: </span><span class="si">{</span><span class="n">intensity</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">"rasterized_grid_size_</span><span class="si">{</span><span class="n">pixel_size</span><span class="si">}</span><span class="s2">.png"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">X_grid</span><span class="p">,</span> <span class="n">Y_grid</span><span class="p">,</span> <span class="n">intensity</span><span class="p">,</span> <span class="n">fig</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="kc">None</span>
@@ -1965,7 +1700,7 @@
 <h2 id="step-4-running-lddmm-alignment">Step 4: Running LDDMM Alignment<a class="headerlink" href="#step-4-running-lddmm-alignment" title="Permanent link">&para;</a></h2>
 <p>The Large Deformation Diffeomorphic Metric Mapping (LDDMM) algorithm performs the alignment:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_lddmm_alignment</span><span class="p">(</span><span class="n">source_grid</span><span class="p">,</span> <span class="n">target_grid</span><span class="p">,</span> <span class="n">source_intensity</span><span class="p">,</span> <span class="n">target_intensity</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Perform LDDMM alignment between source and target datasets</span>
 
 <span class="sd">    Parameters:</span>
@@ -1985,28 +1720,28 @@
 <span class="sd">    --------</span>
 <span class="sd">    dict</span>
 <span class="sd">        LDDMM output containing transformation parameters</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Default parameters if none provided</span>
     <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;niter&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>  <span class="c1"># Maximum iterations</span>
-            <span class="s1">&#39;diffeo_start&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>  <span class="c1"># Start diffeomorphic transformation earlier</span>
-            <span class="s1">&#39;sigmaM&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># Kernel width for momentum field</span>
-            <span class="s1">&#39;sigmaB&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span>  <span class="c1"># Kernel width for backward map</span>
-            <span class="s1">&#39;sigmaA&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span>  <span class="c1"># Kernel width for forward map</span>
-            <span class="s1">&#39;epV&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>     <span class="c1"># Regularization parameter</span>
+            <span class="s1">'niter'</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>  <span class="c1"># Maximum iterations</span>
+            <span class="s1">'diffeo_start'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>  <span class="c1"># Start diffeomorphic transformation earlier</span>
+            <span class="s1">'sigmaM'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># Kernel width for momentum field</span>
+            <span class="s1">'sigmaB'</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span>  <span class="c1"># Kernel width for backward map</span>
+            <span class="s1">'sigmaA'</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span>  <span class="c1"># Kernel width for forward map</span>
+            <span class="s1">'epV'</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>     <span class="c1"># Regularization parameter</span>
         <span class="p">}</span>
 
     <span class="c1"># Check for GPU availability and set device</span>
     <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;device&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;cuda:0&#39;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using GPU for LDDMM calculation&quot;</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">'device'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'cuda:0'</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Using GPU for LDDMM calculation"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;device&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using CPU for LDDMM calculation (this may be slow)&quot;</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">'device'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'cpu'</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Using CPU for LDDMM calculation (this may be slow)"</span><span class="p">)</span>
 
     <span class="c1"># Run LDDMM</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running LDDMM alignment...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Running LDDMM alignment..."</span><span class="p">)</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">STalign</span><span class="o">.</span><span class="n">LDDMM</span><span class="p">(</span>
         <span class="n">source_grid</span><span class="p">,</span>  <span class="c1"># [Y_source, X_source]</span>
         <span class="n">source_intensity</span><span class="p">,</span>
@@ -2015,7 +1750,7 @@
         <span class="o">**</span><span class="n">params</span>
     <span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LDDMM alignment complete&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"LDDMM alignment complete"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">output</span>
 </code></pre></div>
 <h3 id="lddmm-parameters-explained">LDDMM Parameters Explained<a class="headerlink" href="#lddmm-parameters-explained" title="Permanent link">&para;</a></h3>
@@ -2076,7 +1811,7 @@
 <h2 id="step-5-transforming-point-coordinates">Step 5: Transforming Point Coordinates<a class="headerlink" href="#step-5-transforming-point-coordinates" title="Permanent link">&para;</a></h2>
 <p>After obtaining the LDDMM transformation, apply it to transform the original spatial metabolomics coordinates:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">transform_points</span><span class="p">(</span><span class="n">lddmm_output</span><span class="p">,</span> <span class="n">source_coordinates</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Transform source coordinates using LDDMM output</span>
 
 <span class="sd">    Parameters:</span>
@@ -2090,17 +1825,17 @@
 <span class="sd">    --------</span>
 <span class="sd">    numpy.ndarray</span>
 <span class="sd">        Transformed coordinates (shape: n x 2)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Extract transformation parameters</span>
-    <span class="n">A</span> <span class="o">=</span> <span class="n">lddmm_output</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">]</span>
-    <span class="n">v</span> <span class="o">=</span> <span class="n">lddmm_output</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">]</span>
-    <span class="n">xv</span> <span class="o">=</span> <span class="n">lddmm_output</span><span class="p">[</span><span class="s1">&#39;xv&#39;</span><span class="p">]</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">lddmm_output</span><span class="p">[</span><span class="s1">'A'</span><span class="p">]</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">lddmm_output</span><span class="p">[</span><span class="s1">'v'</span><span class="p">]</span>
+    <span class="n">xv</span> <span class="o">=</span> <span class="n">lddmm_output</span><span class="p">[</span><span class="s1">'xv'</span><span class="p">]</span>
 
     <span class="c1"># Ensure device is set correctly for tensor operations</span>
     <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">set_default_device</span><span class="p">(</span><span class="s1">&#39;cuda:0&#39;</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">set_default_device</span><span class="p">(</span><span class="s1">'cuda:0'</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">set_default_device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">set_default_device</span><span class="p">(</span><span class="s1">'cpu'</span><span class="p">)</span>
 
     <span class="c1"># Stack y and x coordinates (note the order for STalign)</span>
     <span class="n">stacked_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">source_coordinates</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">source_coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -2115,7 +1850,7 @@
 <h2 id="step-6-visualizing-alignment-results">Step 6: Visualizing Alignment Results<a class="headerlink" href="#step-6-visualizing-alignment-results" title="Permanent link">&para;</a></h2>
 <p>Visualize the alignment to assess quality:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">visualize_alignment</span><span class="p">(</span><span class="n">xenium_coords</span><span class="p">,</span> <span class="n">transformed_met_coords</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Visualize the alignment between Xenium and transformed metabolomics data</span>
 
 <span class="sd">    Parameters:</span>
@@ -2126,36 +1861,36 @@
 <span class="sd">        Transformed metabolomics coordinates (shape: m x 2)</span>
 <span class="sd">    output_path : str, optional</span>
 <span class="sd">        Path to save the visualization</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 
     <span class="c1"># Plot Xenium coordinates</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
         <span class="n">xenium_coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">xenium_coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
-        <span class="n">s</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Xenium&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span>
+        <span class="n">s</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Xenium'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'blue'</span>
     <span class="p">)</span>
 
     <span class="c1"># Plot transformed metabolomics coordinates</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
         <span class="n">transformed_met_coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">transformed_met_coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
-        <span class="n">s</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Transformed Metabolomics&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span>
+        <span class="n">s</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Transformed Metabolomics'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'orange'</span>
     <span class="p">)</span>
 
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;X coordinate&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Y coordinate&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Alignment of Xenium and Spatial Metabolomics Data&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'X coordinate'</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Y coordinate'</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Alignment of Xenium and Spatial Metabolomics Data'</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">output_path</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">'tight'</span><span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="step-7-saving-transformed-coordinates">Step 7: Saving Transformed Coordinates<a class="headerlink" href="#step-7-saving-transformed-coordinates" title="Permanent link">&para;</a></h2>
 <p>Save the transformed coordinates along with the original data:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_transformed_data</span><span class="p">(</span><span class="n">original_data</span><span class="p">,</span> <span class="n">transformed_coords</span><span class="p">,</span> <span class="n">output_path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Save the original data with transformed coordinates</span>
 
 <span class="sd">    Parameters:</span>
@@ -2166,20 +1901,20 @@
 <span class="sd">        Transformed coordinates (shape: n x 2)</span>
 <span class="sd">    output_path : str</span>
 <span class="sd">        Path to save the combined data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Ensure the number of rows match</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">original_data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">transformed_coords</span><span class="p">),</span> <span class="s2">&quot;Number of coordinates doesn&#39;t match data rows&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">original_data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">transformed_coords</span><span class="p">),</span> <span class="s2">"Number of coordinates doesn't match data rows"</span>
 
     <span class="c1"># Create a copy of the original data</span>
     <span class="n">result_df</span> <span class="o">=</span> <span class="n">original_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="c1"># Add transformed coordinates</span>
-    <span class="n">result_df</span><span class="p">[</span><span class="s1">&#39;x_transformed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">transformed_coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">result_df</span><span class="p">[</span><span class="s1">&#39;y_transformed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">transformed_coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">result_df</span><span class="p">[</span><span class="s1">'x_transformed'</span><span class="p">]</span> <span class="o">=</span> <span class="n">transformed_coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">result_df</span><span class="p">[</span><span class="s1">'y_transformed'</span><span class="p">]</span> <span class="o">=</span> <span class="n">transformed_coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
 
     <span class="c1"># Save to CSV</span>
     <span class="n">result_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved transformed data to </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Saved transformed data to </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="complete-workflow-example">Complete Workflow Example<a class="headerlink" href="#complete-workflow-example" title="Permanent link">&para;</a></h2>
 <p>Here's a complete example that performs all the steps:</p>
@@ -2191,11 +1926,11 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="c1"># Step 1: Read data</span>
-<span class="n">met_file</span> <span class="o">=</span> <span class="s2">&quot;path/to/metabolomics_data.csv&quot;</span>
-<span class="n">xenium_file</span> <span class="o">=</span> <span class="s2">&quot;path/to/xenium_data.csv&quot;</span>
+<span class="n">met_file</span> <span class="o">=</span> <span class="s2">"path/to/metabolomics_data.csv"</span>
+<span class="n">xenium_file</span> <span class="o">=</span> <span class="s2">"path/to/xenium_data.csv"</span>
 
 <span class="c1"># Create output directory</span>
-<span class="n">output_dir</span> <span class="o">=</span> <span class="s2">&quot;alignment_results&quot;</span>
+<span class="n">output_dir</span> <span class="o">=</span> <span class="s2">"alignment_results"</span>
 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Read metabolomics data</span>
@@ -2205,8 +1940,8 @@
 <span class="n">xenium_coords</span><span class="p">,</span> <span class="n">xenium_data</span> <span class="o">=</span> <span class="n">read_xenium_data</span><span class="p">(</span><span class="n">xenium_file</span><span class="p">)</span>
 
 <span class="c1"># Step 2: Visualize before alignment</span>
-<span class="n">plot_non_zero_coordinates</span><span class="p">(</span><span class="n">met_coords</span><span class="p">,</span> <span class="n">met_data</span><span class="p">,</span> <span class="s2">&quot;Spatial Metabolomics Coordinates&quot;</span><span class="p">)</span>
-<span class="n">plot_non_zero_coordinates</span><span class="p">(</span><span class="n">xenium_coords</span><span class="p">,</span> <span class="n">xenium_data</span><span class="p">,</span> <span class="s2">&quot;Xenium Cell Coordinates&quot;</span><span class="p">)</span>
+<span class="n">plot_non_zero_coordinates</span><span class="p">(</span><span class="n">met_coords</span><span class="p">,</span> <span class="n">met_data</span><span class="p">,</span> <span class="s2">"Spatial Metabolomics Coordinates"</span><span class="p">)</span>
+<span class="n">plot_non_zero_coordinates</span><span class="p">(</span><span class="n">xenium_coords</span><span class="p">,</span> <span class="n">xenium_data</span><span class="p">,</span> <span class="s2">"Xenium Cell Coordinates"</span><span class="p">)</span>
 
 <span class="c1"># Step 3: Rasterize both datasets</span>
 <span class="c1"># Experiment with different pixel sizes</span>
@@ -2221,12 +1956,12 @@
 <span class="c1"># Step 4: Run LDDMM alignment</span>
 <span class="c1"># Customize parameters based on your data</span>
 <span class="n">lddmm_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;niter&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
-    <span class="s1">&#39;diffeo_start&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
-    <span class="s1">&#39;sigmaM&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="s1">&#39;sigmaB&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span>
-    <span class="s1">&#39;sigmaA&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span>
-    <span class="s1">&#39;epV&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="s1">'niter'</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="s1">'diffeo_start'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="s1">'sigmaM'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s1">'sigmaB'</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="s1">'sigmaA'</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="s1">'epV'</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">lddmm_output</span> <span class="o">=</span> <span class="n">run_lddmm_alignment</span><span class="p">(</span>
@@ -2239,11 +1974,11 @@
 <span class="n">transformed_met_coords</span> <span class="o">=</span> <span class="n">transform_points</span><span class="p">(</span><span class="n">lddmm_output</span><span class="p">,</span> <span class="n">met_coords</span><span class="p">)</span>
 
 <span class="c1"># Step 6: Visualize alignment results</span>
-<span class="n">output_plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;xenium_metabolomics_alignment.png&quot;</span><span class="p">)</span>
+<span class="n">output_plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">"xenium_metabolomics_alignment.png"</span><span class="p">)</span>
 <span class="n">visualize_alignment</span><span class="p">(</span><span class="n">xenium_coords</span><span class="p">,</span> <span class="n">transformed_met_coords</span><span class="p">,</span> <span class="n">output_plot_path</span><span class="p">)</span>
 
 <span class="c1"># Step 7: Save transformed data</span>
-<span class="n">output_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;metabolomics_transformed.csv&quot;</span><span class="p">)</span>
+<span class="n">output_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">"metabolomics_transformed.csv"</span><span class="p">)</span>
 <span class="n">save_transformed_data</span><span class="p">(</span><span class="n">met_data</span><span class="p">,</span> <span class="n">transformed_met_coords</span><span class="p">,</span> <span class="n">output_data_path</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="optimization-tips">Optimization Tips<a class="headerlink" href="#optimization-tips" title="Permanent link">&para;</a></h2>
@@ -2317,27 +2052,27 @@
 
 <span class="c1"># Simple usage</span>
 <span class="n">aligned_data</span> <span class="o">=</span> <span class="n">align_xenium_to_metabolomics</span><span class="p">(</span>
-    <span class="n">xenium_file</span><span class="o">=</span><span class="s2">&quot;path/to/xenium_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">metabolomics_file</span><span class="o">=</span><span class="s2">&quot;path/to/metabolomics_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;alignment_results&quot;</span><span class="p">,</span>
+    <span class="n">xenium_file</span><span class="o">=</span><span class="s2">"path/to/xenium_data.csv"</span><span class="p">,</span>
+    <span class="n">metabolomics_file</span><span class="o">=</span><span class="s2">"path/to/metabolomics_data.csv"</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">"alignment_results"</span><span class="p">,</span>
     <span class="n">pixel_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
     <span class="n">visualize</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 
 <span class="c1"># Advanced usage with custom parameters</span>
 <span class="n">aligned_data</span> <span class="o">=</span> <span class="n">align_xenium_to_metabolomics</span><span class="p">(</span>
-    <span class="n">xenium_file</span><span class="o">=</span><span class="s2">&quot;path/to/xenium_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">metabolomics_file</span><span class="o">=</span><span class="s2">&quot;path/to/metabolomics_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;alignment_results&quot;</span><span class="p">,</span>
+    <span class="n">xenium_file</span><span class="o">=</span><span class="s2">"path/to/xenium_data.csv"</span><span class="p">,</span>
+    <span class="n">metabolomics_file</span><span class="o">=</span><span class="s2">"path/to/metabolomics_data.csv"</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">"alignment_results"</span><span class="p">,</span>
     <span class="n">pixel_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
-    <span class="n">xenium_x_col</span><span class="o">=</span><span class="s2">&quot;x_centroid&quot;</span><span class="p">,</span>
-    <span class="n">xenium_y_col</span><span class="o">=</span><span class="s2">&quot;y_centroid&quot;</span><span class="p">,</span>
-    <span class="n">met_x_col</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
-    <span class="n">met_y_col</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
+    <span class="n">xenium_x_col</span><span class="o">=</span><span class="s2">"x_centroid"</span><span class="p">,</span>
+    <span class="n">xenium_y_col</span><span class="o">=</span><span class="s2">"y_centroid"</span><span class="p">,</span>
+    <span class="n">met_x_col</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
+    <span class="n">met_y_col</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span>
     <span class="n">lddmm_params</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;niter&#39;</span><span class="p">:</span> <span class="mi">1500</span><span class="p">,</span>
-        <span class="s1">&#39;sigmaM&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
-        <span class="s1">&#39;epV&#39;</span><span class="p">:</span> <span class="mi">600</span>
+        <span class="s1">'niter'</span><span class="p">:</span> <span class="mi">1500</span><span class="p">,</span>
+        <span class="s1">'sigmaM'</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+        <span class="s1">'epV'</span><span class="p">:</span> <span class="mi">600</span>
     <span class="p">},</span>
     <span class="n">visualize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">save_intermediate</span><span class="o">=</span><span class="kc">True</span>
@@ -2426,10 +2161,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>

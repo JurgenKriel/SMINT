@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -295,28 +295,6 @@
     
   
   Visualizations
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../api/segmentation/" class="md-tabs__link">
-          
-  
-  
-    
-  
-  API Reference
 
         </a>
       </li>
@@ -1167,249 +1145,6 @@
   
 
     
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    API Reference
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    API Reference
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/segmentation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Segmentation
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/preprocessing/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Preprocessing
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/visualization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Visualization
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/alignment/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Alignment
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/r_integration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    R Integration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/utils/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Utilities
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -1632,7 +1367,7 @@ roughly together first.</p>
 
 <span class="n">matrix</span> <span class="o">=</span> <span class="n">build_pretransform</span><span class="p">(</span>
     <span class="n">sm_xy</span><span class="p">,</span> <span class="n">xen_xy</span><span class="p">,</span>
-    <span class="n">scale_mode</span><span class="o">=</span><span class="s2">&quot;extent&quot;</span><span class="p">,</span>   <span class="c1"># match bounding-box spans</span>
+    <span class="n">scale_mode</span><span class="o">=</span><span class="s2">"extent"</span><span class="p">,</span>   <span class="c1"># match bounding-box spans</span>
     <span class="n">rotation</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>           <span class="c1"># degrees counter-clockwise</span>
     <span class="n">flip_x</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1673,9 +1408,9 @@ where the biological judgement lives.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_landmark_inputs</span>
 
 <span class="n">out</span> <span class="o">=</span> <span class="n">prepare_landmark_inputs</span><span class="p">(</span>
-    <span class="n">st_file</span><span class="o">=</span><span class="s2">&quot;Z2_final_aligned_annos.csv&quot;</span><span class="p">,</span>
-    <span class="n">sm_file</span><span class="o">=</span><span class="s2">&quot;Ven5B_information_matrix_tissue_only_full_with_xy.csv&quot;</span><span class="p">,</span>
-    <span class="n">output_prefix</span><span class="o">=</span><span class="s2">&quot;/path/to/ven5_z2&quot;</span><span class="p">,</span>
+    <span class="n">st_file</span><span class="o">=</span><span class="s2">"Z2_final_aligned_annos.csv"</span><span class="p">,</span>
+    <span class="n">sm_file</span><span class="o">=</span><span class="s2">"Ven5B_information_matrix_tissue_only_full_with_xy.csv"</span><span class="p">,</span>
+    <span class="n">output_prefix</span><span class="o">=</span><span class="s2">"/path/to/ven5_z2"</span><span class="p">,</span>
     <span class="n">dx</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
     <span class="n">sm_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">scale_xy</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">rotate_left_90</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
 <span class="p">)</span>
@@ -1685,7 +1420,8 @@ where the biological judgement lives.</p>
 <p>Annotate both <code>.npz</code> files, picking the <strong>same anatomical features in the same
 order</strong> in each — correspondence is positional, so an ordering mismatch
 silently produces a wrong registration. Either use the
-<a href="../napari_plugin/">napari plugin</a> or the standalone annotator:</p>
+<a href="../napari_plugin/">napari plugin</a> or STalign's standalone annotator
+(<code>STalign/point_annotator.py</code> in the STalign repository — it is not part of SMINT):</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>point_annotator.py<span class="w"> </span>ven5_z2_st.npz<span class="w"> </span>ven5_z2_sm.npz
 </code></pre></div>
 <p>That writes <code>&lt;prefix&gt;_st_points.npy</code> and <code>&lt;prefix&gt;_sm_points.npy</code>. Then:</p>
@@ -1693,9 +1429,9 @@ silently produces a wrong registration. Either use the
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">register_sm_to_st</span><span class="p">(</span>
     <span class="n">st_file</span><span class="o">=...</span><span class="p">,</span> <span class="n">sm_file</span><span class="o">=...</span><span class="p">,</span>
-    <span class="n">st_points_file</span><span class="o">=</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;st_points&quot;</span><span class="p">],</span>
-    <span class="n">sm_points_file</span><span class="o">=</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;sm_points&quot;</span><span class="p">],</span>
-    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;sm_transformed.csv&quot;</span><span class="p">,</span>
+    <span class="n">st_points_file</span><span class="o">=</span><span class="n">out</span><span class="p">[</span><span class="s2">"st_points"</span><span class="p">],</span>
+    <span class="n">sm_points_file</span><span class="o">=</span><span class="n">out</span><span class="p">[</span><span class="s2">"sm_points"</span><span class="p">],</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="s2">"sm_transformed.csv"</span><span class="p">,</span>
     <span class="n">niter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">epV</span><span class="o">=</span><span class="mf">200.0</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -1720,11 +1456,11 @@ so the choice is always explicit and is recorded on the output frame.</p>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">register_centroids</span><span class="p">(</span>
     <span class="n">nucleus_xy</span><span class="p">,</span> <span class="n">xenium_xy</span><span class="p">,</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;ransac+tps&quot;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">"ransac+tps"</span><span class="p">,</span>
     <span class="n">max_distance</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
     <span class="n">validation_fraction</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;tre_validation&quot;</span><span class="p">])</span>    <span class="c1"># the number that matters</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"tre_validation"</span><span class="p">])</span>    <span class="c1"># the number that matters</span>
 </code></pre></div>
 <table>
 <thead>
@@ -1792,15 +1528,15 @@ ambiguity rather than misregistration. Two useful diagnostics:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment.jobs</span><span class="w"> </span><span class="kn">import</span> <span class="n">JobSpec</span><span class="p">,</span> <span class="n">SlurmResources</span><span class="p">,</span> <span class="n">submit</span><span class="p">,</span> <span class="n">poll</span>
 
 <span class="n">spec</span> <span class="o">=</span> <span class="n">JobSpec</span><span class="p">(</span>
-    <span class="nb">round</span><span class="o">=</span><span class="s2">&quot;st_sm&quot;</span><span class="p">,</span>
-    <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;st_file&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;sm_file&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;st_points&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;sm_points&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">},</span>
-    <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;niter&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">},</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;/vast/scratch/you/run1&quot;</span><span class="p">,</span>
-    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;sbatch&quot;</span><span class="p">,</span>
-    <span class="n">resources</span><span class="o">=</span><span class="n">SlurmResources</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="s2">&quot;gpuq&quot;</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="s2">&quot;64G&quot;</span><span class="p">),</span>
+    <span class="nb">round</span><span class="o">=</span><span class="s2">"st_sm"</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="s2">"st_file"</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">"sm_file"</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">"st_points"</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">"sm_points"</span><span class="p">:</span> <span class="o">...</span><span class="p">},</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">"niter"</span><span class="p">:</span> <span class="mi">1000</span><span class="p">},</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">"/vast/scratch/you/run1"</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s2">"sbatch"</span><span class="p">,</span>
+    <span class="n">resources</span><span class="o">=</span><span class="n">SlurmResources</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="s2">"gpuq"</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="s2">"64G"</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">info</span> <span class="o">=</span> <span class="n">submit</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">poll</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)[</span><span class="s2">&quot;state&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">poll</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)[</span><span class="s2">"state"</span><span class="p">])</span>
 </code></pre></div>
 <div class="admonition danger">
 <p class="admonition-title">Batch jobs need shared storage</p>
@@ -1894,10 +1630,10 @@ pre-registration paths have no STalign dependency and run anywhere.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>
