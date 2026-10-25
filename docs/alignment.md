@@ -90,7 +90,8 @@ This writes `<prefix>_st.npz` and `<prefix>_sm.npz`.
 Annotate both `.npz` files, picking the **same anatomical features in the same
 order** in each — correspondence is positional, so an ordering mismatch
 silently produces a wrong registration. Either use the
-[napari plugin](napari_plugin.md) or the standalone annotator:
+[napari plugin](napari_plugin.md) or STalign's standalone annotator
+(`STalign/point_annotator.py` in the STalign repository — it is not part of SMINT):
 
 ```bash
 python point_annotator.py ven5_z2_st.npz ven5_z2_sm.npz

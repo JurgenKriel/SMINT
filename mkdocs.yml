@@ -61,13 +61,6 @@ nav:
     - Examples: examples.md
   - Visualizations:
     - Interactive Plots: visualizations.md
-  - API Reference:
-    - Segmentation: api/segmentation.md
-    - Preprocessing: api/preprocessing.md
-    - Visualization: api/visualization.md
-    - Alignment: api/alignment.md
-    - R Integration: api/r_integration.md
-    - Utilities: api/utils.md
 
 plugins:
   - search
