@@ -1,6 +1,6 @@
 
 # SMINT - Spatial Multi-Omics Integration Toolkit
-![Workflow Image]([https://github.com/JurgenKriel/SMINT/raw/main/smint_new_logo_2.png)
+![Workflow Image]([https://github.com/JurgenKriel/SMINT/raw/main/smint_new_logo_2.png])
 
 SMINT brings spatial omics modalities into one coordinate system. It segments cells and nuclei across whole-slide images, then registers spatial transcriptomics, spatial metabolomics and post-stain imaging onto each other — interactively in napari, from the command line, or as SLURM jobs.
 
