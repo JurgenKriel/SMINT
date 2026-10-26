@@ -114,6 +114,37 @@ df = register_sm_to_st(
 
 ![Sequential-section registration: before, landmarks and after LDDMM](assets/registration_sequential.png)
 
+### Choosing which columns to register
+
+ST tables routinely carry several coordinate pairs from successive processing
+stages — `x_centroid` alongside `x_new` and `x_new_add`, say. Which one you
+register against is a real choice, and the wrong one **misregisters silently
+rather than raising**.
+
+Inspect first:
+
+```bash
+smint-alignment columns Ven5_z2_pre_aligned_1.csv
+```
+
+Then be explicit:
+
+```python
+register_sm_to_st(
+    ..., st_x_col="x_new_add", st_y_col="y_new_add",
+    sm_kwargs=dict(x_col="x", y_col="y"),
+)
+```
+
+```bash
+smint-alignment st-sm ... --st-x-col x_new_add --st-y-col y_new_add
+```
+
+Omitting them auto-detects in the priority order `x_final`, `x_centroid`,
+`centroid_x`, `x_transformed`, `x` — and logs the choice, so it appears in the
+job log. In the napari plugin the columns are dropdowns populated from the file
+you pick, with the detected pair preselected.
+
 ### Coordinate orientation
 
 STalign works in **row-column** order throughout. `LDDMM` takes grids as
@@ -215,7 +246,7 @@ spec = JobSpec(
     params={"niter": 1000},
     output_dir="/vast/scratch/you/run1",
     backend="sbatch",
-    resources=SlurmResources(partition="gpuq", gpus=1, memory="64G"),
+    resources=SlurmResources(partition="gpuq", gpus=1, gpu_type="A30", memory="64G"),
 )
 info = submit(spec)
 print(poll(spec.output_dir)["state"])
@@ -233,6 +264,28 @@ LDDMM runs on GPU automatically when one is available. Request it with
 `SlurmResources(partition="gpuq", gpus=1)`. GPU and CPU results are
 bit-identical; on a Venture 5 Z2 section the GPU run took 82 s against 112 s on
 8 CPU cores, so the benefit is modest at typical raster sizes.
+
+`gpuq` mixes A30, A100 and P100 cards, and a bare `--gres=gpu:1` takes whatever
+is free — so an untyped request can land on hardware generations apart from the
+one a run was timed on. `gpu_type` defaults to `"A30"`, the card registration is
+validated against, and renders as `--gres=gpu:A30:1`. Pass another name to pick
+a different card, or `gpu_type=None` to accept any:
+
+```python
+SlurmResources(partition="gpuq", gpus=1, gpu_type="A100")  # --gres=gpu:A100:1
+SlurmResources(partition="gpuq", gpus=1, gpu_type=None)    # --gres=gpu:1
+```
+
+Types are checked against the partition before submission, so a card that
+partition does not have is reported by name rather than as SLURM's "Invalid
+generic resource". An unknown partition likewise raises with the list of valid
+ones. To see what the cluster offers:
+
+```python
+from smint.alignment.jobs import available_partitions, available_gpu_types
+available_partitions()          # via sinfo; [] off-cluster
+available_gpu_types("gpuq")     # e.g. ['A100', 'A30', 'P100']
+```
 
 ---
 

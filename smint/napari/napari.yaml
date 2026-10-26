@@ -14,7 +14,7 @@ contributions:
       python_name: smint.napari._widgets:LandmarkWidget
     - id: smint.registration_widget
       title: Run registration
-      python_name: smint.napari._widgets:registration_widget
+      python_name: smint.napari._widgets:RegistrationWidget
 
   widgets:
     - command: smint.load_datasets

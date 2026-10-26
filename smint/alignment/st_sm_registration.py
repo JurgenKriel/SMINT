@@ -40,6 +40,7 @@ overlay, so the choice is always explicit and always recorded in the output.
 import os
 import glob
 import logging
+from pathlib import Path
 from typing import Iterable, Optional, Sequence, Set, Tuple
 
 import numpy as np
@@ -105,13 +106,54 @@ def stalign_available() -> bool:
         return False
 
 
+def _preload_cuda_linalg() -> None:
+    """
+    Load torch's CUDA linalg backend eagerly, by absolute path.
+
+    ``torch.linalg.inv`` -- which STalign's LDDMM calls once per iteration to
+    invert the affine -- lazily ``dlopen``s ``libtorch_cuda_linalg.so`` by
+    *bare name*, so the loader has to find it on a search path. Whether it does
+    depends on which object's RPATH the dynamic loader attributes the call to,
+    which in turn depends on the environment the worker inherited. A job
+    submitted from the napari GUI can therefore die several minutes in with::
+
+        RuntimeError: Error in dlopen: libtorch_cuda_linalg.so:
+        cannot open shared object file: No such file or directory
+
+    on the same node and the same install where an identical run from a shell
+    succeeds. Loading the library here by absolute path puts it in the link map
+    under its SONAME, so torch's later bare-name ``dlopen`` matches the open
+    handle and never touches the filesystem search path.
+
+    Best effort: a failure here is logged, not raised, so that CPU runs and any
+    future torch layout keep working.
+    """
+    import ctypes
+    import torch
+
+    lib = Path(torch.__file__).parent / "lib" / "libtorch_cuda_linalg.so"
+    if not lib.exists():
+        logger.debug("No CUDA linalg backend to preload at %s", lib)
+        return
+    try:
+        ctypes.CDLL(str(lib), mode=ctypes.RTLD_GLOBAL)
+        logger.debug("Preloaded %s", lib)
+    except OSError as exc:
+        logger.warning(
+            "Could not preload %s (%s); torch.linalg on CUDA may fail with a "
+            "dlopen error.", lib, exc
+        )
+
+
 def _resolve_device(device=None) -> str:
     """Return an explicit torch device string, preferring CUDA when present."""
     import torch
 
-    if device is not None:
-        return device
-    return "cuda:0" if torch.cuda.is_available() else "cpu"
+    if device is None:
+        device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    if str(device).startswith("cuda"):
+        _preload_cuda_linalg()
+    return device
 
 
 # --------------------------------------------------------------------------
@@ -200,6 +242,8 @@ def read_sm_matrix(
     keep_positive: bool = True,
     origin: Optional[Tuple[float, float]] = None,
     usecols: Optional[Sequence[str]] = None,
+    x_col: Optional[str] = None,
+    y_col: Optional[str] = None,
     verbose: bool = True,
 ) -> pd.DataFrame:
     """
@@ -229,6 +273,10 @@ def read_sm_matrix(
         Restrict to these columns. Passing ``['x', 'y']`` reads coordinates
         only, which is much faster when the m/z intensities aren't needed
         (e.g. when rasterizing for landmark annotation).
+    x_col, y_col : str, optional
+        Which columns hold the coordinates. By default the columns literally
+        named ``x`` and ``y`` are used; pass these when the matrix carries
+        several coordinate pairs and you need a specific one.
     verbose : bool, optional
         Log progress.
 
@@ -259,14 +307,24 @@ def read_sm_matrix(
 
     df = pd.read_csv(mtx_file, **read_kwargs)
 
-    x_col = next((c for c in df.columns if str(c).lower() == "x"), None)
-    y_col = next((c for c in df.columns if str(c).lower() == "y"), None)
+    if x_col is not None or y_col is not None:
+        missing = [c for c in (x_col, y_col) if c is not None and c not in df.columns]
+        if missing:
+            raise ValueError(
+                f"Column(s) {missing} not found in {os.path.basename(mtx_file)}. "
+                f"Available: {', '.join(map(str, df.columns[:30]))}"
+            )
+    if x_col is None:
+        x_col = next((c for c in df.columns if str(c).lower() == "x"), None)
+    if y_col is None:
+        y_col = next((c for c in df.columns if str(c).lower() == "y"), None)
     is_edge_col = next((c for c in df.columns if str(c).lower() == "is_edge"), None)
 
     if x_col is None or y_col is None:
         raise ValueError(
             "Could not find 'x' and 'y' columns in "
-            f"{os.path.basename(mtx_file)}. Available: {', '.join(map(str, df.columns[:20]))}"
+            f"{os.path.basename(mtx_file)}. Available: "
+            f"{', '.join(map(str, df.columns[:30]))}. Pass x_col / y_col explicitly."
         )
 
     rename_xy = {}
@@ -313,10 +371,81 @@ def sm_coordinates(df: pd.DataFrame) -> np.ndarray:
     return df[["x", "y"]].to_numpy(dtype=float)
 
 
+def list_columns(csv_file: str) -> list:
+    """
+    Column names of a CSV, without reading its contents.
+
+    Lets a caller offer a coordinate-column picker before committing to reading
+    a 450 MB matrix.
+    """
+    if not os.path.exists(csv_file):
+        raise FileNotFoundError(f"File not found: {csv_file}")
+    sep = _sniff_delimiter(csv_file)
+    return list(pd.read_csv(csv_file, sep=sep, nrows=0).columns)
+
+
+def resolve_st_columns(
+    st_file: str,
+    x_col: Optional[str] = None,
+    y_col: Optional[str] = None,
+) -> Tuple[str, str]:
+    """
+    Decide which ST columns hold the coordinates to register.
+
+    Explicit names win. When omitted, columns are auto-detected in the priority
+    order in :mod:`smint.alignment.columns`, and the choice is logged.
+
+    Be deliberate here. ST tables often carry several plausible coordinate
+    pairs from successive processing stages -- ``x_centroid`` alongside
+    ``x_new`` and ``x_new_add``, say -- and picking the wrong one produces a
+    silently misregistered result rather than an error. Pass the names
+    explicitly whenever more than one pair exists.
+
+    Parameters
+    ----------
+    st_file : str
+        Path to the ST CSV.
+    x_col, y_col : str, optional
+        Explicit column names; auto-detected when omitted.
+
+    Returns
+    -------
+    (x_col, y_col)
+    """
+    from .columns import detect_coordinate_columns
+
+    columns = list_columns(st_file)
+
+    missing = [c for c in (x_col, y_col) if c is not None and c not in columns]
+    if missing:
+        raise ValueError(
+            f"Column(s) {missing} not found in {os.path.basename(st_file)}. "
+            f"Available: {', '.join(map(str, columns))}"
+        )
+    if x_col and y_col:
+        return x_col, y_col
+
+    detected_x, detected_y = detect_coordinate_columns(columns)
+    x_col = x_col or detected_x
+    y_col = y_col or detected_y
+    if x_col is None or y_col is None:
+        raise ValueError(
+            f"Could not detect coordinate columns in {os.path.basename(st_file)}. "
+            f"Available: {', '.join(map(str, columns))}. "
+            "Pass st_x_col / st_y_col explicitly."
+        )
+
+    logger.info(
+        "Using ST coordinate columns '%s' / '%s' from %s",
+        x_col, y_col, os.path.basename(st_file),
+    )
+    return x_col, y_col
+
+
 def read_st_annotations(
     st_file: str,
-    x_col: str = "x_final",
-    y_col: str = "y_final",
+    x_col: Optional[str] = None,
+    y_col: Optional[str] = None,
     verbose: bool = True,
 ) -> pd.DataFrame:
     """
@@ -327,37 +456,49 @@ def read_st_annotations(
     st_file : str
         Path to the ST CSV.
     x_col, y_col : str, optional
-        Coordinate column names.
+        Coordinate column names. Auto-detected when omitted; see
+        :func:`resolve_st_columns` for why explicit names are safer.
     verbose : bool, optional
         Log progress.
 
     Returns
     -------
     pandas.DataFrame
-        The frame, with ``x_col``/``y_col`` guaranteed present and numeric.
+        The frame, with the coordinate columns guaranteed present and numeric.
     """
     if not os.path.exists(st_file):
         raise FileNotFoundError(f"ST file not found: {st_file}")
 
+    x_col, y_col = resolve_st_columns(st_file, x_col, y_col)
+
     df = pd.read_csv(st_file)
-    for col in (x_col, y_col):
-        if col not in df.columns:
-            raise ValueError(
-                f"Required column '{col}' not found in {os.path.basename(st_file)}. "
-                f"Available: {', '.join(map(str, df.columns[:20]))}"
-            )
     df[x_col] = pd.to_numeric(df[x_col], errors="coerce")
     df[y_col] = pd.to_numeric(df[y_col], errors="coerce")
 
     if verbose:
-        logger.info("Read %d ST cells from %s", len(df), os.path.basename(st_file))
+        logger.info(
+            "Read %d ST cells from %s (%s, %s)",
+            len(df), os.path.basename(st_file), x_col, y_col,
+        )
     return df
 
 
 def st_coordinates(
-    df: pd.DataFrame, x_col: str = "x_final", y_col: str = "y_final"
+    df: pd.DataFrame,
+    x_col: Optional[str] = None,
+    y_col: Optional[str] = None,
 ) -> np.ndarray:
-    """Return the ``(N, 2)`` ``[x, y]`` array from an ST frame."""
+    """
+    Return the ``(N, 2)`` ``[x, y]`` array from an ST frame.
+
+    Columns are auto-detected when omitted.
+    """
+    from .columns import require_coordinate_columns
+
+    if x_col is None or y_col is None:
+        detected_x, detected_y = require_coordinate_columns(df.columns, "ST frame")
+        x_col = x_col or detected_x
+        y_col = y_col or detected_y
     return df[[x_col, y_col]].to_numpy(dtype=float)
 
 
@@ -739,8 +880,8 @@ def prepare_landmark_inputs(
     sm_file: str,
     output_prefix: str,
     dx: float = 30.0,
-    st_x_col: str = "x_final",
-    st_y_col: str = "y_final",
+    st_x_col: Optional[str] = None,
+    st_y_col: Optional[str] = None,
     sm_kwargs: Optional[dict] = None,
 ) -> dict:
     """
@@ -777,6 +918,7 @@ def prepare_landmark_inputs(
         the landmark paths the annotator will produce.
     """
     sm_kwargs = dict(sm_kwargs or {})
+    st_x_col, st_y_col = resolve_st_columns(st_file, st_x_col, st_y_col)
 
     st_df = read_st_annotations(st_file, x_col=st_x_col, y_col=st_y_col)
     sm_df = read_sm_matrix(sm_file, **sm_kwargs)
@@ -821,8 +963,8 @@ def register_sm_to_st(
     epV: float = 200.0,
     device: Optional[str] = None,
     orientation: str = "dataset",
-    st_x_col: str = "x_final",
-    st_y_col: str = "y_final",
+    st_x_col: Optional[str] = None,
+    st_y_col: Optional[str] = None,
     sm_kwargs: Optional[dict] = None,
     lddmm_params: Optional[dict] = None,
 ) -> pd.DataFrame:
@@ -850,9 +992,11 @@ def register_sm_to_st(
     orientation : {'dataset', 'stalign'}, optional
         Output coordinate frame. See the module docstring.
     st_x_col, st_y_col : str, optional
-        ST coordinate columns.
+        Which ST columns to register. Auto-detected when omitted; pass them
+        explicitly when the table carries several coordinate pairs, since the
+        wrong choice misregisters silently rather than raising.
     sm_kwargs : dict, optional
-        Forwarded to :func:`read_sm_matrix`.
+        Forwarded to :func:`read_sm_matrix`, including ``x_col``/``y_col``.
     lddmm_params : dict, optional
         Extra parameters forwarded to ``STalign.LDDMM``.
 
@@ -863,6 +1007,7 @@ def register_sm_to_st(
     """
     sm_kwargs = dict(sm_kwargs or {})
     lddmm_params = dict(lddmm_params or {})
+    st_x_col, st_y_col = resolve_st_columns(st_file, st_x_col, st_y_col)
 
     st_df = read_st_annotations(st_file, x_col=st_x_col, y_col=st_y_col)
     sm_df = read_sm_matrix(sm_file, **sm_kwargs)

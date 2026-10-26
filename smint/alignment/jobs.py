@@ -44,6 +44,77 @@ VALID_BACKENDS = ("sbatch", "local")
 #: Terminal states; anything else means the job is still in flight.
 TERMINAL_STATES = ("completed", "failed", "cancelled")
 
+#: Environment variables that must not leak from the caller into the worker.
+#:
+#: The whole point of running the worker out-of-process is that the GUI lives
+#: in a numpy>=2 environment while STalign needs numpy<2. Inheriting the
+#: caller's ``PYTHONPATH``/``PYTHONHOME`` would put the GUI's site-packages
+#: back on the worker's import path, and an inherited loader path can change
+#: which shared objects torch resolves at runtime -- both of which turn the
+#: worker's behaviour into a function of how the GUI happened to be launched.
+LEAKY_ENV_VARS = ("PYTHONPATH", "PYTHONHOME", "PYTHONSTARTUP", "LD_PRELOAD")
+
+
+def worker_env(base: Optional[dict] = None) -> dict:
+    """Return a copy of ``base`` (default ``os.environ``) with :data:`LEAKY_ENV_VARS` dropped."""
+    env = dict(os.environ if base is None else base)
+    for name in LEAKY_ENV_VARS:
+        env.pop(name, None)
+    return env
+
+
+def available_partitions() -> list:
+    """
+    Partition names this cluster accepts, via ``sinfo``.
+
+    Returns an empty list when SLURM is unavailable, so callers can fall back
+    rather than blocking on a check they cannot perform.
+    """
+    if not shutil.which("sinfo"):
+        return []
+    try:
+        result = subprocess.run(
+            ["sinfo", "-h", "-o", "%P"], capture_output=True, text=True, timeout=30
+        )
+    except (subprocess.SubprocessError, OSError):
+        return []
+    if result.returncode != 0:
+        return []
+    # sinfo marks the default partition with a trailing '*'
+    return sorted({line.strip().rstrip("*") for line in result.stdout.split() if line.strip()})
+
+
+def available_gpu_types(partition: Optional[str] = None) -> list:
+    """
+    GPU types this cluster advertises, via ``sinfo``.
+
+    ``sinfo`` reports gres as ``gpu:A30:4(S:0-1)``; the middle field is the
+    type name ``--gres=gpu:<type>:<n>`` expects. Pass ``partition`` to list
+    only the types that partition offers.
+
+    Returns an empty list when SLURM is unavailable, so callers can fall back
+    rather than blocking on a check they cannot perform.
+    """
+    if not shutil.which("sinfo"):
+        return []
+    cmd = ["sinfo", "-h", "-o", "%G"]
+    if partition:
+        cmd += ["-p", partition]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+    except (subprocess.SubprocessError, OSError):
+        return []
+    if result.returncode != 0:
+        return []
+
+    types = set()
+    for line in result.stdout.split():
+        # "gpu:A30:4(S:0-1)" -> "A30"; nodes without GPUs report "(null)"
+        fields = line.strip().split(":")
+        if len(fields) >= 3 and fields[0] == "gpu":
+            types.add(fields[1])
+    return sorted(types)
+
 
 def default_worker_python() -> str:
     """
@@ -75,6 +146,12 @@ class SlurmResources:
     that actually has them -- asking for a GPU on a CPU partition leaves the
     job pending indefinitely rather than failing, which is easy to mistake for
     a slow queue. :meth:`check` warns about that combination.
+
+    ``gpu_type`` pins which card the job gets. A bare ``--gres=gpu:N`` is a
+    lottery across every model the partition holds -- on this cluster ``gpuq``
+    mixes A30, A100 and P100 -- so a run can land on a card generations older
+    than the one it was timed on. Registration is validated on the A30, which
+    is why that is the default. Set it to ``None`` to accept any card.
     """
 
     partition: str = "regular"
@@ -83,12 +160,29 @@ class SlurmResources:
     time_limit: str = "04:00:00"
     job_name: str = "smint_register"
     gpus: int = 0
+    gpu_type: Optional[str] = "A30"
 
     #: Substrings that identify a GPU partition on this cluster.
     GPU_PARTITION_HINTS = ("gpu", "a100", "a30", "p100", "a10")
 
     def check(self) -> None:
-        """Warn about resource requests that will not schedule as intended."""
+        """
+        Validate the resource request before anything reaches ``sbatch``.
+
+        Raises
+        ------
+        ValueError
+            If the partition is not one this cluster offers. Catching it here
+            turns SLURM's terse "Invalid partition name specified" into a
+            message naming the valid options.
+        """
+        partitions = available_partitions()
+        if partitions and self.partition not in partitions:
+            raise ValueError(
+                f"Partition {self.partition!r} does not exist on this cluster. "
+                f"Available: {', '.join(partitions)}"
+            )
+
         if self.gpus and not any(
             hint in self.partition.lower() for hint in self.GPU_PARTITION_HINTS
         ):
@@ -107,6 +201,17 @@ class SlurmResources:
                 self.partition,
             )
 
+        if self.gpus and self.gpu_type:
+            # An unknown type is rejected by sbatch outright, so name the real
+            # options rather than let "Invalid generic resource" stand alone.
+            types = available_gpu_types(self.partition)
+            if types and self.gpu_type not in types:
+                raise ValueError(
+                    f"GPU type {self.gpu_type!r} is not offered by partition "
+                    f"{self.partition!r}. Available: {', '.join(types)}. "
+                    "Set gpu_type=None to accept any card."
+                )
+
     def sbatch_directives(self, log_dir: Path) -> str:
         lines = [
             f"#SBATCH --job-name={self.job_name}",
@@ -118,7 +223,8 @@ class SlurmResources:
             f"#SBATCH --error={log_dir / (self.job_name + '_%j.err')}",
         ]
         if self.gpus:
-            lines.append(f"#SBATCH --gres=gpu:{self.gpus}")
+            gres = f"gpu:{self.gpu_type}:{self.gpus}" if self.gpu_type else f"gpu:{self.gpus}"
+            lines.append(f"#SBATCH --gres={gres}")
         return "\n".join(lines)
 
 
@@ -333,6 +439,11 @@ def build_sbatch_script(spec: JobSpec, spec_path: Path) -> str:
 # Generated by smint.alignment.jobs -- do not edit; regenerate from the JobSpec.
 set -euo pipefail
 
+# sbatch exports the submitting process's environment, which for a GUI-driven
+# submission is napari's. Drop what would otherwise reach into the worker's
+# interpreter or its dynamic loader.
+unset {' '.join(LEAKY_ENV_VARS)}
+
 export OMP_NUM_THREADS="${{SLURM_CPUS_PER_TASK:-{spec.resources.cpus_per_task}}}"
 export MKL_NUM_THREADS="${{SLURM_CPUS_PER_TASK:-{spec.resources.cpus_per_task}}}"
 
@@ -408,6 +519,7 @@ def submit(spec: JobSpec) -> dict:
     process = subprocess.Popen(
         [spec.worker_python, "-m", "smint.cli.register", str(spec_path)],
         stdout=handle, stderr=subprocess.STDOUT, start_new_session=True,
+        env=worker_env(),
     )
     write_status(spec.output_dir, "running", f"local pid {process.pid}", pid=process.pid)
     logger.info("Started local worker pid %s for %s round", process.pid, spec.round)
