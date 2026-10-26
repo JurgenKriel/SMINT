@@ -1404,20 +1404,30 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <li><strong>dask</strong>: For parallel computing (base package)</li>
 <li><strong>scikit-image</strong>: For image processing</li>
 <li><strong>tifffile</strong>: For reading/writing OME-TIFF files</li>
-<li><strong>cellpose</strong>: For cell segmentation models</li>
+<li><strong>cellpose</strong> (3 or 4): For cell segmentation models</li>
 <li><strong>opencv-python</strong>: For image processing and contour extraction</li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Cellpose 3 and 4</p>
+<p>SMINT works with Cellpose 3 and Cellpose 4. Models are given as a built-in
+name or a path to a trained model. Cellpose 3 has the <code>cyto</code>, <code>cyto2</code>,
+<code>cyto3</code> and <code>nuclei</code> models; Cellpose 4 has only Cellpose-SAM (<code>cpsam</code>), so
+on Cellpose 4 those names fall back to <code>cpsam</code> with a warning — pass a
+fine-tuned model path instead. <code>channels</code> (<code>[main, nuclear]</code>, 1-based, 0 =
+none) selects the input channels identically on both versions.</p>
+</div>
 <h3 id="optional-dependencies">Optional Dependencies<a class="headerlink" href="#optional-dependencies" title="Permanent link">&para;</a></h3>
 <p>These dependencies enable additional features but are not required for core functionality:</p>
 <h4 id="distributed-processing">Distributed Processing<a class="headerlink" href="#distributed-processing" title="Permanent link">&para;</a></h4>
 <ul>
 <li>
-<p><strong>dask[distributed]</strong>: For distributed computing
-  <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"dask[distributed]"</span>
+<p><strong>smint[distributed]</strong>: Dask distributed, dask-jobqueue (SLURM workers),
+  zarr and shapely, for <code>run_distributed_segmentation</code>
+  <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"smint[distributed] @ git+https://github.com/JurgenKriel/SMINT.git"</span>
 </code></pre></div></p>
 </li>
 <li>
-<p><strong>dask-cuda</strong>: For GPU-accelerated distributed computing (requires CUDA)
+<p><strong>dask-cuda</strong>: One local worker per GPU (requires CUDA)
   <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>dask-cuda
 </code></pre></div></p>
 </li>

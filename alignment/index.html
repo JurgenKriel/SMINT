@@ -738,6 +738,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#choosing-which-columns-to-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing which columns to register
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#coordinate-orientation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1217,6 +1228,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#choosing-which-columns-to-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing which columns to register
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#coordinate-orientation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1437,6 +1459,26 @@ silently produces a wrong registration. Either use the
 <span class="p">)</span>
 </code></pre></div>
 <p><img alt="Sequential-section registration: before, landmarks and after LDDMM" src="../assets/registration_sequential.png" /></p>
+<h3 id="choosing-which-columns-to-register">Choosing which columns to register<a class="headerlink" href="#choosing-which-columns-to-register" title="Permanent link">&para;</a></h3>
+<p>ST tables routinely carry several coordinate pairs from successive processing
+stages — <code>x_centroid</code> alongside <code>x_new</code> and <code>x_new_add</code>, say. Which one you
+register against is a real choice, and the wrong one <strong>misregisters silently
+rather than raising</strong>.</p>
+<p>Inspect first:</p>
+<div class="highlight"><pre><span></span><code>smint-alignment<span class="w"> </span>columns<span class="w"> </span>Ven5_z2_pre_aligned_1.csv
+</code></pre></div>
+<p>Then be explicit:</p>
+<div class="highlight"><pre><span></span><code><span class="n">register_sm_to_st</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span> <span class="n">st_x_col</span><span class="o">=</span><span class="s2">"x_new_add"</span><span class="p">,</span> <span class="n">st_y_col</span><span class="o">=</span><span class="s2">"y_new_add"</span><span class="p">,</span>
+    <span class="n">sm_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x_col</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">y_col</span><span class="o">=</span><span class="s2">"y"</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>smint-alignment<span class="w"> </span>st-sm<span class="w"> </span>...<span class="w"> </span>--st-x-col<span class="w"> </span>x_new_add<span class="w"> </span>--st-y-col<span class="w"> </span>y_new_add
+</code></pre></div>
+<p>Omitting them auto-detects in the priority order <code>x_final</code>, <code>x_centroid</code>,
+<code>centroid_x</code>, <code>x_transformed</code>, <code>x</code> — and logs the choice, so it appears in the
+job log. In the napari plugin the columns are dropdowns populated from the file
+you pick, with the detected pair preselected.</p>
 <h3 id="coordinate-orientation">Coordinate orientation<a class="headerlink" href="#coordinate-orientation" title="Permanent link">&para;</a></h3>
 <p>STalign works in <strong>row-column</strong> order throughout. <code>LDDMM</code> takes grids as
 <code>[Y, X]</code>, and <code>transform_points_source_to_target</code> both accepts and returns
@@ -1539,7 +1581,7 @@ ambiguity rather than misregistration. Two useful diagnostics:</p>
     <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">"niter"</span><span class="p">:</span> <span class="mi">1000</span><span class="p">},</span>
     <span class="n">output_dir</span><span class="o">=</span><span class="s2">"/vast/scratch/you/run1"</span><span class="p">,</span>
     <span class="n">backend</span><span class="o">=</span><span class="s2">"sbatch"</span><span class="p">,</span>
-    <span class="n">resources</span><span class="o">=</span><span class="n">SlurmResources</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="s2">"gpuq"</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="s2">"64G"</span><span class="p">),</span>
+    <span class="n">resources</span><span class="o">=</span><span class="n">SlurmResources</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="s2">"gpuq"</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gpu_type</span><span class="o">=</span><span class="s2">"A30"</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="s2">"64G"</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">info</span> <span class="o">=</span> <span class="n">submit</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">poll</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)[</span><span class="s2">"state"</span><span class="p">])</span>
@@ -1556,6 +1598,22 @@ rejects these up front. Use <code>/vast/scratch</code> or <code>/vast/projects</
 <code>SlurmResources(partition="gpuq", gpus=1)</code>. GPU and CPU results are
 bit-identical; on a Venture 5 Z2 section the GPU run took 82 s against 112 s on
 8 CPU cores, so the benefit is modest at typical raster sizes.</p>
+<p><code>gpuq</code> mixes A30, A100 and P100 cards, and a bare <code>--gres=gpu:1</code> takes whatever
+is free — so an untyped request can land on hardware generations apart from the
+one a run was timed on. <code>gpu_type</code> defaults to <code>"A30"</code>, the card registration is
+validated against, and renders as <code>--gres=gpu:A30:1</code>. Pass another name to pick
+a different card, or <code>gpu_type=None</code> to accept any:</p>
+<div class="highlight"><pre><span></span><code><span class="n">SlurmResources</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="s2">"gpuq"</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gpu_type</span><span class="o">=</span><span class="s2">"A100"</span><span class="p">)</span>  <span class="c1"># --gres=gpu:A100:1</span>
+<span class="n">SlurmResources</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="s2">"gpuq"</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gpu_type</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>    <span class="c1"># --gres=gpu:1</span>
+</code></pre></div>
+<p>Types are checked against the partition before submission, so a card that
+partition does not have is reported by name rather than as SLURM's "Invalid
+generic resource". An unknown partition likewise raises with the list of valid
+ones. To see what the cluster offers:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment.jobs</span><span class="w"> </span><span class="kn">import</span> <span class="n">available_partitions</span><span class="p">,</span> <span class="n">available_gpu_types</span>
+<span class="n">available_partitions</span><span class="p">()</span>          <span class="c1"># via sinfo; [] off-cluster</span>
+<span class="n">available_gpu_types</span><span class="p">(</span><span class="s2">"gpuq"</span><span class="p">)</span>     <span class="c1"># e.g. ['A100', 'A30', 'P100']</span>
+</code></pre></div>
 <hr />
 <h2 id="environments">Environments<a class="headerlink" href="#environments" title="Permanent link">&para;</a></h2>
 <p>STalign requires <strong>numpy &lt; 2</strong> — the <code>nptyping</code> dependency it pulls in via

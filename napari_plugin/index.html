@@ -1337,6 +1337,10 @@ submitting. Use <code>/vast/scratch</code> or <code>/vast/projects</code>.</p>
 when available, and GPU results are bit-identical to CPU. The speedup is modest
 at typical raster sizes — 82 s versus 112 s on 8 CPU cores for a Venture 5
 section — so CPU is a perfectly reasonable default.</p>
+<p><strong>GPU type</strong> picks the card. <code>gpuq</code> holds a mix of A30, A100 and P100, and
+"any" takes whichever is free, so a run can land on a much older card than the
+one it was timed on. It defaults to the A30, which registration is validated
+against. The dropdown lists what the cluster actually advertises.</p>
 <hr />
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <p><strong>Widget fails with <code>missing 1 required positional argument: 'viewer'</code></strong>

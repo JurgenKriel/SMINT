@@ -773,6 +773,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Segmentation API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stitching-tiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stitching tiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1368,6 +1385,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Segmentation API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stitching-tiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stitching tiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1531,6 +1565,15 @@
   - At least one nuclear channel (e.g., DAPI, Hoechst) for nuclei segmentation
 - <strong>Bit depth</strong>: 8-bit or 16-bit grayscale per channel
 - <strong>Quality</strong>: Minimal noise, good contrast between cells and background</p>
+<div class="admonition note">
+<p class="admonition-title">Cellpose 3 and 4</p>
+<p>SMINT works with Cellpose 3 and Cellpose 4. Models are given as a built-in
+name or a path to a trained model. Cellpose 3 has the <code>cyto</code>, <code>cyto2</code>,
+<code>cyto3</code> and <code>nuclei</code> models; Cellpose 4 has only Cellpose-SAM (<code>cpsam</code>), so
+on Cellpose 4 those names fall back to <code>cpsam</code> with a warning — pass a
+fine-tuned model path instead. <code>channels</code> (<code>[main, nuclear]</code>, 1-based, 0 =
+none) selects the input channels identically on both versions.</p>
+</div>
 <h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
 <p>Segmentation is run with <code>scripts/run_segmentation.py</code> from a source checkout.
 Model parameters (thresholds, channels, adaptive nuclei settings) come from a
@@ -1546,8 +1589,9 @@ YAML config — see <a href="../configuration/">Configuration</a> and
 <span class="w">    </span>--visualize
 </code></pre></div>
 <h3 id="distributed-segmentation">Distributed Segmentation<a class="headerlink" href="#distributed-segmentation" title="Permanent link">&para;</a></h3>
-<p>Add <code>--distributed</code> to process chunks in parallel with Dask, and <code>--use-gpu</code>
-to run on the available GPUs:</p>
+<p>Add <code>--distributed</code> to split the image into overlapping tiles segmented in
+parallel by Dask workers, and <code>--use-gpu</code> to use GPU workers (needs
+<code>pip install "smint[distributed]"</code>):</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/run_segmentation.py<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--image<span class="w"> </span>path/to/large_image.ome.tiff<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--output-dir<span class="w"> </span>results/segmentation<span class="w"> </span><span class="se">\</span>
@@ -1675,14 +1719,40 @@ to run on the available GPUs:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.segmentation</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_distributed_segmentation</span>
 
 <span class="n">results</span> <span class="o">=</span> <span class="n">run_distributed_segmentation</span><span class="p">(</span>
-    <span class="n">image_path</span><span class="o">=</span><span class="s2">"path/to/large_image.ome.tiff"</span><span class="p">,</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">"results/segmentation"</span><span class="p">,</span>
+    <span class="n">image_path</span><span class="o">=</span><span class="s2">"path/to/large_image.ome.zarr"</span><span class="p">,</span>   <span class="c1"># OME-Zarr, Zarr, TIFF or OME-TIFF</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">"/vast/scratch/you/seg_run"</span><span class="p">,</span>      <span class="c1"># shared storage for SLURM workers</span>
     <span class="n">config_path</span><span class="o">=</span><span class="s2">"configs/segmentation_config.yaml"</span><span class="p">,</span>
-    <span class="n">n_workers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>          <span class="c1"># None = use all available workers</span>
-    <span class="n">use_gpu</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">chunk_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2048</span><span class="p">,</span> <span class="mi">2048</span><span class="p">),</span>
+    <span class="n">cell_model</span><span class="o">=</span><span class="s2">"/path/to/cpsam_finetuned"</span><span class="p">,</span>        <span class="c1"># model path or built-in name</span>
+    <span class="n">nuclei_model</span><span class="o">=</span><span class="s2">"nuclei"</span><span class="p">,</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span>                              <span class="c1"># core tile size (px)</span>
+    <span class="n">tile_overlap</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>                             <span class="c1"># &gt; largest cell radius</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s2">"slurm"</span><span class="p">,</span>                              <span class="c1"># or "local"</span>
+    <span class="n">n_workers</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">slurm</span><span class="o">=</span><span class="p">{</span><span class="s2">"queue"</span><span class="p">:</span> <span class="s2">"gpuq"</span><span class="p">,</span> <span class="s2">"gpu_type"</span><span class="p">:</span> <span class="s2">"A30"</span><span class="p">,</span> <span class="s2">"memory"</span><span class="p">:</span> <span class="s2">"64GB"</span><span class="p">},</span>
 <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">"total_cells"</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="s2">"cells_summary_path"</span><span class="p">])</span>
 </code></pre></div>
+<p><code>backend="local"</code> runs CPU workers, or one worker per GPU when <code>dask-cuda</code> is
+installed; <code>scheduler_address=</code> connects to an existing Dask cluster. The
+config file's optional <code>distributed:</code> section takes the same keys.</p>
+<h3 id="stitching-tiles">Stitching tiles<a class="headerlink" href="#stitching-tiles" title="Permanent link">&para;</a></h3>
+<p>Each tile is segmented with an overlap margin, so cells on a tile boundary are
+seen whole by both neighbours. The duplicates and collisions this creates are
+resolved with a port of the R workflow in <code>stitching/stitching.Rmd</code>
+(<code>smint.segmentation.stitching</code>). Overlap below is the intersection as a
+fraction of the smaller object.</p>
+<ol>
+<li><strong>Stitch nuclei, then cells</strong> (cells must touch a stitched nucleus):
+   merge pairs overlapping by more than 50% until nothing more merges, then
+   trim overlaps under 25% from both objects, then drop the smaller object of
+   any pair still overlapping by 25% or more.</li>
+<li><strong>Reconcile cells with nuclei</strong>: drop cells without a credible nucleus, grow
+   cells over nuclei they mostly contain, split nuclei straddling several
+   cells, remove duplicate and contained objects, and assign every nucleus to
+   exactly one cell. Nuclei with no cell become nucleus-only cells.</li>
+</ol>
+<p>The thresholds are <code>stitch_merge_thresh</code> (0.5) and <code>stitch_trim_thresh</code>
+(0.25); <code>reconcile_nuclei=False</code> skips step 2.</p>
 <h2 id="advanced-adaptive-segmentation">Advanced Adaptive Segmentation<a class="headerlink" href="#advanced-adaptive-segmentation" title="Permanent link">&para;</a></h2>
 <p>SMINT supports adaptive segmentation that dynamically adjusts parameters based on local image characteristics:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.segmentation</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_large_image</span>
@@ -1729,8 +1799,33 @@ to run on the available GPUs:</p>
 </tr>
 </tbody>
 </table>
-<p><code>run_distributed_segmentation</code> writes per-chunk <code>outlines_&lt;y&gt;_&lt;x&gt;_&lt;model&gt;.csv</code>
-files and merges them into <code>combined_cell_outlines.csv</code>.</p>
+<p><code>run_distributed_segmentation</code> writes, in <code>output_dir</code>:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cells_outlines.csv</code>, <code>nuclei_outlines.csv</code></td>
+<td>Stitched outline vertices: <code>global_cell_id</code>, <code>x</code>, <code>y</code></td>
+</tr>
+<tr>
+<td><code>cells_summary.csv</code></td>
+<td>Per cell: <code>global_cell_id</code>, <code>x_centroid</code>, <code>y_centroid</code>, <code>area</code>, <code>n_nuclei</code></td>
+</tr>
+<tr>
+<td><code>nuclei_summary.csv</code></td>
+<td>Per nucleus: <code>global_cell_id</code>, <code>x_centroid</code>, <code>y_centroid</code>, <code>area</code>, <code>cell_id</code> (containing cell)</td>
+</tr>
+<tr>
+<td><code>cells.zarr</code>, <code>nuclei.zarr</code></td>
+<td>Full-resolution label masks (per-tile IDs, not the stitched IDs)</td>
+</tr>
+</tbody>
+</table>
 <h2 id="live-segmentation-viewer">Live Segmentation Viewer<a class="headerlink" href="#live-segmentation-viewer" title="Permanent link">&para;</a></h2>
 <p>SMINT includes a Tkinter viewer for monitoring segmentation in real time. From
 the command line:</p>
