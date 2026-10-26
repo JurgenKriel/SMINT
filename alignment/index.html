@@ -1576,6 +1576,15 @@ up as a peak (<code>vote_block_displacements</code>). Then:</p>
 <li>A round is <strong>kept only if it improves</strong> the fitting nuclei's alignment;
    otherwise registration stops there.</li>
 </ol>
+<p><img alt="How multi-round registration works on Venture 5 z5" src="../assets/registration_multiround.png" /></p>
+<p><em>(a) In one block the nearest-cell offsets (white) cluster around zero, but the
+votes peak at the true offset of (23, 5) µm — more than a cell spacing. (b) The
+block peaks across the section form a smooth field (a small rotation and
+scale), which round 1 fits as an affine; red crosses are blocks that disagree
+and are ignored. &copy; The same window after the old one-shot fit and after
+<code>multiround</code>. (d) Held-out nuclei: distance to the nearest cell. (e) The finer
+TPS round didn't improve this section, so it was rejected.
+<code>examples/multiround_figure.py</code> renders this figure.</em></p>
 <p>Each round's outcome is in <code>result["rounds"]</code>. Tune with <code>schedule=</code> —
 <code>(max_distance, block_size, bin_size)</code> per round, in microns — and
 <code>min_improvement=</code>.</p>
