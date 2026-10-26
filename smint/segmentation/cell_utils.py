@@ -101,13 +101,15 @@ def segment_chunk(chunk_data, model_instance, chunk_position=None, diameter=80,
         return np.zeros(chunk_data.shape[-2:], dtype=np.uint16), []
 
     try:
-        # Run segmentation
-        masks, flows, styles = model_instance.eval(
+        # Run segmentation; run_eval applies `channels` the same way on Cellpose 3 and 4
+        from .cellpose_compat import run_eval
+        masks = run_eval(
+            model_instance,
             chunk_data,
+            channels=channels,
             diameter=int(diameter),  # Cast to int to avoid type errors
             flow_threshold=flow_threshold,
             cellprob_threshold=cellprob_threshold,
-            channels=channels
         )
         
         # Get outlines

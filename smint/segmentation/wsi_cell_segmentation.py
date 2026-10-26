@@ -189,7 +189,7 @@ def visualize_roi_combined(image_data_stack, roi_position, roi_size,
             roi_df_nuclei['x_rel'] = roi_df_nuclei['x'] - x_offset_for_plot
             roi_df_nuclei['y_rel'] = roi_df_nuclei['y'] - y_offset_for_plot
             for obj_id, group in roi_df_nuclei.groupby('global_cell_id'):
-                ax.plot(group['x_rel'], group['y_rel'], 'cyan-', linewidth=1.0, alpha=0.7)
+                ax.plot(group['x_rel'], group['y_rel'], color='cyan', linestyle='-', linewidth=1.0, alpha=0.7)
             outline_info.append(f"Nuclei({roi_df_nuclei['global_cell_id'].nunique()}):Cyan")
 
     if outline_info:
@@ -410,25 +410,24 @@ def process_large_image(
         
     try:
         # Import locally to avoid circular imports
-        from cellpose import models
+        from .cellpose_compat import cellpose_major_version, is_known_model, load_model, use_gpu as cellpose_use_gpu
         
-        # Check for GPU
-        use_gpu = models.use_gpu()
-        logger.info(f"GPU available and will be used: {use_gpu}")
+        use_gpu = cellpose_use_gpu()
+        logger.info(f"Cellpose {cellpose_major_version()}; GPU available and will be used: {use_gpu}")
     
         # Load cell model
-        if os.path.exists(cell_model_path) or cell_model_path.lower() in ["cyto", "nuclei", "cyto2"]:
+        if is_known_model(cell_model_path):
             logger.info(f"Loading cell model from: {cell_model_path}")
-            cell_model = models.CellposeModel(gpu=use_gpu, model_type=cell_model_path)
+            cell_model = load_model(cell_model_path, gpu=use_gpu)
             logger.info("Cell model loaded successfully")
         else:
             cell_model = None
             logger.warning(f"Cell model path not found, skipping cell segmentation: {cell_model_path}")
         
         # Load nuclei model
-        if os.path.exists(nuclei_model_path) or nuclei_model_path.lower() in ["cyto", "nuclei", "cyto2"]:
+        if is_known_model(nuclei_model_path):
             logger.info(f"Loading nuclei model from: {nuclei_model_path}")
-            nuclei_model = models.CellposeModel(gpu=use_gpu, model_type=nuclei_model_path)
+            nuclei_model = load_model(nuclei_model_path, gpu=use_gpu)
             logger.info("Nuclei model loaded successfully")
         else:
             nuclei_model = None

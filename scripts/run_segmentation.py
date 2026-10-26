@@ -67,8 +67,8 @@ def parse_args():
     parser.add_argument('--nuclei-diameter', type=float,
                         help='Diameter of nuclei for segmentation')
     
-    parser.add_argument('--chunk-size', type=int, nargs=2, default=[2048, 2048],
-                        help='Size of chunks for processing (height width)')
+    parser.add_argument('--chunk-size', type=int, nargs=2,
+                        help='Size of chunks for processing (height width); default from config, else 2048 2048')
     
     parser.add_argument('--visualize', action='store_true',
                         help='Enable visualization')
@@ -91,8 +91,10 @@ def build_config_from_args(args):
     # Basic settings
     config['output_dir'] = args.output_dir
     
-    if args.distributed:
-        config['use_gpu'] = args.use_gpu
+    # Only flags the user actually passed override the config file
+    if args.use_gpu:
+        config['use_gpu'] = True
+    if args.chunk_size:
         config['chunk_size'] = args.chunk_size
     
     # Model paths

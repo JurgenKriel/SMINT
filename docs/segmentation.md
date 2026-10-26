@@ -31,6 +31,14 @@ For optimal segmentation results, input images should have:
 - **Bit depth**: 8-bit or 16-bit grayscale per channel
 - **Quality**: Minimal noise, good contrast between cells and background
 
+!!! note "Cellpose 3 and 4"
+    SMINT works with Cellpose 3 and Cellpose 4. Models are given as a built-in
+    name or a path to a trained model. Cellpose 3 has the `cyto`, `cyto2`,
+    `cyto3` and `nuclei` models; Cellpose 4 has only Cellpose-SAM (`cpsam`), so
+    on Cellpose 4 those names fall back to `cpsam` with a warning — pass a
+    fine-tuned model path instead. `channels` (`[main, nuclear]`, 1-based, 0 =
+    none) selects the input channels identically on both versions.
+
 ## Quick Start
 
 Segmentation is run with `scripts/run_segmentation.py` from a source checkout.
@@ -52,8 +60,9 @@ python scripts/run_segmentation.py \
 
 ### Distributed Segmentation
 
-Add `--distributed` to process chunks in parallel with Dask, and `--use-gpu`
-to run on the available GPUs:
+Add `--distributed` to split the image into overlapping tiles segmented in
+parallel by Dask workers, and `--use-gpu` to use GPU workers (needs
+`pip install "smint[distributed]"`):
 
 ```bash
 python scripts/run_segmentation.py \
@@ -127,14 +136,43 @@ For distributed processing:
 from smint.segmentation import run_distributed_segmentation
 
 results = run_distributed_segmentation(
-    image_path="path/to/large_image.ome.tiff",
-    output_dir="results/segmentation",
+    image_path="path/to/large_image.ome.zarr",   # OME-Zarr, Zarr, TIFF or OME-TIFF
+    output_dir="/vast/scratch/you/seg_run",      # shared storage for SLURM workers
     config_path="configs/segmentation_config.yaml",
-    n_workers=None,          # None = use all available workers
-    use_gpu=True,
-    chunk_size=(2048, 2048),
+    cell_model="/path/to/cpsam_finetuned",        # model path or built-in name
+    nuclei_model="nuclei",
+    chunk_size=2048,                              # core tile size (px)
+    tile_overlap=256,                             # > largest cell radius
+    backend="slurm",                              # or "local"
+    n_workers=8,
+    slurm={"queue": "gpuq", "gpu_type": "A30", "memory": "64GB"},
 )
+print(results["total_cells"], results["cells_summary_path"])
 ```
+
+`backend="local"` runs CPU workers, or one worker per GPU when `dask-cuda` is
+installed; `scheduler_address=` connects to an existing Dask cluster. The
+config file's optional `distributed:` section takes the same keys.
+
+### Stitching tiles
+
+Each tile is segmented with an overlap margin, so cells on a tile boundary are
+seen whole by both neighbours. The duplicates and collisions this creates are
+resolved with a port of the R workflow in `stitching/stitching.Rmd`
+(`smint.segmentation.stitching`). Overlap below is the intersection as a
+fraction of the smaller object.
+
+1. **Stitch nuclei, then cells** (cells must touch a stitched nucleus):
+   merge pairs overlapping by more than 50% until nothing more merges, then
+   trim overlaps under 25% from both objects, then drop the smaller object of
+   any pair still overlapping by 25% or more.
+2. **Reconcile cells with nuclei**: drop cells without a credible nucleus, grow
+   cells over nuclei they mostly contain, split nuclei straddling several
+   cells, remove duplicate and contained objects, and assign every nucleus to
+   exactly one cell. Nuclei with no cell become nucleus-only cells.
+
+The thresholds are `stitch_merge_thresh` (0.5) and `stitch_trim_thresh`
+(0.25); `reconcile_nuclei=False` skips step 2.
 
 ## Advanced Adaptive Segmentation
 
@@ -164,8 +202,14 @@ results = process_large_image(
 | `chunk_<y>_<x>.png` | Per-chunk visualizations (with `visualize=True`) | PNG |
 | `live_update.png` | Latest chunk, for the live viewer | PNG |
 
-`run_distributed_segmentation` writes per-chunk `outlines_<y>_<x>_<model>.csv`
-files and merges them into `combined_cell_outlines.csv`.
+`run_distributed_segmentation` writes, in `output_dir`:
+
+| File | Description |
+|------|-------------|
+| `cells_outlines.csv`, `nuclei_outlines.csv` | Stitched outline vertices: `global_cell_id`, `x`, `y` |
+| `cells_summary.csv` | Per cell: `global_cell_id`, `x_centroid`, `y_centroid`, `area`, `n_nuclei` |
+| `nuclei_summary.csv` | Per nucleus: `global_cell_id`, `x_centroid`, `y_centroid`, `area`, `cell_id` (containing cell) |
+| `cells.zarr`, `nuclei.zarr` | Full-resolution label masks (per-tile IDs, not the stitched IDs) |
 
 ## Live Segmentation Viewer
 

@@ -53,8 +53,16 @@ These dependencies are automatically installed when you install SMINT:
 - **dask**: For parallel computing (base package)
 - **scikit-image**: For image processing
 - **tifffile**: For reading/writing OME-TIFF files
-- **cellpose**: For cell segmentation models
+- **cellpose** (3 or 4): For cell segmentation models
 - **opencv-python**: For image processing and contour extraction
+
+!!! note "Cellpose 3 and 4"
+    SMINT works with Cellpose 3 and Cellpose 4. Models are given as a built-in
+    name or a path to a trained model. Cellpose 3 has the `cyto`, `cyto2`,
+    `cyto3` and `nuclei` models; Cellpose 4 has only Cellpose-SAM (`cpsam`), so
+    on Cellpose 4 those names fall back to `cpsam` with a warning — pass a
+    fine-tuned model path instead. `channels` (`[main, nuclear]`, 1-based, 0 =
+    none) selects the input channels identically on both versions.
 
 ### Optional Dependencies
 
@@ -62,12 +70,13 @@ These dependencies enable additional features but are not required for core func
 
 #### Distributed Processing
 
-- **dask[distributed]**: For distributed computing
+- **smint[distributed]**: Dask distributed, dask-jobqueue (SLURM workers),
+  zarr and shapely, for `run_distributed_segmentation`
   ```bash
-  pip install "dask[distributed]"
+  pip install "smint[distributed] @ git+https://github.com/JurgenKriel/SMINT.git"
   ```
 
-- **dask-cuda**: For GPU-accelerated distributed computing (requires CUDA)
+- **dask-cuda**: One local worker per GPU (requires CUDA)
   ```bash
   pip install dask-cuda
   ```
