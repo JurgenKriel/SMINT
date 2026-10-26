@@ -823,6 +823,197 @@ def register_centroids(
     }
 
 
+def refine_by_assignment(
+    source_xy: np.ndarray,
+    target_xy: np.ndarray,
+    transform=None,
+    snap_radius: float = 10.0,
+    neighbour_radius: float = 100.0,
+    consistency_tol: Optional[float] = None,
+    min_neighbours: int = 5,
+    k_fill: int = 8,
+    validation_fraction: float = 0.1,
+    random_state: Optional[int] = 0,
+    passes: int = 4,
+) -> dict:
+    """
+    Snap registered source points exactly onto their partner targets.
+
+    A port of the lab's ``alignment_refinement.r``. A smooth transform leaves
+    each nucleus a few microns from its cell -- partly because a nucleus
+    really is off-centre in its cell. This step instead *assigns* nuclei to
+    cells and moves each confidently assigned nucleus onto its partner:
+
+    1. Pair transformed source points one-to-one with targets (mutual nearest
+       neighbours within ``snap_radius``).
+    2. Keep a pair only if its offset agrees, within ``consistency_tol``, with
+       the median offset of the other pairs within ``neighbour_radius`` -- a
+       pairing with the wrong cell disagrees with its neighbourhood.
+    3. Snap kept pairs: the source point moves exactly onto its target.
+    4. Every other point moves by the median offset of its ``k_fill`` nearest
+       snapped neighbours (within ``neighbour_radius``), or not at all.
+    5. Repeat: the moved, still-unsnapped points are paired again with the
+       still-unmatched targets, and kept if they agree with the snapped field
+       around them -- up to ``passes`` times, until nothing new snaps.
+
+    Snapped points coincide with their targets by construction, so their
+    residual says nothing about correctness. The check is ``validation``: a
+    fraction of the kept pairs is left out of the offset field, their
+    positions are predicted from their neighbours alone (step 4), and the
+    distance from each prediction to its partner is reported.
+
+    Parameters
+    ----------
+    source_xy, target_xy : numpy.ndarray
+        ``(N, 2)`` / ``(M, 2)`` points. ``source_xy`` in its original frame.
+    transform : callable, optional
+        Registration to apply first (e.g. ``register_centroids(...)["transform"]``).
+        Default: none, ``source_xy`` is already registered.
+    snap_radius : float
+        Maximum distance for a pair.
+    neighbour_radius : float
+        Neighbourhood for the consistency test and for filling in.
+    consistency_tol : float, optional
+        Allowed deviation from the neighbourhood's median offset. Default
+        0.4 x the target's median nearest-neighbour spacing.
+    min_neighbours : int
+        Pairs with fewer neighbouring pairs than this cannot be checked and
+        are not snapped.
+    passes : int
+        Pairing passes (step 5); 1 disables re-pairing.
+    k_fill : int
+        Snapped neighbours whose median offset moves an unsnapped point.
+    validation_fraction : float
+        Fraction of kept pairs used for the held-out check.
+
+    Returns
+    -------
+    dict
+        ``refined_xy`` (``(N, 2)``), ``status`` (``'snapped'``, ``'filled'`` or
+        ``'unmoved'`` per point), ``target_idx`` (partner index, -1 if none),
+        ``n_snapped``, ``fraction_snapped`` (of source points),
+        ``fraction_targets_matched``, ``consistency_tol`` and ``validation``
+        (``median_error``, ``within_2``, ``within_5`` for the held-out pairs).
+    """
+    source_xy = np.asarray(source_xy, dtype=float)
+    target_xy = np.asarray(target_xy, dtype=float)
+    moved = transform(source_xy) if transform is not None else source_xy.copy()
+    n = len(moved)
+
+    if consistency_tol is None:
+        spacing = cKDTree(target_xy).query(target_xy, k=2)[0][:, 1]
+        consistency_tol = 0.4 * float(np.median(spacing))
+
+    si, ti, _ = match_centroids(moved, target_xy, max_distance=snap_radius, mutual=True)
+    offsets = target_xy[ti] - moved[si]
+
+    # Two passes: the second judges each pair against neighbours that passed the first
+    keep = np.ones(len(si), dtype=bool)
+    for _ in range(2):
+        med = np.full((len(si), 2), np.nan)
+        kept_idx = np.flatnonzero(keep)
+        tree = cKDTree(moved[si][kept_idx])
+        for i, idx in enumerate(tree.query_ball_point(moved[si], neighbour_radius)):
+            idx = [kept_idx[j] for j in idx if kept_idx[j] != i]
+            if len(idx) >= min_neighbours:
+                med[i] = np.median(offsets[idx], axis=0)
+        deviation = np.linalg.norm(offsets - med, axis=1)
+        keep = np.isfinite(deviation) & (deviation <= consistency_tol)
+
+    kept_src, kept_tgt, kept_off = si[keep], ti[keep], offsets[keep]
+
+    # Held-out check: predict some kept pairs from the others' offsets alone
+    rng = np.random.default_rng(random_state)
+    held = rng.random(len(kept_src)) < validation_fraction
+    validation = {"n": int(held.sum()), "median_error": float("nan"),
+                  "within_2": float("nan"), "within_5": float("nan")}
+    if held.any() and (~held).sum() >= k_fill:
+        tree = cKDTree(moved[kept_src[~held]])
+        d, j = tree.query(moved[kept_src[held]], k=k_fill, distance_upper_bound=neighbour_radius)
+        ok = np.isfinite(d)
+        pred_off = np.array([np.median(kept_off[~held][jj[o]], axis=0) if o.any() else [0.0, 0.0]
+                             for jj, o in zip(j, ok)])
+        err = np.linalg.norm(moved[kept_src[held]] + pred_off - target_xy[kept_tgt[held]], axis=1)
+        validation.update(median_error=float(np.median(err)), within_2=float(np.mean(err < 2)),
+                          within_5=float(np.mean(err < 5)))
+
+    refined = moved.copy()
+    status = np.full(n, "unmoved", dtype=object)
+    partner = np.full(n, -1)
+    refined[kept_src] = target_xy[kept_tgt]
+    status[kept_src] = "snapped"
+    partner[kept_src] = kept_tgt
+    passes_snapped = [int(len(kept_src))]
+
+    def field_median(points, min_count):
+        """Median snapped offset of each point's k_fill nearest snapped neighbours."""
+        snapped = np.flatnonzero(status == "snapped")
+        out = np.full((len(points), 2), np.nan)
+        if len(snapped) == 0:
+            return out
+        field = target_xy[partner[snapped]] - moved[snapped]
+        k = min(k_fill, len(snapped))
+        d, j = cKDTree(moved[snapped]).query(points, k=k, distance_upper_bound=neighbour_radius)
+        if k == 1:
+            d, j = d[:, None], j[:, None]
+        for i, (dd, jj) in enumerate(zip(d, j)):
+            ok = np.isfinite(dd)
+            if ok.sum() >= min_count:
+                out[i] = np.median(field[jj[ok]], axis=0)
+        return out
+
+    def fill():
+        rest = np.flatnonzero(status != "snapped")
+        if len(rest):
+            med = field_median(moved[rest], 1)
+            ok = np.isfinite(med[:, 0])
+            refined[rest[ok]] = moved[rest[ok]] + med[ok]
+            status[rest[ok]] = "filled"
+            refined[rest[~ok]] = moved[rest[~ok]]
+            status[rest[~ok]] = "unmoved"
+
+    fill()
+    for _ in range(passes - 1):
+        free_src = np.flatnonzero(status != "snapped")
+        taken = np.zeros(len(target_xy), dtype=bool)
+        taken[partner[partner >= 0]] = True
+        free_tgt = np.flatnonzero(~taken)
+        if len(free_src) == 0 or len(free_tgt) == 0:
+            break
+        si2, ti2, _ = match_centroids(refined[free_src], target_xy[free_tgt],
+                                      max_distance=snap_radius, mutual=True)
+        src, tgt = free_src[si2], free_tgt[ti2]
+        med = field_median(moved[src], min_neighbours)
+        deviation = np.linalg.norm((target_xy[tgt] - moved[src]) - med, axis=1)
+        accept = np.isfinite(deviation) & (deviation <= consistency_tol)
+        if not accept.any():
+            break
+        refined[src[accept]] = target_xy[tgt[accept]]
+        status[src[accept]] = "snapped"
+        partner[src[accept]] = tgt[accept]
+        passes_snapped.append(int(np.sum(status == "snapped")))
+        fill()
+
+    result = {
+        "refined_xy": refined, "status": status, "target_idx": partner,
+        "n_snapped": int(np.sum(status == "snapped")),
+        "fraction_snapped": float(np.sum(status == "snapped") / max(n, 1)),
+        "fraction_targets_matched": float(np.sum(status == "snapped") / max(len(target_xy), 1)),
+        "snapped_per_pass": passes_snapped,
+        "n_filled": int(np.sum(status == "filled")),
+        "consistency_tol": float(consistency_tol),
+        "validation": validation,
+    }
+    logger.info(
+        "Refinement: %d points snapped (%.1f%% of source, %.1f%% of targets), %d filled from "
+        "neighbours; held-out field check: median %.2f, %.0f%% within 2, %.0f%% within 5",
+        result["n_snapped"], 100 * result["fraction_snapped"], 100 * result["fraction_targets_matched"],
+        result["n_filled"], validation["median_error"], 100 * validation["within_2"],
+        100 * validation["within_5"],
+    )
+    return result
+
+
 def register_centroid_files(
     source_file: str,
     target_file: str,
@@ -831,6 +1022,8 @@ def register_centroid_files(
     output_path: Optional[str] = None,
     x_col: str = "x_transformed",
     y_col: str = "y_transformed",
+    refine: bool = True,
+    refine_kwargs: Optional[dict] = None,
     **kwargs,
 ) -> Tuple[pd.DataFrame, dict]:
     """
@@ -852,6 +1045,13 @@ def register_centroid_files(
         Where to write the transformed source table.
     x_col, y_col : str, optional
         Output column names.
+    refine : bool, optional
+        After registering, snap confidently matched points onto their targets
+        with :func:`refine_by_assignment` (default). ``x_col`` / ``y_col`` then
+        hold the refined positions, ``x_col + "_smooth"`` the transform-only
+        ones, and ``registration_status`` says how each point was placed.
+    refine_kwargs : dict, optional
+        Forwarded to :func:`refine_by_assignment`.
     **kwargs
         Forwarded to :func:`register_centroids`.
 
@@ -883,6 +1083,14 @@ def register_centroid_files(
 
     moved = result["transform"](source_xy)
     result_df = source_df.copy()
+    if refine:
+        refinement = refine_by_assignment(moved, target_xy, **(refine_kwargs or {}))
+        result["refinement"] = refinement
+        result_df[f"{x_col}_smooth"] = moved[:, 0]
+        result_df[f"{y_col}_smooth"] = moved[:, 1]
+        moved = refinement["refined_xy"]
+        result_df["registration_status"] = refinement["status"]
+        result_df["target_index"] = refinement["target_idx"]
     result_df[x_col] = moved[:, 0]
     result_df[y_col] = moved[:, 1]
 

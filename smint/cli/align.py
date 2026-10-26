@@ -100,7 +100,12 @@ def build_parser() -> argparse.ArgumentParser:
     centroid.add_argument("--validation-fraction", type=float, default=0.25,
                           help="Pairs held out from fitting; 0 makes the reported TRE meaningless")
     centroid.add_argument("--n-control", type=int, default=1000, help="TPS control points")
-    centroid.add_argument("--tps-regularization", type=float, default=1.0)
+    centroid.add_argument("--tps-regularization", type=float, default=None,
+                          help="Default: 1000 for multiround, 1 for the single-round methods")
+    centroid.add_argument("--no-refine", dest="refine", action="store_false",
+                          help="Skip snapping matched nuclei onto their cells")
+    centroid.add_argument("--snap-radius", type=float, default=10.0,
+                          help="Refinement: maximum nucleus-cell distance for snapping")
     centroid.add_argument("--source-cols", nargs=2, default=["centroid_x", "centroid_y"],
                           metavar=("X", "Y"))
     centroid.add_argument("--target-cols", nargs=2, default=["x_centroid", "y_centroid"],
@@ -301,6 +306,8 @@ def main(argv=None) -> int:
             "tps_regularization": args.tps_regularization,
             "source_cols": tuple(args.source_cols),
             "target_cols": tuple(args.target_cols),
+            "refine": args.refine,
+            "refine_kwargs": {"snap_radius": args.snap_radius},
         },
     )
 
