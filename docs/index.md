@@ -5,7 +5,7 @@ cells and nuclei across whole-slide images, then registers spatial
 transcriptomics, spatial metabolomics and post-stain imaging onto each other —
 interactively in napari, from the command line, or as SLURM jobs.
 
-![SMINT Workflow](https://github.com/JurgenKriel/SMINT/raw/main/SpatialSegPaper_v2.png)
+![SMINT Workflow](https://github.com/JurgenKriel/SMINT/raw/main/smint_new_logo_2.png)
 
 ## Install
 
