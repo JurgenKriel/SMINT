@@ -81,6 +81,8 @@ def _run_centroid(spec) -> dict:
             "inlier_fraction": (
                 float(result["inliers"].mean()) if result["inliers"] is not None else None
             ),
+            "rounds": result.get("rounds"),
+            "validation": result.get("validation"),
         },
     }
 

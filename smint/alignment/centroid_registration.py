@@ -17,8 +17,24 @@ this module handles, in increasing order of flexibility:
 ``affine``       Least-squares affine on all matched pairs.
 ``ransac``       RANSAC-robust affine; rejects bad correspondences.
 ``tps``          Thin-plate spline after an affine pre-alignment.
-``ransac+tps``   RANSAC affine, then TPS on the inliers. Recommended.
+``ransac+tps``   RANSAC affine, then TPS on the inliers.
+``multiround``   Coarse-to-fine displacement voting: an affine through
+                 per-block displacement peaks, then a smooth TPS through
+                 finer blocks. Recommended, and the default.
 ===============  =========================================================
+
+The single-round methods match every centroid once, by nearest neighbour,
+before anything is fitted. When the starting misalignment is comparable to
+the cell spacing, many of those first matches pair a nucleus with the wrong
+cell, and no fit to them can recover -- nearest-neighbour refinement then pulls
+each nucleus toward whichever cell happens to be closest. ``multiround``
+avoids committing to matches: within each block, every nucleus votes for the
+displacements to several nearby cells, and the true offset -- shared by the
+whole block -- is the peak of those votes (:func:`vote_block_displacements`).
+Round 1 fits an affine through the block peaks; later rounds vote again in
+smaller blocks on the result and add a smooth TPS through those peaks, to
+follow local warps. A round is kept only if it improves the alignment of the
+fitting points.
 
 Measuring quality honestly
 --------------------------
@@ -30,8 +46,11 @@ pairs it was fitted to, regardless of whether those correspondences are right.
 An unregularised TPS with as many control points as pairs will always report
 TRE ~ 0 on those pairs -- that is interpolation, not accuracy.
 
-Every function here therefore splits matched pairs into a fit set and a
-held-out validation set, and :func:`register_centroids` reports TRE on both.
+Every method here therefore holds data out of fitting and reports TRE on it.
+The single-round methods hold out matched pairs. ``multiround`` re-matches
+every round, so it holds out *source points* instead, before any matching:
+TRE is then the distance from each held-out point, after transformation, to
+its mutual nearest target within ``max_distance``.
 **Only the validation TRE is meaningful.** A large gap between fit TRE and
 validation TRE means the transform is memorising correspondences.
 
@@ -52,7 +71,7 @@ from scipy.spatial.distance import cdist
 
 logger = logging.getLogger(__name__)
 
-VALID_METHODS = ("affine", "ransac", "tps", "ransac+tps")
+VALID_METHODS = ("affine", "ransac", "tps", "ransac+tps", "multiround")
 
 
 # --------------------------------------------------------------------------
@@ -266,44 +285,53 @@ def estimate_affine_ransac(
     inliers : numpy.ndarray
         Boolean mask of inlier pairs.
     """
-    from skimage.measure import ransac as _ransac
-    from skimage.transform import AffineTransform
-
     source_xy = np.asarray(source_xy, dtype=float)
     target_xy = np.asarray(target_xy, dtype=float)
-
-    if source_xy.shape[0] < min_samples:
+    n = source_xy.shape[0]
+    if n < min_samples:
         logger.warning(
             "RANSAC needs at least %d pairs, got %d; falling back to "
-            "least-squares affine.", min_samples, source_xy.shape[0],
+            "least-squares affine.", min_samples, n,
         )
-        return estimate_affine(source_xy, target_xy), np.ones(
-            source_xy.shape[0], dtype=bool
-        )
+        return estimate_affine(source_xy, target_xy), np.ones(n, dtype=bool)
 
-    model, inliers = _ransac(
-        (source_xy, target_xy),
-        AffineTransform,
-        min_samples=min_samples,
-        residual_threshold=residual_threshold,
-        max_trials=max_trials,
-        rng=random_state,
-    )
+    # Plain NumPy: scikit-image's ransac peaked at ~75 GB on 35k pairs with a
+    # wide residual threshold. Candidate affines come from exact 3-point
+    # solves, scored in batches so memory stays at batch x n.
+    rng = np.random.default_rng(random_state)
+    homogeneous = np.hstack([source_xy, np.ones((n, 1))])
+    threshold_sq = float(residual_threshold) ** 2
+    best_count, best_params = -1, None
+    batch = 64
+    for start in range(0, max_trials, batch):
+        size = min(batch, max_trials - start)
+        picks = np.stack([rng.choice(n, min_samples, replace=False) for _ in range(size)])
+        A = homogeneous[picks[:, :3]]                      # (size, 3, 3)
+        B = target_xy[picks[:, :3]]                        # (size, 3, 2)
+        ok = np.abs(np.linalg.det(A)) > 1e-9               # skip collinear triples
+        if not ok.any():
+            continue
+        params = np.linalg.solve(A[ok], B[ok])             # (k, 3, 2)
+        residual_sq = ((homogeneous @ params - target_xy) ** 2).sum(axis=2)  # (k, n)
+        counts = (residual_sq < threshold_sq).sum(axis=1)
+        k = int(np.argmax(counts))
+        if counts[k] > best_count:
+            best_count, best_params = int(counts[k]), params[k]
 
-    if model is None:
+    if best_params is None or best_count < min_samples:
         logger.warning("RANSAC failed to find a model; using least squares.")
-        return estimate_affine(source_xy, target_xy), np.ones(
-            source_xy.shape[0], dtype=bool
-        )
+        return estimate_affine(source_xy, target_xy), np.ones(n, dtype=bool)
 
-    if inliers is None:
-        inliers = np.ones(source_xy.shape[0], dtype=bool)
-
+    inliers = ((homogeneous @ best_params - target_xy) ** 2).sum(axis=1) < threshold_sq
+    refit = np.linalg.lstsq(homogeneous[inliers], target_xy[inliers], rcond=None)[0]
+    inliers = ((homogeneous @ refit - target_xy) ** 2).sum(axis=1) < threshold_sq
+    matrix = np.eye(3)
+    matrix[:2, :] = refit.T
     logger.info(
         "RANSAC affine: %d/%d inliers (%.1f%%) at residual_threshold=%s",
-        int(inliers.sum()), len(inliers), 100 * inliers.mean(), residual_threshold,
+        int(inliers.sum()), n, 100 * inliers.mean(), residual_threshold,
     )
-    return np.asarray(model.params, dtype=float), np.asarray(inliers, dtype=bool)
+    return matrix, inliers
 
 
 # --------------------------------------------------------------------------
@@ -436,45 +464,230 @@ def apply_tps(points_xy: np.ndarray, model: Optional[dict], chunk_size: int = 50
 # Orchestration
 # --------------------------------------------------------------------------
 
+def _mutual_tre(moved_xy: np.ndarray, target_xy: np.ndarray, max_distance: float):
+    """``(mean, std)`` distance from points to their mutual nearest target within ``max_distance``."""
+    _, _, distances = match_centroids(moved_xy, target_xy, max_distance=max_distance, mutual=True)
+    if distances.size == 0:
+        return (float("nan"), float("nan"))
+    return (float(distances.mean()), float(distances.std()))
+
+
+def alignment_quality(moved_xy: np.ndarray, target_xy: np.ndarray) -> dict:
+    """
+    Correspondence-free alignment summary of ``moved_xy`` against ``target_xy``.
+
+    Returns ``median_nn`` (median distance to the nearest target) and
+    ``mutual_within_5`` / ``mutual_within_10``: the fraction of points whose
+    nearest target has them as its nearest point too, within 5 / 10 units.
+    """
+    moved_xy = np.asarray(moved_xy, dtype=float)
+    if len(moved_xy) == 0:
+        return {"median_nn": float("nan"), "mutual_within_5": float("nan"), "mutual_within_10": float("nan")}
+    d, j = cKDTree(target_xy).query(moved_xy)
+    back = cKDTree(moved_xy).query(np.asarray(target_xy)[j])[1]
+    mutual = back == np.arange(len(moved_xy))
+    return {
+        "median_nn": float(np.median(d)),
+        "mutual_within_5": float(np.mean(mutual & (d < 5))),
+        "mutual_within_10": float(np.mean(mutual & (d < 10))),
+    }
+
+
+def vote_block_displacements(
+    source_xy: np.ndarray,
+    target_xy: np.ndarray,
+    max_distance: float,
+    block_size: float,
+    bin_size: float = 2.0,
+    k: Optional[int] = None,
+    min_points: int = 25,
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Estimate the local source -> target displacement in square blocks.
+
+    Every source point votes for the displacements to its ``k`` nearest
+    targets within ``max_distance``. Wrong candidates point in random
+    directions, but the true offset is shared by every point in the block, so
+    it is the peak of the (lightly smoothed) 2D vote histogram. This works even
+    when the misalignment exceeds the cell spacing, where nearest-neighbour
+    matching cannot -- provided the tissue is not a regular lattice, whose
+    periodicity makes every whole-spacing shift look equally good.
+
+    ``k`` defaults to the expected number of targets within ``max_distance``
+    (from the target density, capped at 128), so the true partner is among
+    the candidates anywhere in that radius.
+
+    Returns
+    -------
+    centres, displacements : numpy.ndarray
+        ``(B, 2)`` block centroids and their modal displacements, for blocks
+        holding at least ``min_points`` source points.
+    """
+    from scipy.ndimage import gaussian_filter
+
+    source_xy = np.asarray(source_xy, dtype=float)
+    target_xy = np.asarray(target_xy, dtype=float)
+    if k is None:
+        span = np.ptp(target_xy, axis=0)
+        density = len(target_xy) / max(span[0] * span[1], 1e-9)
+        k = int(np.clip(np.ceil(density * np.pi * max_distance ** 2), 8, 128))
+    d, j = cKDTree(target_xy).query(source_xy, k=k, distance_upper_bound=max_distance)
+    valid = np.isfinite(d)
+    displacement = target_xy[np.where(valid, j, 0)] - source_xy[:, None, :]
+    edges = np.arange(-max_distance, max_distance + bin_size, bin_size)
+
+    keys = np.floor((source_xy - source_xy.min(axis=0)) / block_size).astype(np.int64)
+    flat = keys[:, 0] * 1_000_003 + keys[:, 1]
+    order = np.argsort(flat, kind="stable")
+    groups = np.split(order, np.flatnonzero(np.diff(flat[order])) + 1)
+
+    centres, peaks = [], []
+    for idx in groups:
+        if len(idx) < min_points:
+            continue
+        votes = displacement[idx][valid[idx]]
+        if len(votes) == 0:
+            continue
+        hist = gaussian_filter(np.histogram2d(votes[:, 0], votes[:, 1], bins=[edges, edges])[0], 1.0)
+        ix, iy = np.unravel_index(np.argmax(hist), hist.shape)
+        peaks.append([(edges[ix] + edges[ix + 1]) / 2, (edges[iy] + edges[iy + 1]) / 2])
+        centres.append(source_xy[idx].mean(axis=0))
+    return np.asarray(centres).reshape(-1, 2), np.asarray(peaks).reshape(-1, 2)
+
+
+def _register_multiround(
+    source_xy, target_xy, max_distance, validation_fraction, max_trials,
+    tps_regularization, random_state, schedule, min_improvement,
+) -> dict:
+    """Coarse-to-fine displacement voting; see :func:`register_centroids`."""
+    rng = np.random.default_rng(random_state)
+    held_out = rng.random(len(source_xy)) < validation_fraction
+    fit_points = np.flatnonzero(~held_out)
+    fit_xy, val_xy = source_xy[~held_out], source_xy[held_out]
+    if schedule is None:
+        schedule = ((max_distance, 500.0, 2.0), (0.25 * max_distance, 250.0, 1.0))
+
+    affine_matrix, tps_models = np.eye(3), []
+
+    def transform_with(matrix, models):
+        def transform(points):
+            moved = apply_affine(points, matrix)
+            for model in models:
+                moved = apply_tps(moved, model)
+            return moved
+        return transform
+
+    tre_initial = _mutual_tre(val_xy if held_out.any() else fit_xy, target_xy, max_distance)
+    logger.info("Initial TRE (held-out points, mutual NN <= %s): %.4f", max_distance, tre_initial[0])
+    score = alignment_quality(fit_xy, target_xy)["median_nn"]
+    rounds = [{"stage": "initial", "median_nn": score}]
+
+    for k, (round_distance, block_size, bin_size) in enumerate(schedule):
+        current = transform_with(affine_matrix, tps_models)(fit_xy)
+        centres, peaks = vote_block_displacements(current, target_xy, round_distance, block_size, bin_size)
+        if len(centres) < 3:
+            logger.info("Round %d: only %d blocks with enough points; stopping.", k + 1, len(centres))
+            break
+        step, inliers = estimate_affine_ransac(
+            centres, centres + peaks, residual_threshold=3 * bin_size,
+            max_trials=max_trials, random_state=random_state,
+        )
+        if k == 0:
+            candidate = (step @ affine_matrix, tps_models)
+            stage = "affine"
+        else:
+            model = fit_tps(centres[inliers], centres[inliers] + peaks[inliers],
+                            regularization=tps_regularization, n_control=None)
+            candidate = (affine_matrix, tps_models + [model])
+            stage = "tps"
+        new_score = alignment_quality(transform_with(*candidate)(fit_xy), target_xy)["median_nn"]
+        accepted = new_score < score * (1 - min_improvement)
+        rounds.append({"stage": stage, "max_distance": float(round_distance),
+                       "block_size": float(block_size), "blocks": int(len(centres)),
+                       "consistent_blocks": float(inliers.mean()), "median_nn": float(new_score),
+                       "accepted": bool(accepted)})
+        logger.info("Round %d (%s, %g-unit blocks): %d blocks, %.0f%% consistent, median NN %.2f -> %.2f%s",
+                    k + 1, stage, block_size, len(centres), 100 * inliers.mean(), score, new_score,
+                    "" if accepted else " -- not an improvement, stopping")
+        if not accepted:
+            break
+        affine_matrix, tps_models = candidate
+        score = new_score
+
+    transform = transform_with(affine_matrix, tps_models)
+    si, ti, match_distances = match_centroids(transform(fit_xy), target_xy,
+                                              max_distance=max_distance, mutual=True)
+    tre_fit = _mutual_tre(transform(fit_xy), target_xy, max_distance)
+    tre_validation = (_mutual_tre(transform(val_xy), target_xy, max_distance)
+                      if held_out.any() else (float("nan"), float("nan")))
+    return {
+        "affine": affine_matrix, "tps": tps_models[-1] if tps_models else None,
+        "tps_models": tps_models, "transform": transform,
+        "source_idx": fit_points[si], "target_idx": ti, "match_distances": match_distances,
+        "inliers": None, "n_matched": int(len(si)), "rounds": rounds,
+        "tre_initial": tre_initial, "tre_fit": tre_fit, "tre_validation": tre_validation,
+        "validation": {
+            "before": alignment_quality(val_xy, target_xy),
+            "after": alignment_quality(transform(val_xy), target_xy),
+        },
+    }
+
+
 def register_centroids(
     source_xy: np.ndarray,
     target_xy: np.ndarray,
-    method: str = "ransac+tps",
+    method: str = "multiround",
     max_distance: float = 100.0,
     mutual: bool = True,
     validation_fraction: float = 0.25,
     residual_threshold: float = 10.0,
     max_trials: int = 1000,
-    tps_regularization: float = 1.0,
+    tps_regularization: Optional[float] = None,
     n_control: Optional[int] = 1000,
     random_state: Optional[int] = 0,
+    schedule: Optional[Sequence[Tuple[float, float, float]]] = None,
+    min_improvement: float = 0.01,
 ) -> dict:
     """
     Register two centroid sets acquired from the *same* physical section.
 
-    Matches centroids by nearest neighbour, holds out a fraction of the pairs,
-    fits the requested transform on the rest, and reports TRE on both sets.
+    ``multiround`` (the default) re-matches and refits over several rounds;
+    the single-round methods match once by nearest neighbour, hold out a
+    fraction of the pairs, and fit the rest. All report TRE on held-out data.
 
     Parameters
     ----------
     source_xy, target_xy : numpy.ndarray
         ``(N, 2)`` / ``(M, 2)`` ``(x, y)`` centroids. The source is moved onto
         the target.
-    method : {'affine', 'ransac', 'tps', 'ransac+tps'}, optional
+    method : {'multiround', 'affine', 'ransac', 'tps', 'ransac+tps'}, optional
         Registration model. See the module docstring.
     max_distance : float, optional
         Correspondence cutoff, in coordinate units.
     mutual : bool, optional
         Require reciprocal nearest neighbours.
     validation_fraction : float, optional
-        Fraction of matched pairs held out from fitting. Set to ``0.0`` only
-        if you accept that the reported TRE is then uninformative.
+        Fraction held out from fitting: matched pairs for the single-round
+        methods, source points for ``multiround``. Set to ``0.0`` only if you
+        accept that the reported TRE is then uninformative.
     residual_threshold, max_trials : optional
-        RANSAC settings.
+        RANSAC settings (``multiround`` derives each round's threshold from
+        its radius).
     tps_regularization, n_control : optional
-        TPS settings.
+        TPS settings. Regularisation defaults to 1000 for ``multiround``
+        (whose control points are block centres) and 1 for the single-round
+        methods.
     random_state : int, optional
         Seed for the split, RANSAC and control-point sampling.
+    schedule : sequence of (max_distance, block_size, bin_size), optional
+        ``multiround`` voting rounds, coarse to fine. Round 1 fits an affine
+        through the block displacements; later rounds add a smooth TPS
+        through them. Default ``((max_distance, 500, 2),
+        (0.25 * max_distance, 250, 1))``, in coordinate units (microns).
+    min_improvement : float, optional
+        ``multiround`` keeps a round only if it lowers the fit points' median
+        nearest-target distance by at least this fraction, and stops at the
+        first round that does not.
 
     Returns
     -------
@@ -485,12 +698,34 @@ def register_centroids(
         ``inliers`` (or None), ``n_matched``,
         ``tre_initial``, ``tre_fit``, ``tre_validation`` -- each a
         ``(mean, std)`` tuple, with ``tre_validation`` the one to trust.
+        ``multiround`` adds ``rounds`` (a per-round log) and ``validation``,
+        :func:`alignment_quality` of the held-out points ``before`` and
+        ``after`` -- a correspondence-free check alongside TRE.
     """
     if method not in VALID_METHODS:
         raise ValueError(f"method must be one of {VALID_METHODS}, got {method!r}")
 
     source_xy = np.asarray(source_xy, dtype=float)
     target_xy = np.asarray(target_xy, dtype=float)
+
+    if method == "multiround":
+        result = _register_multiround(
+            source_xy, target_xy, max_distance, validation_fraction, max_trials,
+            1000.0 if tps_regularization is None else tps_regularization,
+            random_state, schedule, min_improvement,
+        )
+        tre_initial, tre_fit, tre_validation = (
+            result["tre_initial"], result["tre_fit"], result["tre_validation"])
+        logger.info("TRE after multiround -- fit: %.4f | held-out validation: %.4f",
+                    tre_fit[0], tre_validation[0])
+        if np.isfinite(tre_validation[0]) and tre_validation[0] >= tre_initial[0]:
+            logger.warning(
+                "Held-out TRE (%.4f) is no better than the initial TRE (%.4f): the "
+                "transform does not improve the alignment.", tre_validation[0], tre_initial[0])
+        return {"method": method, **result}
+
+    if tps_regularization is None:
+        tps_regularization = 1.0
 
     source_idx, target_idx, match_distances = match_centroids(
         source_xy, target_xy, max_distance=max_distance, mutual=mutual

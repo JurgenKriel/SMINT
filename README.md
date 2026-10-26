@@ -89,8 +89,8 @@ Or from Python:
 ```python
 from smint.alignment import register_centroids
 
-result = register_centroids(nucleus_xy, xenium_xy, method="ransac+tps")
-print(result["tre_validation"])  # TRE on held-out pairs
+result = register_centroids(nucleus_xy, xenium_xy)   # multiround: coarse-to-fine rounds
+print(result["tre_validation"])  # TRE on held-out nuclei
 ```
 
 See the [Alignment guide](https://jurgenkriel.github.io/SMINT/alignment/).

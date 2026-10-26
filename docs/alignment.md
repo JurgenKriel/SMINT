@@ -175,21 +175,51 @@ For post-staining on the same section, where centroids correspond one-to-one.
 ```python
 from smint.alignment import register_centroids
 
-result = register_centroids(
-    nucleus_xy, xenium_xy,
-    method="ransac+tps",
-    max_distance=100.0,
-    validation_fraction=0.25,
-)
-print(result["tre_validation"])    # the number that matters
+result = register_centroids(nucleus_xy, xenium_xy)   # method="multiround"
+print(result["tre_validation"])                       # the number that matters
+print(result["validation"]["after"])                  # median NN, matched fractions
 ```
+
+![Post-stain nuclei registered to Xenium cells, before and after](assets/registration_same_section.png)
 
 | Method | What it does |
 |---|---|
-| `affine` | Least-squares affine on all matched pairs |
+| `multiround` (default) | Coarse-to-fine displacement voting: an affine, then optional smooth TPS rounds |
+| `affine` | Least-squares affine on all nearest-neighbour pairs |
 | `ransac` | RANSAC-robust affine; rejects bad correspondences |
 | `tps` | Thin-plate spline after an affine pre-alignment |
 | `ransac+tps` | RANSAC affine, then TPS on the inliers |
+
+### Why multiple rounds
+
+The single-round methods match every nucleus to its nearest cell *once*,
+before fitting. When the starting offset is comparable to the cell spacing,
+most of those matches are wrong, and no transform fitted to them can recover:
+on Venture 5 z5 (cells ~17 µm apart, nuclei ~12 µm off) they barely move the
+alignment.
+
+`multiround` never commits to nearest neighbours. Within each block of tissue,
+every nucleus votes for the displacements to several nearby cells; wrong
+candidates scatter, while the true offset — shared by the whole block — piles
+up as a peak (`vote_block_displacements`). Then:
+
+1. **Round 1** fits an affine through the block peaks (500 µm blocks).
+2. **Round 2** votes again in 250 µm blocks on the result and adds a smooth TPS
+   through those peaks, following local warps.
+3. A round is **kept only if it improves** the fitting nuclei's alignment;
+   otherwise registration stops there.
+
+Each round's outcome is in `result["rounds"]`. Tune with `schedule=` —
+`(max_distance, block_size, bin_size)` per round, in microns — and
+`min_improvement=`.
+
+| Venture 5 z5, held-out nuclei | median NN | matched ≤ 5 µm | matched ≤ 10 µm |
+|---|---|---|---|
+| no transform | 12.4 µm | 10% | 34% |
+| `ransac+tps` (one round) | 11.5 µm | 13% | 40% |
+| **`multiround`** | **5.4 µm** | **45%** | **76%** |
+
+*Matched = mutual nearest neighbours. 88,906 nuclei, 74,247 cells; 3 s.*
 
 ### Measuring quality honestly
 
@@ -200,17 +230,25 @@ regardless of whether those correspondences are correct. An unregularised TPS
 with as many control points as pairs will *always* report TRE ≈ 0 on those
 pairs — that is interpolation, not accuracy.
 
-`register_centroids` therefore always holds out a fraction of pairs and reports
-TRE on both:
+`register_centroids` therefore always holds data out of fitting and reports
+TRE on it. The single-round methods hold out matched pairs; `multiround`
+re-estimates correspondences each round, so it holds out a quarter of the
+*nuclei* before anything is matched:
 
 ```
 tre_initial      before any transform
-tre_fit          on the pairs used for fitting     <- not evidence
-tre_validation   on held-out pairs                 <- the real number
+tre_fit          on the data used for fitting      <- not evidence
+tre_validation   on held-out data                  <- the real number
 ```
 
-A large gap between the two means the transform is memorising
-correspondences. The function warns when it detects this.
+For `multiround`, TRE is the distance from each held-out nucleus to its mutual
+nearest cell. `result["validation"]` adds a correspondence-free summary of the
+held-out nuclei `before` and `after`: median distance to the nearest cell, and
+the fractions matched within 5 and 10 µm.
+
+A large gap between fit and validation means the transform is memorising
+correspondences; a validation TRE no better than the initial one means it did
+not help. The function warns in both cases.
 
 !!! warning "Matching is mutual by default"
     `mutual=True` keeps only pairs that are each other's nearest neighbour.
@@ -220,14 +258,16 @@ correspondences. The function warns when it detects this.
 
 ### Interpreting the result
 
-If no method beats the initial TRE, the datasets are already as aligned as a
-global transform can make them, and the remaining distance is correspondence
-ambiguity rather than misregistration. Two useful diagnostics:
-
-- Compare against the target's own inter-cell spacing. If the residual is a
-  large fraction of that, many "matches" are neighbouring cells rather than the
-  same cell.
-- Sweep `max_distance`. If TRE shrinks in proportion rather than reaching a
+- **A single-round method doesn't beat the initial TRE.** Usually the starting
+  offset is close to the cell spacing and nearest-neighbour matching is
+  pairing nuclei with neighbouring cells. Use `multiround`.
+- **Compare with the target's cell spacing.** A residual that is a large
+  fraction of it means many "matches" are neighbouring cells, not the same
+  cell.
+- **Expect a floor of a few microns.** Xenium reports *cell* centroids; a
+  stained nucleus's centroid is legitimately a few microns away from its
+  cell's.
+- **Sweep `max_distance`.** If TRE shrinks in proportion rather than reaching a
   plateau, the threshold is setting the residual, not alignment error.
 
 ---
