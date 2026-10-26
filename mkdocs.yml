@@ -1,75 +1,154 @@
-site_name: SMINT Documentation
-site_description: Spatial Multi-Omics Integration Toolkit
+site_name: SMINT
+site_description: Spatial Multi-Omics Integration Toolkit — segment whole slides and register spatial omics modalities into one coordinate system
 site_author: Jurgen Kriel
+site_url: https://jurgenkriel.github.io/SMINT/
 repo_url: https://github.com/JurgenKriel/SMINT
 repo_name: JurgenKriel/SMINT
+edit_uri: edit/main/docs/
 
 theme:
   name: material
+  logo: assets/smint_logo.png
+  favicon: assets/smint_logo.png
   palette:
-    primary: blue
-    accent: indigo
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: pink
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: pink
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
   features:
     - navigation.instant
     - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
-    - navigation.expand
     - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
     - content.code.copy
+    - content.code.annotate
     - content.tabs.link
+    - content.action.edit
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
 
 markdown_extensions:
+  - abbr
   - admonition
-  - codehilite
+  - attr_list
+  - md_in_html
   - footnotes
+  - tables
+  - def_list
   - toc:
       permalink: true
-  - pymdownx.highlight
-  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
   - pymdownx.inlinehilite
-  - pymdownx.tabbed
-  - pymdownx.arithmatex
+  - pymdownx.snippets:
+      base_path: ["docs"]
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
   - pymdownx.betterem
   - pymdownx.caret
-  - pymdownx.critic
-  - pymdownx.details
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  - pymdownx.keys
   - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.keys
   - pymdownx.smartsymbols
   - pymdownx.tasklist:
       custom_checkbox: true
-  - pymdownx.tilde
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 nav:
   - Home: index.md
-  - Getting Started:
+  - Getting started:
     - Installation: installation.md
-    - Dependency Handling: dependency_handling.md
-    - Configuration: configuration.md
-  - User Guide:
+    - Quick start: quickstart.md
+  - Tutorials:
+    - tutorials/index.md
+    - Segment a whole slide: tutorials/01_segmentation.ipynb
+    - Same-section registration: tutorials/02_same_section_registration.ipynb
+    - Sequential-section registration: tutorials/03_sequential_registration.ipynb
+    - Distributed segmentation on SLURM: tutorials/04_distributed_segmentation.ipynb
+    - Worked examples on real data: examples.md
+  - User guide:
+    - concepts/index.md
+    - The SMINT workflow: concepts/workflow.md
+    - Choosing a registration method: concepts/registration_methods.md
+    - Coordinate frames: concepts/coordinate_frames.md
+    - Tiling and stitching: concepts/tiling_and_stitching.md
     - Segmentation: segmentation.md
     - Alignment: alignment.md
-    - Xenium-Metabolomics: xenium_metabolomics_alignment.md
-    - napari Plugin: napari_plugin.md
-    - R Integration: r_integration.md
-    - HPC Deployment: hpc_deployment.md
-  - Examples:
-    - Examples: examples.md
-  - Visualizations:
-    - Interactive Plots: visualizations.md
+    - napari plugin: napari_plugin.md
+    - Running on HPC: hpc_deployment.md
+    - R integration: r_integration.md
+  - Reference:
+    - reference/index.md
+    - Command line: reference/cli.md
+    - Data formats: reference/data_formats.md
+    - Configuration: reference/configuration.md
+    - Python API:
+      - Alignment: reference/api/alignment.md
+      - Segmentation: reference/api/segmentation.md
+      - Jobs: reference/api/jobs.md
+  - Gallery: visualizations.md
+  - About:
+    - FAQ & troubleshooting: faq.md
+    - Changelog: changelog.md
+    - Contributing: contributing.md
+    - Citation: citation.md
 
 plugins:
   - search
+  - mkdocs-jupyter:
+      execute: false
+      include_source: true
+      ignore_h1_titles: true
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: ["."]
+          options:
+            docstring_style: numpy
+            show_source: false
+            show_root_heading: true
+            show_symbol_type_heading: true
+            members_order: source
+            separate_signature: true
+            merge_init_into_class: true
+            filters: ["!^_"]
+  - redirects:
+      redirect_maps:
+        dependency_handling.md: installation.md
+        configuration.md: reference/configuration.md
+        xenium_metabolomics_alignment.md: tutorials/03_sequential_registration.ipynb
 
 extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/JurgenKriel/SMINT
-  version:
-    provider: mike
 
-copyright: Copyright &copy; 2024 Jurgen Kriel
+copyright: Copyright &copy; 2024–2026 Jurgen Kriel · MIT licence

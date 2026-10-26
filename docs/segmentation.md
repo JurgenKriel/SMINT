@@ -50,7 +50,7 @@ For optimal segmentation results, input images should have:
 
 Segmentation is run with `scripts/run_segmentation.py` from a source checkout.
 Model parameters (thresholds, channels, adaptive nuclei settings) come from a
-YAML config — see [Configuration](configuration.md) and
+YAML config — see [Configuration](reference/configuration.md) and
 `configs/segmentation_config.yaml`.
 
 ### Single-Process Segmentation

@@ -1,0 +1,8 @@
+# Pinned so CI and local builds render the same site
+mkdocs==1.6.1
+mkdocs-material==9.6.14
+pymdown-extensions==10.15
+mkdocs-jupyter==0.25.1
+mkdocstrings==0.29.1
+mkdocstrings-python==1.16.12
+mkdocs-redirects==1.2.2
