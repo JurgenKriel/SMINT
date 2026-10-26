@@ -24,9 +24,8 @@ exposes this via the ``orientation`` argument:
 
 ``orientation="dataset"`` (default)
     Assign ``out[:, 0] -> x`` and ``out[:, 1] -> y``. This reproduces the
-    historical Venture outputs (``x_transformed`` / ``y_transformed`` in
-    ``venture_pt5/aligned_lddmm_2/``), so existing downstream code keeps
-    working -- but these coordinates are transposed relative to the ST
+    project's historical outputs (``x_transformed`` / ``y_transformed``), so
+    existing downstream code keeps working -- but these coordinates are transposed relative to the ST
     cells and do not overlay them.
 
 ``orientation="stalign"``
@@ -255,7 +254,7 @@ def read_sm_matrix(
 
     The SM grid is stored in pixel units; ``scale_xy`` converts it to the same
     micron scale as the ST centroids, so registration starts near the right
-    magnitude. For the Venture cohort this is ``10.0``.
+    magnitude. For the MALDI data SMINT was developed on this is ``10.0``.
 
     Parameters
     ----------
@@ -449,7 +448,7 @@ def read_st_annotations(
     verbose: bool = True,
 ) -> pd.DataFrame:
     """
-    Read an ST annotation table (e.g. ``Z2_final_aligned_annos.csv``).
+    Read an ST annotation table (e.g. ``sample2_xenium_z2.csv``).
 
     Parameters
     ----------
@@ -771,7 +770,7 @@ def transform_points(
         Source coordinates, as plain x and y vectors.
     orientation : {'dataset', 'stalign'}, optional
         Which frame to return. See the module docstring. ``'dataset'``
-        reproduces the historical Venture outputs and keeps the source
+        reproduces the project's historical outputs and keeps the source
         dataset's orientation; ``'stalign'`` returns true xy in the ST frame.
         The two differ by a transpose.
 
@@ -1050,7 +1049,7 @@ def find_sm_matrix_files(base_path: str, layers: Sequence[int]) -> dict:
     Parameters
     ----------
     base_path : str
-        Root of the ``integrated`` directory for a patient.
+        Root of the ``integrated`` directory for a sample.
     layers : sequence of int
         Layer numbers to search.
 

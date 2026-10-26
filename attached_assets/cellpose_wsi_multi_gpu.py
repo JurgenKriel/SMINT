@@ -25,7 +25,7 @@ from contextlib import contextmanager
 import pandas as pd # Import pandas for CSV export
 
 # --- Default Configuration ---
-DEFAULT_IMAGE_PATH = "/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/dapi_combined_af_merged_image.ome.tif"
+DEFAULT_IMAGE_PATH = "/path/to/sample2/ome/dapi_combined_af_merged_image.ome.tif"
 DEFAULT_OUTPUT_DIR = "output_segmentation_combined"
 DEFAULT_CSV_BASE_PATH = "output_segmentation_combined/outlines" # Default base for CSV files
 # Default models and their corresponding parameters

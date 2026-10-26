@@ -46,9 +46,9 @@ def segment_chunk(chunk, model=None, chunk_position=None):
     Segment a single chunk using cellpose and extract outlines
     """
     if model is None:
-        model = models.CellposeModel(model_type='nuclei', gpu=True)
+        #model = models.CellposeModel(model_type='nuclei', gpu=True)
         #model = models.CellposeModel(model_type='CP', gpu=True) #use for DAPI-only images
-        #model = models.CellposeModel(pretrained_model="/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700", gpu=True)
+        model = models.CellposeModel(pretrained_model="/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700", gpu=True)
 
     # Ensure chunk is 2D and properly formatted
     if chunk.ndim > 2:
@@ -72,10 +72,10 @@ def segment_chunk(chunk, model=None, chunk_position=None):
     try:
         # Run cellpose with error handling for different versions
         result = model.eval(chunk,
-                            diameter=100,
+                            diameter=80,
                             flow_threshold=0.8,
-                            cellprob_threshold=-0.5,
-                            channels=[0,0])
+                            cellprob_threshold=-3.5,
+                            channels=[2,0])
 
 
         # Handle different return formats
@@ -241,11 +241,11 @@ def process_large_image(image_path, output_path, csv_path, chunk_size=(1024, 102
 if __name__ == "__main__":
     # Set up dask client
     client = Client()
-
+    
     # Process image
-    image_path = "/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/dapi_processed.tif"
-    output_path = "/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/Venture5_cell_outlines.zarr"
-    csv_path = "/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/Venture5_nuclei_outlines.csv"
+    image_path = "/path/to/sample2/ome/dapi_combined_af_merged_image.ome.tif"
+    output_path = "/path/to/sample2/ome/Sample2_cell_outlines.zarr"
+    csv_path = "/path/to/sample2/ome/Sample2_cell_outlines.csv"
 
     chunk_size = (3024, 3024)
     # Process the image

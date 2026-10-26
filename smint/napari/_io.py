@@ -156,7 +156,7 @@ def save_landmarks(points_xy: np.ndarray, path: str) -> Path:
 
     That format is a ``{label: [(x, y)]}`` dict pickled into a ``.npy``, with
     labels as ``'1'``, ``'2'``, ... in click order. Writing the same thing keeps
-    existing Venture landmark files interchangeable with plugin output, and
+    existing landmark files interchangeable with plugin output, and
     lets :func:`smint.alignment.st_sm_registration.load_landmarks` read either.
 
     Parameters

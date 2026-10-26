@@ -12,8 +12,8 @@ from scipy.ndimage import gaussian_filter
 from scipy.spatial import cKDTree
 from smint.alignment import centroid_registration as cr
 
-XEN = "/vast/projects/BCRL_Multi_Omics/venture_pt5/z5_pre_aligned_coordinates.csv"
-NUC = "/vast/projects/BCRL_Multi_Omics/venture_pt5/segmentations/wsi/transformed_nuc_points_in_global.csv"
+XEN = "/path/to/sample2/z5_pre_aligned_coordinates.csv"
+NUC = "/path/to/sample2/segmentations/wsi/transformed_nuc_points_in_global.csv"
 xen = pd.read_csv(XEN, usecols=["x_centroid", "y_centroid"]).to_numpy(float)
 nuc = pd.read_csv(NUC, usecols=["x_centroid", "y_centroid"]).to_numpy(float)
 held = np.random.default_rng(0).random(len(nuc)) < 0.25

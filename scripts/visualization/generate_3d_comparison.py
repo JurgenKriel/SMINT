@@ -8,17 +8,17 @@ import plotly.graph_objects as go
 # =========================================================
 # Configuration
 # =========================================================
-PER_CLASS_CAP = 3000       # max cells per annotation per patient
+PER_CLASS_CAP = 3000       # max cells per annotation per sample
 COORD_PRECISION = 1        # decimal places for x/y/z coordinates
 
-v2_csv = '/stornext/Bioinf/data/lab_brain_cancer/projects/tme_spatial/transcriptomics/venture/Ven2_23BCRL059T/data/out/aligned_annotations_240620.csv'
-v3_csv = '/stornext/Bioinf/data/lab_brain_cancer/projects/tme_spatial/venture_multi_omics/venture_pt3/annotated_polygons/ven3_annotations_centroids.csv'
-pt5_base = '/vast/projects/BCRL_Multi_Omics/venture_pt5/'
-pt5_z_planes = [80, 70, 60, 50, 40, 30, 20, 10]
+sampleA_csv = '/path/to/sampleA/aligned_annotations.csv'
+sampleC_csv = '/path/to/sampleC/annotations_centroids.csv'
+sampleB_base = '/path/to/sampleB/'
+sampleB_z_planes = [80, 70, 60, 50, 40, 30, 20, 10]
 
-out_path = '/vast/projects/BCRL_Multi_Omics/SMINT/docs/bcrl_patient_3d_comparison.html'
+out_path = 'docs/samples_3d_comparison.html'
 
-PATIENT_LABELS = ['Patient 1', 'Patient 5', 'Patient 3']
+SAMPLE_LABELS = ['Sample A', 'Sample B', 'Sample C']
 
 # =========================================================
 # Helpers
@@ -75,40 +75,40 @@ default_color_tuple = (0.5, 0.5, 0.5)
 # =========================================================
 # Load data
 # =========================================================
-print('Loading Patient 1 (PT2)...')
-v2_all = pd.read_csv(v2_csv)
-v2_all['Anno'] = v2_all['Anno'].apply(normalize_label)
-v2_all = round_cols(v2_all, ['x_centroid', 'y_centroid', 'z_centroid'], COORD_PRECISION)
-v2_all = subsample(v2_all, 'Anno', PER_CLASS_CAP)
-print(f'  {len(v2_all)} cells')
+print('Loading Sample A...')
+sampleA_all = pd.read_csv(sampleA_csv)
+sampleA_all['Anno'] = sampleA_all['Anno'].apply(normalize_label)
+sampleA_all = round_cols(sampleA_all, ['x_centroid', 'y_centroid', 'z_centroid'], COORD_PRECISION)
+sampleA_all = subsample(sampleA_all, 'Anno', PER_CLASS_CAP)
+print(f'  {len(sampleA_all)} cells')
 
-print('Loading Patient 5 (PT5)...')
-pt5_parts = []
-for i, z_val in enumerate(pt5_z_planes):
-    df = pd.read_csv(f'{pt5_base}/Z{i+1}_final_aligned_annos.csv')
+print('Loading Sample B...')
+sampleB_parts = []
+for i, z_val in enumerate(sampleB_z_planes):
+    df = pd.read_csv(f'{sampleB_base}/Z{i+1}_final_aligned_annos.csv')
     df['z_plane'] = z_val
-    pt5_parts.append(df)
-plot_df = pd.concat(pt5_parts, ignore_index=True)
+    sampleB_parts.append(df)
+plot_df = pd.concat(sampleB_parts, ignore_index=True)
 plot_df['Anno'] = plot_df['Anno'].apply(normalize_label)
 plot_df = round_cols(plot_df, ['x_final', 'y_final'], COORD_PRECISION)
 plot_df = subsample(plot_df, 'Anno', PER_CLASS_CAP)
 print(f'  {len(plot_df)} cells')
 
-print('Loading Patient 3 (PT3)...')
-v3_all = pd.read_csv(v3_csv)
-v3_all = v3_all.rename(columns={'Anno2': 'Anno', 'new_x_centroid': 'x_centroid', 'new_y_centroid': 'y_centroid'})
-v3_all['Anno'] = v3_all['Anno'].apply(normalize_label)
+print('Loading Sample C...')
+sampleC_all = pd.read_csv(sampleC_csv)
+sampleC_all = sampleC_all.rename(columns={'Anno2': 'Anno', 'new_x_centroid': 'x_centroid', 'new_y_centroid': 'y_centroid'})
+sampleC_all['Anno'] = sampleC_all['Anno'].apply(normalize_label)
 layer_to_z = {'z1': 10, 'z2': 20, 'z3': 30, 'z4': 40, 'z5': 50, 'z6': 60, 'z7': 70, 'z8': 80}
-v3_all['z_centroid'] = v3_all['layer'].map(layer_to_z).fillna(0.0).astype(float)
-v3_all = round_cols(v3_all, ['x_centroid', 'y_centroid', 'z_centroid'], COORD_PRECISION)
-v3_all = subsample(v3_all, 'Anno', PER_CLASS_CAP)
-print(f'  {len(v3_all)} cells')
+sampleC_all['z_centroid'] = sampleC_all['layer'].map(layer_to_z).fillna(0.0).astype(float)
+sampleC_all = round_cols(sampleC_all, ['x_centroid', 'y_centroid', 'z_centroid'], COORD_PRECISION)
+sampleC_all = subsample(sampleC_all, 'Anno', PER_CLASS_CAP)
+print(f'  {len(sampleC_all)} cells')
 
 # =========================================================
 # Unified annotation list
 # =========================================================
 all_annotations = sorted(
-    pd.Index(v2_all['Anno']).union(pd.Index(plot_df['Anno'])).union(pd.Index(v3_all['Anno'])).unique().tolist()
+    pd.Index(sampleA_all['Anno']).union(pd.Index(plot_df['Anno'])).union(pd.Index(sampleC_all['Anno'])).unique().tolist()
 )
 
 # =========================================================
@@ -123,14 +123,14 @@ layout_common = dict(
     scene=scene_cfg,
 )
 
-fig_pt2 = px.scatter_3d(
-    v2_all, x='x_centroid', y='y_centroid', z='z_centroid',
+fig_a = px.scatter_3d(
+    sampleA_all, x='x_centroid', y='y_centroid', z='z_centroid',
     color='Anno', color_discrete_map=cell_type_to_rgb_plotly,
     category_orders={'Anno': all_annotations}, title=None,
     labels={'x_centroid': 'X', 'y_centroid': 'Y', 'z_centroid': 'Z', 'Anno': 'Annotation'}
 )
-fig_pt2.update_traces(marker=dict(size=2), hoverinfo='skip', hovertemplate=None)
-fig_pt2.update_layout(**layout_common)
+fig_a.update_traces(marker=dict(size=2), hoverinfo='skip', hovertemplate=None)
+fig_a.update_layout(**layout_common)
 
 def build_scatter_fig(df, x_col, y_col, z_col):
     traces = []
@@ -149,18 +149,18 @@ def build_scatter_fig(df, x_col, y_col, z_col):
     fig.update_layout(**layout_common)
     return fig
 
-fig_pt5 = build_scatter_fig(plot_df, 'x_final', 'y_final', 'z_plane')
-fig_pt3 = build_scatter_fig(v3_all, 'x_centroid', 'y_centroid', 'z_centroid')
+fig_b = build_scatter_fig(plot_df, 'x_final', 'y_final', 'z_plane')
+fig_c = build_scatter_fig(sampleC_all, 'x_centroid', 'y_centroid', 'z_centroid')
 
 # =========================================================
 # Export
 # =========================================================
 print('Exporting HTML...')
-div1 = fig_pt2.to_html(full_html=False, include_plotlyjs='cdn')
-div2 = fig_pt5.to_html(full_html=False, include_plotlyjs=False)
-div3 = fig_pt3.to_html(full_html=False, include_plotlyjs=False)
+div1 = fig_a.to_html(full_html=False, include_plotlyjs='cdn')
+div2 = fig_b.to_html(full_html=False, include_plotlyjs=False)
+div3 = fig_c.to_html(full_html=False, include_plotlyjs=False)
 
-p1, p2, p3 = PATIENT_LABELS
+p1, p2, p3 = SAMPLE_LABELS
 
 # Build HTML legend items from annotation colour map
 legend_items_html = ''
@@ -178,7 +178,7 @@ html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<title>BCRL Patient 3D Spatial Transcriptomics</title>
+<title>Sample 3D Spatial Transcriptomics</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
   *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
@@ -340,7 +340,7 @@ html = f"""<!DOCTYPE html>
 <body>
 
 <div id="selector">
-  <span>Patient:</span>
+  <span>Sample:</span>
   <button class="tab-btn active" data-panel="panel-p1">{p1}</button>
   <button class="tab-btn" data-panel="panel-p2">{p2}</button>
   <button class="tab-btn" data-panel="panel-p3">{p3}</button>

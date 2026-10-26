@@ -5,8 +5,8 @@
 #SBATCH --gres=gpu:A30:4
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=256G
-#SBATCH --output=/vast/projects/BCRL_Multi_Omics/slurm_logs/cellpose_dual_wsi_live_%j.out
-#SBATCH --error=/vast/projects/BCRL_Multi_Omics/slurm_logs/cellpose_dual_wsi_live_%j.err
+#SBATCH --output=/path/to/project/slurm_logs/cellpose_dual_wsi_live_%j.out
+#SBATCH --error=/path/to/project/slurm_logs/cellpose_dual_wsi_live_%j.err
 #SBATCH --time=24:00:00
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=kriel.j@wehi.edu.au
@@ -28,7 +28,7 @@
 # ... (Module loading) ...
 
 # Set default values
-IMAGE_PATH=${IMAGE_PATH:-"/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/dapi_combined_af_merged_image.ome.tif"}
+IMAGE_PATH=${IMAGE_PATH:-"/path/to/sample2/ome/dapi_combined_af_merged_image.ome.tif"}
 OUTPUT_DIR=${OUTPUT_DIR:-"output_segmentation_combined"}
 # --- ADD CSV BASE PATH ---
 OUTPUT_CSV_BASE=${OUTPUT_CSV_BASE:-"${OUTPUT_DIR}/outlines"} # Default relative to output_dir
@@ -49,7 +49,7 @@ BATCH_SIZE=${BATCH_SIZE:-1}
 # Create output directories
 mkdir -p "$OUTPUT_DIR"
 mkdir -p "$(dirname "$OUTPUT_CSV_BASE")" # Create dir for CSVs
-mkdir -p "/vast/projects/BCRL_Multi_Omics/slurm_logs"
+mkdir -p "/path/to/project/slurm_logs"
 
 # Print configuration
 echo "Configuration:"
@@ -62,7 +62,7 @@ echo "  MODEL_TYPES: $MODEL_TYPES"
 # ... (Environment setup) ...
 
 # Define the path to your Python script
-PYTHON_SCRIPT_PATH="/vast/projects/BCRL_Multi_Omics/segmentation_pipeline/cellpose_wsi_multi_gpu.py" # Adjust if needed
+PYTHON_SCRIPT_PATH="/path/to/project/segmentation_pipeline/cellpose_wsi_multi_gpu.py" # Adjust if needed
 
 # Check if script exists
 if [ ! -f "$PYTHON_SCRIPT_PATH" ]; then

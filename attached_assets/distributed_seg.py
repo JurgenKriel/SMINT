@@ -718,7 +718,7 @@ def create_interactive_plots_html(image_path, zarr_path, csv_path, output_dir, r
 # This is just to demonstrate the code works, not to process the full image
 def test_tiff_reading():
     """Test reading a small region of the TIFF file"""
-    image_path = "/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/dapi_combined_af_merged_cropped_small_roi.ome.tif"
+    image_path = "/path/to/sample2/ome/dapi_combined_af_merged_cropped_small_roi.ome.tif"
     
     # Get image info
     with tifffile.TiffFile(image_path) as tiff:
@@ -754,10 +754,10 @@ if __name__ == "__main__":
         logger.info(f"Dask client started: {client}")
 
         # Define paths
-        image_path = "/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/dapi_combined_af_merged_cropped_small_roi.ome.tif"
-        output_zarr_path = "/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/Venture5_cell_test_outlines.zarr"
-        csv_path = "/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/Venture5_cell_test_outlines.csv"
-        output_dir = "/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/segmentation_visualization"
+        image_path = "/path/to/sample2/ome/dapi_combined_af_merged_cropped_small_roi.ome.tif"
+        output_zarr_path = "/path/to/sample2/ome/Sample2_cell_test_outlines.zarr"
+        csv_path = "/path/to/sample2/ome/Sample2_cell_test_outlines.csv"
+        output_dir = "/path/to/sample2/ome/segmentation_visualization"
 
         logger.info("Starting distributed image processing...")
 

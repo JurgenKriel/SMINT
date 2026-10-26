@@ -15,10 +15,10 @@ environment. Results are cached in ``--cache`` so the plots can be re-rendered
 without re-registering.
 
     python examples/registration_figures.py \\
-        --st Z2_final_aligned_annos.csv \\
-        --sm Ven5B_information_matrix_tissue_only_full_with_xy.csv \\
-        --st-points ven5_z2_st_points_B_points.npy \\
-        --sm-points ven5_z2_sm_points_B_points.npy \\
+        --st sample2_xenium_z2.csv \\
+        --sm sample2_maldi_section_B.csv \\
+        --st-points sample2_z2_st_points.npy \\
+        --sm-points sample2_z2_sm_points.npy \\
         --nuclei nuc_centroids_xy.csv \\
         --outdir docs/assets --cache registration_cache
 """

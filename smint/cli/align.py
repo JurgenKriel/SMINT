@@ -4,7 +4,7 @@
 A friendly front end over the same machinery the napari plugin drives: build a
 job spec, then either run it here or submit it to SLURM.
 
-    smint-alignment st-sm  --st Z2.csv --sm Ven5B.csv \\
+    smint-alignment st-sm  --st st_z2.csv --sm sm_section_b.csv \\
         --st-points z2_st_points.npy --sm-points z2_sm_points.npy \\
         --output-dir /vast/scratch/you/run1
 

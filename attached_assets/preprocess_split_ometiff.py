@@ -99,7 +99,7 @@ def combine_channels(channel1, channel2, normalize_result=True):
 
 # Usage example
 if __name__ == "__main__":
-    image_path = "/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/Venture_Pt5_4051_bottom-06-Orthogonal Projection-01-Stitching-03.ome.tif"
+    image_path = "/path/to/sample2/ome/sample2_orthogonal_projection_stitched.ome.tif"
 
     # Preprocess channels
     print("Starting preprocessing...")
@@ -119,9 +119,9 @@ if __name__ == "__main__":
 
     # Optionally save the results
     # Save individual channels
-    tifffile.imwrite('/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/af568_processed.tif', af568)
-    tifffile.imwrite('/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/af647_processed.tif', af647)
-    tifffile.imwrite('//vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/dapi_processed.tif', dapi)
+    tifffile.imwrite('/path/to/sample2/ome/af568_processed.tif', af568)
+    tifffile.imwrite('/path/to/sample2/ome/af647_processed.tif', af647)
+    tifffile.imwrite('/path/to/sample2/ome/dapi_processed.tif', dapi)
 
     # Save combined channel
     tifffile.imwrite('combined_af568_af647.tif', combined)

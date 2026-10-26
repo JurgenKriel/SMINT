@@ -84,7 +84,7 @@ def extract_contours_from_mask(mask_file):
 
 def main():
     # Specify input directory containing _seg.npy files
-    input_dir = '/vast/scratch/users/kriel.j/venture_pt5/4051_tile_export/composite_rgb/cellpose_output/'  # Current directory, modify as needed
+    input_dir = '/path/to/sample2/tile_export/composite_rgb/cellpose_output/'  # Current directory, modify as needed
 
     # Get all _seg.npy files
     #seg_files = list(Path(input_dir).glob('*_seg.npy'))

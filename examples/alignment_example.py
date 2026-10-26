@@ -2,7 +2,7 @@
 """
 Registration examples for SMINT.
 
-Runs against synthetic data, so it works anywhere without needing the Venture
+Runs against synthetic data, so it works anywhere without needing the project's
 datasets. Sections 3 and 4 print the workflow for real files rather than
 executing it, since they need inputs this script cannot invent.
 
@@ -135,9 +135,9 @@ def example_st_sm():
 
     # Phase 1: rasterise both modalities for annotation
     out = prepare_landmark_inputs(
-        st_file="Z2_final_aligned_annos.csv",
-        sm_file="Ven5B_information_matrix.csv",
-        output_prefix="ven5_z2",
+        st_file="sample2_xenium_z2.csv",
+        sm_file="sample2_maldi_section_B.csv",
+        output_prefix="sample2_z2",
         sm_kwargs=dict(scale_xy=10.0, rotate_left_90=True),
     )
 

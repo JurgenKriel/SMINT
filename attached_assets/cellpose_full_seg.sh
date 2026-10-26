@@ -5,8 +5,8 @@
 #SBATCH --gres=gpu:A100:1        # Request 1 A100 GPU
 #SBATCH --cpus-per-task=16       # CPUs for I/O, numpy etc.
 #SBATCH --mem=128G               # Adjust based on chunk size and image size
-#SBATCH --output=/vast/projects/BCRL_Multi_Omics/slurm_logs/cellpose_dual_wsi_%j.out # Log directory
-#SBATCH --error=/vast/projects/BCRL_Multi_Omics/slurm_logs/cellpose_dual_wsi_%j.err  # Log directory
+#SBATCH --output=/path/to/project/slurm_logs/cellpose_dual_wsi_%j.out # Log directory
+#SBATCH --error=/path/to/project/slurm_logs/cellpose_dual_wsi_%j.err  # Log directory
 #SBATCH --time=24:00:00          # Adjust as needed
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=kriel.j@wehi.edu.au
@@ -17,7 +17,7 @@ module purge # Start with a clean environment
 # module load cuda/11.8 # Or the version compatible with your Cellpose/PyTorch install
 
 echo "Activating Python environment..."
-source /vast/projects/BCRL_Multi_Omics/cellpose_env/bin/activate
+source /path/to/project/cellpose_env/bin/activate
 # conda activate /path/to/your/conda/envs/cellpose_env # Or use conda activate
 
 # Verify activation (optional)
@@ -31,7 +31,7 @@ set -o pipefail
 
 # --- Define Paths and Parameters ---
 echo "Setting up paths and parameters..."
-IMAGE_FILE="/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/dapi_combined_af_merged_image.ome.tif"
+IMAGE_FILE="/path/to/sample2/ome/dapi_combined_af_merged_image.ome.tif"
 
 # --- Model Paths ---
 CELL_MODEL_PATH="/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700" # Your custom cell model
@@ -39,9 +39,9 @@ NUCLEI_MODEL_PATH="nuclei" # Use built-in 'nuclei' model (or provide a path)
 
 # --- Output Configuration ---
 # Create a unique output directory based on Job ID
-BASE_OUTPUT_DIR="/vast/scratch/users/kriel.j/venture_pt5/Jurgen/ome/segmentation_output_dual_${SLURM_JOB_ID}"
-OUTPUT_BASENAME="Venture5_WSI_DualSegmentation" # Base name for files within output dir
-PYTHON_SCRIPT="/vast/projects/BCRL_Multi_Omics/segmentation_pipeline/adaptive_segmentation.py" # <--- UPDATE THIS PATH TO YOUR NEW SCRIPT
+BASE_OUTPUT_DIR="/path/to/sample2/ome/segmentation_output_dual_${SLURM_JOB_ID}"
+OUTPUT_BASENAME="Sample2_WSI_DualSegmentation" # Base name for files within output dir
+PYTHON_SCRIPT="/path/to/project/segmentation_pipeline/adaptive_segmentation.py" # <--- UPDATE THIS PATH TO YOUR NEW SCRIPT
 
 # Create output directory
 mkdir -p "$BASE_OUTPUT_DIR"
@@ -135,7 +135,7 @@ if [ $EXIT_CODE -eq 0 ]; then
     echo "Log file: ${CSV_OUTPUT_BASE}.log"
 else
     echo "Python script failed with exit code $EXIT_CODE."
-    echo "Check SLURM error file: /vast/projects/BCRL_Multi_Omics/slurm_logs/cellpose_dual_wsi_${SLURM_JOB_ID}.err"
+    echo "Check SLURM error file: /path/to/project/slurm_logs/cellpose_dual_wsi_${SLURM_JOB_ID}.err"
     echo "Check Python log file (if created): ${CSV_OUTPUT_BASE}.log"
 
 fi
