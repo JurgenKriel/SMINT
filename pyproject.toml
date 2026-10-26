@@ -30,6 +30,7 @@ dependencies = [
     "pyyaml>=6.0",  # smint.utils.config
     "scikit-image>=0.25.2",
     "setuptools>=80.4.0",
+    "shapely>=2.0",  # smint.segmentation.stitching, imported by smint.segmentation
     "tifffile>=2025.5.10",
 ]
 

@@ -84,6 +84,26 @@ def available_partitions() -> list:
     return sorted({line.strip().rstrip("*") for line in result.stdout.split() if line.strip()})
 
 
+def default_partition() -> Optional[str]:
+    """
+    The cluster's default partition (the one ``sinfo`` marks with ``*``).
+
+    Returns None when SLURM is unavailable or no default is marked.
+    """
+    if not shutil.which("sinfo"):
+        return None
+    try:
+        result = subprocess.run(
+            ["sinfo", "-h", "-o", "%P"], capture_output=True, text=True, timeout=30
+        )
+    except (subprocess.SubprocessError, OSError):
+        return None
+    for line in result.stdout.split():
+        if line.strip().endswith("*"):
+            return line.strip().rstrip("*")
+    return None
+
+
 def available_gpu_types(partition: Optional[str] = None) -> list:
     """
     GPU types this cluster advertises, via ``sinfo``.

@@ -49,13 +49,21 @@ def setup_logger(csv_base_path):
     log_dir = os.path.dirname(log_file)
     if log_dir:
         os.makedirs(log_dir, exist_ok=True)
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
-        handlers=[logging.FileHandler(log_file), logging.StreamHandler()]
-    )
-    return logging.getLogger(__name__)
+    # A dedicated logger rather than logging.basicConfig: basicConfig touches the
+    # root logger, so in any program that already configured logging every line
+    # was printed twice. Handlers are replaced on each call, so repeated runs in
+    # one session don't stack them either.
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+    for handler in list(logger.handlers):
+        logger.removeHandler(handler)
+        handler.close()
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    for handler in (logging.FileHandler(log_file), logging.StreamHandler()):
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    logger.propagate = False
+    return logger
 
 def create_rgb_roi(image_data_stack, y_start, y_end, x_start, x_end, vis_ch_indices=[0, 1]):
     """
