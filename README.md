@@ -41,25 +41,6 @@ cd SMINT
 pip install -e .
 ```
 
-SMINT's segmentation requires **Cellpose 3** (`cellpose>=3,<4`), which is
-installed automatically. Cellpose 4 ships only its SAM-based `cpsam` model and
-ignores the `cyto`/`nuclei` model types and `channels` this pipeline uses, so
-don't upgrade it in a SMINT environment.
-
-## Optional Dependencies
-
-SMINT is designed with graceful dependency handling to ensure robust operation across different environments.
-
-```bash
-# Full installation with all optional dependencies
-pip install "smint[all] @ git+https://github.com/JurgenKriel/SMINT.git"
-
-# Or specific feature sets, from a source checkout
-pip install -e ".[r_integration]"  # For R integration (rpy2)
-pip install -e ".[docs]"           # To build the documentation
-pip install -e ".[dev]"            # pytest, flake8, black
-```
-
 Registration with STalign needs STalign itself, installed separately in an
 environment with numpy < 2 (see the
 [Alignment documentation](https://jurgenkriel.github.io/SMINT/alignment/#environments)):
@@ -128,6 +109,33 @@ process_large_image(
 )
 ```
 
+### Visualization
+
+```python
+from smint.visualization import visualize_segmentation_results
+
+# Create interactive visualization of segmentation results
+visualize_segmentation_results(
+    image_path="path/to/whole_slide_image.ome.tiff",
+    segmentation_csv="path/to/segmentation_results.csv",
+    output_html="path/to/output/visualization.html",
+    thumbnail_size=(800, 800)
+)
+```
+
+### R Integration
+
+```python
+from smint.r_integration import run_spatialomics_analysis
+
+# Run spatial statistics analysis using R
+run_spatialomics_analysis(
+    segmentation_data="path/to/segmentation_results.csv",
+    expression_data="path/to/gene_expression.csv",
+    output_directory="path/to/output",
+    spatial_methods=["Ripley", "Morans"]
+)
+```
 ## Transcriptomics workflow  
 
 ### 1. Stitch Polygons

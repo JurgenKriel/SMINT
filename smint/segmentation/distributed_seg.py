@@ -9,8 +9,9 @@ both neighbouring tiles:
    arrays, so no pixel is written twice.
 2. It extracts outlines from the full expanded mask, so each boundary cell is
    reported, complete, by both tiles.
-3. The coordinator stitches those duplicates (merge / trim / remove, mirroring
-   ``stitching/stitching.Rmd``) and writes one outline CSV per object type.
+3. The coordinator stitches those duplicates and reconciles cells with nuclei
+   (:mod:`smint.segmentation.stitching`, a port of ``stitching/stitching.Rmd``),
+   then writes outline and summary CSVs per object type.
 
 Workers come from a local cluster (CPU, or one worker per GPU via dask_cuda),
 from SLURM via dask_jobqueue, or from an existing scheduler. Workers read the
@@ -30,6 +31,12 @@ import tifffile
 
 from ..utils.config import load_config
 from .cellpose_compat import is_known_model, load_model, run_eval
+from .stitching import (
+    filter_by_nuclei,
+    polygons_from_outlines,
+    reconcile_cells_and_nuclei,
+    stitch_polygons,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +81,8 @@ def setup_logging(output_dir=None):
     """
     log = logging.getLogger('smint.distributed_seg')
     log.setLevel(logging.INFO)
+    # Stitching reports its merge / trim / reconcile counts on its own logger
+    logging.getLogger('smint.segmentation.stitching').setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     # Log to the console only if nothing up the hierarchy already does, so a
@@ -81,10 +90,12 @@ def setup_logging(output_dir=None):
     for h in [h for h in log.handlers if isinstance(h, logging.FileHandler)]:
         log.removeHandler(h)
         h.close()
+    stitch_log = logging.getLogger('smint.segmentation.stitching')
     if not log.hasHandlers() and not logging.getLogger().handlers:
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(formatter)
         log.addHandler(console_handler)
+        stitch_log.addHandler(console_handler)
 
     if output_dir:
         os.makedirs(output_dir, exist_ok=True)
@@ -92,6 +103,9 @@ def setup_logging(output_dir=None):
             os.path.join(output_dir, f'distributed_seg_{time.strftime("%Y%m%d-%H%M%S")}.log'))
         file_handler.setFormatter(formatter)
         log.addHandler(file_handler)
+        for h in [h for h in stitch_log.handlers if isinstance(h, logging.FileHandler)]:
+            stitch_log.removeHandler(h)
+        stitch_log.addHandler(file_handler)
 
     return log
 
@@ -383,163 +397,73 @@ def segment_tile(tile_id, tile_coords, image_path, image_shape, overlap,
 
 
 # ---------------------------------------------------------------------------
-# Stitching (coordinator side)
+# Outputs (coordinator side)
 # ---------------------------------------------------------------------------
 
-def _overlapping_pairs(geoms):
-    """Yield ``(i, j, max_overlap)`` for each intersecting pair, ``i < j``."""
-    from shapely.strtree import STRtree
-
-    tree = STRtree(geoms)
-    for i, poly in enumerate(geoms):
-        for j in tree.query(poly):
-            if j <= i:
-                continue
-            other = geoms[j]
-            try:
-                if not poly.intersects(other):
-                    continue
-                inter = poly.intersection(other).area
-            except Exception:
-                continue
-            if inter >= 1.0:
-                yield i, int(j), max(inter / poly.area, inter / other.area)
-
-
-def _stitch_round(id_to_poly, merge_thresh, trim_thresh):
+def stitch_and_reconcile(cell_outlines, nuclei_outlines, merge_threshold=0.5,
+                         trim_threshold=0.25, reconcile=True):
     """
-    One round of merge, then trim / remove, on ``{id: Polygon}``.
+    Turn raw per-tile outlines into final, non-overlapping cells and nuclei.
 
-    Merging runs to completion before any trim or removal is decided, and those
-    are decided between the *merged* objects. Deciding all three from the same
-    pass of raw fragments lets "remove the smaller" fire between two fragments
-    of one cell and delete the cell it was merged into.
-    """
-    from collections import defaultdict
-    from shapely.ops import unary_union
-
-    ids = list(id_to_poly)
-    geoms = [id_to_poly[i] for i in ids]
-    parent = list(range(len(ids)))
-
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    for i, j, overlap in _overlapping_pairs(geoms):
-        if overlap > merge_thresh:
-            pi, pj = find(i), find(j)
-            if pi != pj:
-                parent[pj] = pi
-
-    groups = defaultdict(list)
-    for i in range(len(ids)):
-        groups[find(i)].append(i)
-    polys = {}
-    for root, members in groups.items():
-        if len(members) == 1:
-            polys[ids[root]] = geoms[root]
-        else:
-            try:
-                polys[ids[root]] = unary_union([geoms[m] for m in members])
-            except Exception:
-                polys[ids[root]] = geoms[root]
-
-    # Collisions left between distinct merged objects; any still above
-    # merge_thresh are merged next round.
-    ids = list(polys)
-    geoms = [polys[k] for k in ids]
-    to_remove, trim_pairs = set(), []
-    for i, j, overlap in _overlapping_pairs(geoms):
-        if overlap < trim_thresh:
-            trim_pairs.append((ids[i], ids[j]))
-        elif overlap <= merge_thresh:
-            to_remove.add(ids[i] if geoms[i].area < geoms[j].area else ids[j])
-
-    for k in to_remove:
-        polys.pop(k, None)
-    for a, b in trim_pairs:
-        if a not in polys or b not in polys:
-            continue
-        try:
-            pa, pb = polys[a], polys[b]
-            polys[a], polys[b] = pa.difference(pb), pb.difference(pa)
-        except Exception:
-            continue
-
-    return {k: p for k, p in polys.items() if p is not None and not p.is_empty and p.area > 0}
-
-
-def stitch_outlines(outlines, n_rounds=3, merge_thresh=0.5, trim_thresh=0.25):
-    """
-    Resolve duplicate boundary objects from overlapping tiles.
-
-    Per round, for each intersecting pair, by the larger of the two overlap
-    fractions:
-
-    - above ``merge_thresh`` -- union (the same object seen by two tiles)
-    - below ``trim_thresh`` -- trim both (a minor collision)
-    - otherwise -- remove the smaller object
+    Nuclei are stitched first; cells are filtered to those touching a stitched
+    nucleus, then stitched; finally cells and nuclei are reconciled so every
+    nucleus sits inside exactly one cell. See :mod:`smint.segmentation.stitching`.
 
     Args:
-        outlines (list): Dicts with ``global_id``, ``x_coords``, ``y_coords``.
-        n_rounds (int): Merge / trim / remove iterations.
-        merge_thresh (float): Overlap above which objects are merged.
-        trim_thresh (float): Overlap below which objects are trimmed.
+        cell_outlines (list or None): Raw cell outline dicts, or None to skip cells.
+        nuclei_outlines (list or None): Raw nucleus outline dicts, or None.
+        merge_threshold (float): Merge pairs overlapping by more than this.
+        trim_threshold (float): Trim below, remove smaller at or above this.
+        reconcile (bool): Run cell / nucleus reconciliation when both exist.
 
     Returns:
-        list: Outline dicts with sequential ``global_id`` from 1.
+        tuple: ``(cells, nuclei, nucleus_cell)``; ``nucleus_cell`` holds each
+        nucleus's index into ``cells``, or None when not reconciled.
     """
-    from shapely.geometry import MultiPolygon, Polygon
-
-    id_to_poly = {}
-    for o in outlines:
-        coords = list(zip(o['x_coords'], o['y_coords']))
-        if len(coords) < 3:
-            continue
-        try:
-            poly = Polygon(coords)
-            if not poly.is_valid:
-                poly = poly.buffer(0)
-            if poly.area > 0:
-                id_to_poly[o['global_id']] = poly
-        except Exception:
-            continue
-
-    for rnd in range(n_rounds):
-        before = len(id_to_poly)
-        id_to_poly = _stitch_round(id_to_poly, merge_thresh, trim_thresh)
-        logging.getLogger('smint.distributed_seg').info(
-            f"  Stitch round {rnd + 1}/{n_rounds}: {before} -> {len(id_to_poly)}")
-
-    stitched = []
-    for poly in id_to_poly.values():
-        if isinstance(poly, MultiPolygon):
-            poly = max(poly.geoms, key=lambda p: p.area)
-        if not poly.is_valid:
-            poly = poly.buffer(0)
-            if isinstance(poly, MultiPolygon):
-                poly = max(poly.geoms, key=lambda p: p.area)
-        try:
-            coords = np.asarray(poly.exterior.coords)
-        except Exception:
-            continue
-        stitched.append({'global_id': len(stitched) + 1,
-                         'x_coords': coords[:, 0], 'y_coords': coords[:, 1]})
-    return stitched
+    log = logging.getLogger('smint.distributed_seg')
+    cells = nuclei = nucleus_cell = None
+    if nuclei_outlines is not None:
+        log.info(f"Stitching {len(nuclei_outlines)} nucleus outlines")
+        nuclei = stitch_polygons(polygons_from_outlines(nuclei_outlines),
+                                 merge_threshold, trim_threshold)
+    if cell_outlines is not None:
+        cells = polygons_from_outlines(cell_outlines)
+        if nuclei is not None:
+            n = len(cells)
+            cells = filter_by_nuclei(cells, nuclei)
+            log.info(f"{n - len(cells)} of {n} cell outlines touch no nucleus and were dropped")
+        log.info(f"Stitching {len(cells)} cell outlines")
+        cells = stitch_polygons(cells, merge_threshold, trim_threshold)
+    if reconcile and cells is not None and nuclei is not None:
+        cells, nuclei, nucleus_cell = reconcile_cells_and_nuclei(cells, nuclei)
+    return cells, nuclei, nucleus_cell
 
 
-def outlines_to_dataframe(outlines):
-    """Flatten outline dicts to SMINT's ``global_cell_id, x, y`` vertex table."""
-    if not outlines:
+def polygons_to_dataframe(polygons):
+    """Flatten polygons to SMINT's ``global_cell_id, x, y`` vertex table, IDs from 1."""
+    if len(polygons) == 0:
         return pd.DataFrame(columns=['global_cell_id', 'x', 'y'])
+    coords = [np.asarray(p.exterior.coords) for p in polygons]
     return pd.DataFrame({
-        'global_cell_id': np.concatenate([np.full(len(o['x_coords']), o['global_id']) for o in outlines]),
-        'x': np.concatenate([o['x_coords'] for o in outlines]),
-        'y': np.concatenate([o['y_coords'] for o in outlines]),
+        'global_cell_id': np.repeat(np.arange(1, len(coords) + 1), [len(c) for c in coords]),
+        'x': np.concatenate([c[:, 0] for c in coords]),
+        'y': np.concatenate([c[:, 1] for c in coords]),
     })
+
+
+def polygon_summary(polygons, **columns):
+    """One row per polygon: ``global_cell_id``, centroid, area, plus ``columns``."""
+    import shapely
+    centroids = shapely.centroid(np.asarray(polygons, dtype=object)) if len(polygons) else []
+    table = pd.DataFrame({
+        'global_cell_id': np.arange(1, len(polygons) + 1),
+        'x_centroid': shapely.get_x(centroids) if len(polygons) else [],
+        'y_centroid': shapely.get_y(centroids) if len(polygons) else [],
+        'area': shapely.area(np.asarray(polygons, dtype=object)) if len(polygons) else [],
+    })
+    for name, values in columns.items():
+        table[name] = values
+    return table
 
 
 # ---------------------------------------------------------------------------
@@ -665,7 +589,7 @@ def run_distributed_segmentation(image_path, output_dir, config_path=None,
                                  backend=None, scheduler_address=None, tile_overlap=None,
                                  cell_model=None, nuclei_model=None,
                                  cell_params=None, nuclei_params=None,
-                                 split_multinucleated=None, stitch_rounds=None,
+                                 split_multinucleated=None, reconcile_nuclei=None,
                                  stitch_merge_thresh=None, stitch_trim_thresh=None,
                                  slurm=None, worker_wait_timeout=None):
     """
@@ -677,7 +601,7 @@ def run_distributed_segmentation(image_path, output_dir, config_path=None,
     ``flow_threshold``, ``cellprob_threshold``, ``channels``), ``n_workers``,
     ``use_gpu``, ``chunk_size``, and an optional ``distributed`` section with
     ``backend``, ``scheduler_address``, ``tile_overlap``,
-    ``split_multinucleated``, ``stitch_rounds``, ``stitch_merge_thresh``,
+    ``split_multinucleated``, ``reconcile_nuclei``, ``stitch_merge_thresh``,
     ``stitch_trim_thresh``, ``worker_wait_timeout`` and ``slurm``.
 
     Args:
@@ -702,24 +626,33 @@ def run_distributed_segmentation(image_path, output_dir, config_path=None,
         nuclei_params (dict, optional): Nuclei model parameters.
         split_multinucleated (bool, optional): Split cells with several nuclei.
             Default True.
-        stitch_rounds (int, optional): Stitching iterations. Default 3.
+        reconcile_nuclei (bool, optional): Reconcile cells with nuclei and
+            assign each nucleus to a cell. Default True.
         stitch_merge_thresh (float, optional): Merge above this overlap. Default 0.5.
-        stitch_trim_thresh (float, optional): Trim below this overlap. Default 0.25.
+        stitch_trim_thresh (float, optional): Trim below this overlap, remove
+            the smaller object at or above it. Default 0.25.
         slurm (dict, optional): SLURMCluster options, see :func:`setup_dask_client`.
         worker_wait_timeout (int, optional): Seconds to wait for workers. Default 600.
 
     Returns:
-        dict: ``cells_csv_path``, ``nuclei_csv_path``, ``cells_zarr_path``,
-        ``nuclei_zarr_path``, ``total_cells``, ``total_nuclei``, ``n_tiles``,
-        ``failed_tiles`` and ``processing_time``.
+        dict: ``cells_csv_path``, ``nuclei_csv_path``, ``cells_summary_path``,
+        ``nuclei_summary_path``, ``cells_zarr_path``, ``nuclei_zarr_path``,
+        ``total_cells``, ``total_nuclei``, ``n_tiles``, ``failed_tiles`` and
+        ``processing_time``.
 
     Raises:
         ImportError: A required package is missing.
         RuntimeError: Every tile failed.
 
-    The CSVs hold one row per outline vertex: ``global_cell_id, x, y``, IDs
-    renumbered from 1 after stitching. Label IDs in the Zarr masks are
-    per-tile and are not the stitched IDs.
+    Outputs in ``output_dir``:
+
+    - ``cells_outlines.csv`` / ``nuclei_outlines.csv`` -- one row per outline
+      vertex: ``global_cell_id, x, y``, IDs from 1 after stitching.
+    - ``cells_summary.csv`` -- ``global_cell_id, x_centroid, y_centroid, area,
+      n_nuclei``; ``nuclei_summary.csv`` -- the same with ``cell_id`` (the
+      containing cell's ``global_cell_id``) in place of ``n_nuclei``.
+    - ``cells.zarr`` / ``nuclei.zarr`` -- raw label masks. Their IDs are
+      per-tile and are not the stitched IDs.
     """
     for ok, pkg in ((DISTRIBUTED_AVAILABLE, 'distributed'), (ZARR_AVAILABLE, 'zarr'),
                     (CELLPOSE_AVAILABLE, 'cellpose')):
@@ -761,7 +694,7 @@ def run_distributed_segmentation(image_path, output_dir, config_path=None,
     scheduler_address = pick(scheduler_address, 'scheduler_address', None)
     tile_overlap = int(pick(tile_overlap, 'tile_overlap', DEFAULT_TILE_OVERLAP))
     split_multinucleated = pick(split_multinucleated, 'split_multinucleated', True)
-    stitch_rounds = int(pick(stitch_rounds, 'stitch_rounds', 3))
+    reconcile_nuclei = bool(pick(reconcile_nuclei, 'reconcile_nuclei', True))
     stitch_merge_thresh = float(pick(stitch_merge_thresh, 'stitch_merge_thresh', 0.5))
     stitch_trim_thresh = float(pick(stitch_trim_thresh, 'stitch_trim_thresh', 0.25))
     slurm = pick(slurm, 'slurm', None)
@@ -821,21 +754,34 @@ def run_distributed_segmentation(image_path, output_dir, config_path=None,
 
     output = {'cells_zarr_path': cells_zarr_path, 'nuclei_zarr_path': nuclei_zarr_path,
               'cells_csv_path': None, 'nuclei_csv_path': None,
+              'cells_summary_path': None, 'nuclei_summary_path': None,
               'total_cells': 0, 'total_nuclei': 0, 'n_tiles': len(tiles),
               'failed_tiles': [r['tile_coords'] for r in failed]}
 
-    for kind, model in (('cells', cell_model), ('nuclei', nuclei_model)):
+    def collect(key, model):
         if model is None:
+            return None
+        return [o for r in results if r['success'] for o in r[key]]
+
+    cells, nuclei, nucleus_cell = stitch_and_reconcile(
+        collect('cell_outlines', cell_model), collect('nuclei_outlines', nuclei_model),
+        stitch_merge_thresh, stitch_trim_thresh, reconcile_nuclei)
+
+    for kind, polys in (('cells', cells), ('nuclei', nuclei)):
+        if polys is None:
             continue
-        key = 'cell_outlines' if kind == 'cells' else 'nuclei_outlines'
-        raw = [o for r in results if r['success'] for o in r[key]]
-        log.info(f"Stitching {len(raw)} {kind} outlines")
-        stitched = stitch_outlines(raw, stitch_rounds, stitch_merge_thresh, stitch_trim_thresh)
         csv_path = os.path.join(output_dir, f'{kind}_outlines.csv')
-        outlines_to_dataframe(stitched).to_csv(csv_path, index=False)
+        polygons_to_dataframe(polys).to_csv(csv_path, index=False)
+        extra = {}
+        if nucleus_cell is not None:
+            extra = ({'n_nuclei': np.bincount(nucleus_cell, minlength=len(cells))}
+                     if kind == 'cells' else {'cell_id': nucleus_cell + 1})
+        summary_path = os.path.join(output_dir, f'{kind}_summary.csv')
+        polygon_summary(polys, **extra).to_csv(summary_path, index=False)
         output[f'{kind}_csv_path'] = csv_path
-        output[f'total_{kind}'] = len(stitched)
-        log.info(f"{len(stitched)} {kind} -> {csv_path}")
+        output[f'{kind}_summary_path'] = summary_path
+        output[f'total_{kind}'] = len(polys)
+        log.info(f"{len(polys)} {kind} -> {csv_path}")
 
     output['processing_time'] = time.time() - start
     if failed:
