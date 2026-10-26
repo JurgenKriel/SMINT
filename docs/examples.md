@@ -225,7 +225,7 @@ print(results["total_cells"], results["total_nuclei"])
 33 29
 ```
 
-![Nuclei, GFAP and phalloidin with cell and nucleus outlines on one 1024 px chunk](assets/segmentation_example.jpg)
+![Nuclei, GFAP and phalloidin with cell and nucleus outlines on one 1024 px chunk](assets/segmentation_gfap_phalloidin.jpg)
 
 *Venture 6, one 1024 px chunk of a 2048 × 2048 px crop; Cellpose 4 on one A30
 took 23 s for the crop. Cyan: nuclei; green: GFAP; magenta: phalloidin. Right:

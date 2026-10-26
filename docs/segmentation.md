@@ -12,6 +12,13 @@ The SMINT segmentation pipeline consists of several key stages:
 4. **Post-processing** - Refining segmentation results and extracting features
 5. **Visualization** - Generating visual outputs for quality control
 
+![Nuclei, GFAP and phalloidin with SMINT cell and nucleus outlines](assets/segmentation_gfap_phalloidin.jpg)
+
+*Venture 6 brain tissue: nuclei (cyan), GFAP (green) and phalloidin (magenta),
+with cell outlines (white) and nucleus outlines (yellow) from a fine-tuned
+Cellpose-SAM model on one GPU. See [Examples](examples.md#4-segmenting-a-whole-slide-image-on-one-gpu)
+for the code.*
+
 ## Input Data Requirements
 
 ### Supported Image Formats
