@@ -1658,17 +1658,34 @@ matched nuclei overlap their cells exactly, <code>register_centroid_files</code>
 <li><strong>Fill in</strong> every other nucleus with the median offset of its nearest
    snapped neighbours; nuclei with none within 100 µm stay put.</li>
 <li><strong>Repeat</strong> pairing for what is left, up to four passes.</li>
+<li><strong>Assign</strong> the nuclei still left to the free cells around them by a
+   one-to-one, minimum-total-distance assignment (within 0.75 × the cell
+   spacing), and move them onto those cells. These skipped the neighbourhood
+   check, so they are marked <code>assigned</code> rather than <code>snapped</code>.</li>
 </ol>
 <p><img alt="Before registration, after the smooth transform, and after snapping" src="../assets/registration_refinement.png" /></p>
-<p>On Venture 5 z5, <strong>57,083 nuclei — 77% of Xenium cells — end up exactly on a
-distinct cell</strong>; 17,413 more follow their neighbours, and the rest lie outside
-the Xenium area (median 250 µm from any cell). On synthetic sections with
-known correspondence, the passes snap 98% of the nuclei that have a cell,
-and 98% of snaps are on the right one.</p>
+<p>On Venture 5 z5, <strong>65,349 nuclei — 88% of Xenium cells — end up exactly on a
+distinct cell</strong>: 57,083 snapped and 8,266 assigned. 9,147 follow their
+neighbours, and 14,410 lie outside the Xenium area (median 250 µm from any
+cell). On synthetic sections with known correspondence, the passes snap 98% of
+the nuclei that have a cell, and 98% of snaps are on the right one.</p>
+<div class="admonition warning">
+<p class="admonition-title">Assigned pairs are not verified</p>
+<p>Each placed nucleus has a <code>neighbour_deviation</code>: how far its offset is from
+the median offset of the snapped nuclei around it. Right pairs sit at the
+nucleus-in-cell scatter; a nucleus put on a neighbour's cell deviates by
+about a cell spacing. On z5 the snapped pairs' median is 4.1 µm and the
+assigned pairs' 8.5 µm, and on synthetic data only 25–33% of assigned
+pairs are correct — most leftovers are nuclei with no Xenium cell
+(over-segmentation, or outside the Xenium plane). Large cells can hold a
+nucleus far off-centre, so some assigned pairs will be right; centroids
+alone can't say which. Filter on <code>registration_status</code> /
+<code>neighbour_deviation</code>, or pass <code>--no-assign-remaining</code>.</p>
+</div>
 <p>The output CSV holds the snapped positions in <code>x_transformed</code> /
 <code>y_transformed</code>, the smooth-transform positions in <code>*_smooth</code>, a
-<code>registration_status</code> (<code>snapped</code> / <code>filled</code> / <code>unmoved</code>) and the partner's
-row in <code>target_index</code>. Use <code>--no-refine</code> (or <code>refine=False</code>) for the smooth
+<code>registration_status</code> (<code>snapped</code> / <code>assigned</code> / <code>filled</code> / <code>unmoved</code>), the
+partner's row in <code>target_index</code> and <code>neighbour_deviation</code>. Use <code>--no-refine</code> (or <code>refine=False</code>) for the smooth
 transform alone.</p>
 <div class="admonition note">
 <p class="admonition-title">A snapped nucleus has zero residual by construction</p>
