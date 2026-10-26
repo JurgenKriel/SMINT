@@ -22,8 +22,8 @@ flowchart TD
     G --> H["Pick paired landmarks<br/>same features, same order, ≥ 3"]
     H --> I["<b>STalign LDDMM</b><br/>orientation = stalign"]
 
-    classDef same fill:#fff5f7,stroke:#d53f8c,color:#521b41
-    classDef seq fill:#ebf4ff,stroke:#2b6cb0,color:#1a365d
+    classDef same fill:#d53f8c2e,stroke:#d53f8c
+    classDef seq fill:#2b6cb02e,stroke:#2b6cb0
     class B,B1,C,D,E,F same
     class G,H,I seq
 ```

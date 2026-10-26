@@ -33,7 +33,7 @@ flowchart TD
     LD --> OUT
     OUT --> R["3 · Downstream R scripts<br/>transcripts and metabolites → cells"]
 
-    classDef io fill:#ebf4ff,stroke:#2b6cb0,color:#1a365d
+    classDef io fill:#2b6cb02e,stroke:#2b6cb0
     class IMG,TAB,OUT io
 ```
 
