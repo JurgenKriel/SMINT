@@ -788,6 +788,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#snapping-matched-nuclei-onto-their-cells" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Snapping matched nuclei onto their cells
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#measuring-quality-honestly" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1289,6 +1300,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#snapping-matched-nuclei-onto-their-cells" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Snapping matched nuclei onto their cells
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#measuring-quality-honestly" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1619,6 +1641,43 @@ TPS round didn't improve this section, so it was rejected.
 </tbody>
 </table>
 <p><em>Matched = mutual nearest neighbours. 88,906 nuclei, 74,247 cells; 3 s.</em></p>
+<h3 id="snapping-matched-nuclei-onto-their-cells">Snapping matched nuclei onto their cells<a class="headerlink" href="#snapping-matched-nuclei-onto-their-cells" title="Permanent link">&para;</a></h3>
+<p>A smooth transform leaves every nucleus a few microns from its cell — partly
+because a stained nucleus genuinely sits off-centre in its Xenium cell. To make
+matched nuclei overlap their cells exactly, <code>register_centroid_files</code> (and so
+<code>smint-alignment centroid</code>) follows registration with
+<code>refine_by_assignment</code>, a port of the lab's <code>alignment_refinement.r</code>:</p>
+<ol>
+<li><strong>Pair</strong> registered nuclei one-to-one with Xenium cells (mutual nearest
+   neighbours within <code>snap_radius</code>, 10 µm).</li>
+<li><strong>Check</strong> each pair against its neighbourhood: its offset must be within
+   <code>consistency_tol</code> (default 0.4 × the cell spacing) of the median offset of
+   the pairs around it. A nucleus paired with the wrong cell disagrees with
+   its neighbours.</li>
+<li><strong>Snap</strong> pairs that pass: the nucleus moves exactly onto its cell.</li>
+<li><strong>Fill in</strong> every other nucleus with the median offset of its nearest
+   snapped neighbours; nuclei with none within 100 µm stay put.</li>
+<li><strong>Repeat</strong> pairing for what is left, up to four passes.</li>
+</ol>
+<p><img alt="Before registration, after the smooth transform, and after snapping" src="../assets/registration_refinement.png" /></p>
+<p>On Venture 5 z5, <strong>57,083 nuclei — 77% of Xenium cells — end up exactly on a
+distinct cell</strong>; 17,413 more follow their neighbours, and the rest lie outside
+the Xenium area (median 250 µm from any cell). On synthetic sections with
+known correspondence, the passes snap 98% of the nuclei that have a cell,
+and 98% of snaps are on the right one.</p>
+<p>The output CSV holds the snapped positions in <code>x_transformed</code> /
+<code>y_transformed</code>, the smooth-transform positions in <code>*_smooth</code>, a
+<code>registration_status</code> (<code>snapped</code> / <code>filled</code> / <code>unmoved</code>) and the partner's
+row in <code>target_index</code>. Use <code>--no-refine</code> (or <code>refine=False</code>) for the smooth
+transform alone.</p>
+<div class="admonition note">
+<p class="admonition-title">A snapped nucleus has zero residual by construction</p>
+<p>So its TRE says nothing about whether it is on the <em>right</em> cell. The
+check is <code>refinement["validation"]</code>: a tenth of the accepted pairs is
+left out, their positions are predicted from their neighbours alone, and
+the error is reported. On z5 that is a median 4.0 µm — the nucleus-in-cell
+scatter that only individual snapping removes.</p>
+</div>
 <h3 id="measuring-quality-honestly">Measuring quality honestly<a class="headerlink" href="#measuring-quality-honestly" title="Permanent link">&para;</a></h3>
 <p>Target Registration Error is easy to compute in a way that is <strong>circular</strong>.
 Correspondences here are established by nearest neighbour, so a sufficiently
