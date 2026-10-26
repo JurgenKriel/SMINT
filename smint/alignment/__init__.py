@@ -72,6 +72,7 @@ from .centroid_registration import (
     register_centroids,
     vote_block_displacements,
     alignment_quality,
+    refine_by_assignment,
     register_centroid_files,
 )
 
@@ -135,6 +136,7 @@ __all__ = [
     'register_centroids',
     'vote_block_displacements',
     'alignment_quality',
+    'refine_by_assignment',
     'register_centroid_files',
 ]
 

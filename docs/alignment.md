@@ -232,6 +232,46 @@ Each round's outcome is in `result["rounds"]`. Tune with `schedule=` —
 
 *Matched = mutual nearest neighbours. 88,906 nuclei, 74,247 cells; 3 s.*
 
+### Snapping matched nuclei onto their cells
+
+A smooth transform leaves every nucleus a few microns from its cell — partly
+because a stained nucleus genuinely sits off-centre in its Xenium cell. To make
+matched nuclei overlap their cells exactly, `register_centroid_files` (and so
+`smint-alignment centroid`) follows registration with
+`refine_by_assignment`, a port of the lab's `alignment_refinement.r`:
+
+1. **Pair** registered nuclei one-to-one with Xenium cells (mutual nearest
+   neighbours within `snap_radius`, 10 µm).
+2. **Check** each pair against its neighbourhood: its offset must be within
+   `consistency_tol` (default 0.4 × the cell spacing) of the median offset of
+   the pairs around it. A nucleus paired with the wrong cell disagrees with
+   its neighbours.
+3. **Snap** pairs that pass: the nucleus moves exactly onto its cell.
+4. **Fill in** every other nucleus with the median offset of its nearest
+   snapped neighbours; nuclei with none within 100 µm stay put.
+5. **Repeat** pairing for what is left, up to four passes.
+
+![Before registration, after the smooth transform, and after snapping](assets/registration_refinement.png)
+
+On Venture 5 z5, **57,083 nuclei — 77% of Xenium cells — end up exactly on a
+distinct cell**; 17,413 more follow their neighbours, and the rest lie outside
+the Xenium area (median 250 µm from any cell). On synthetic sections with
+known correspondence, the passes snap 98% of the nuclei that have a cell,
+and 98% of snaps are on the right one.
+
+The output CSV holds the snapped positions in `x_transformed` /
+`y_transformed`, the smooth-transform positions in `*_smooth`, a
+`registration_status` (`snapped` / `filled` / `unmoved`) and the partner's
+row in `target_index`. Use `--no-refine` (or `refine=False`) for the smooth
+transform alone.
+
+!!! note "A snapped nucleus has zero residual by construction"
+    So its TRE says nothing about whether it is on the *right* cell. The
+    check is `refinement["validation"]`: a tenth of the accepted pairs is
+    left out, their positions are predicted from their neighbours alone, and
+    the error is reported. On z5 that is a median 4.0 µm — the nucleus-in-cell
+    scatter that only individual snapping removes.
+
 ### Measuring quality honestly
 
 Target Registration Error is easy to compute in a way that is **circular**.

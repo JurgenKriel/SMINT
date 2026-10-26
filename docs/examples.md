@@ -170,6 +170,8 @@ smint-alignment centroid \
   "tre_initial": 10.96,
   "tre_fit": 4.45,
   "tre_validation": 4.93,
+  "refinement": {"n_snapped": 57083, "fraction_targets_matched": 0.77,
+                 "snapped_per_pass": [55208, 56923, 57069, 57083], "n_filled": 17413},
   "rounds": [
     {"stage": "initial", "median_nn": 12.40},
     {"stage": "affine", "block_size": 500.0, "blocks": 300, "consistent_blocks": 0.91,
@@ -185,11 +187,16 @@ smint-alignment centroid \
 *88,906 nuclei and 74,247 Xenium cells, about 17 µm apart; 3 s.*
 
 **How to read this.** `tre_validation` is measured on a quarter of the nuclei
-held out before any matching, and is the number to trust: 11.0 µm → 4.9 µm.
-The rounds show the affine voting round did the work; the finer TPS round
-didn't improve the fitting nuclei, so it was rejected and registration
-stopped. Held out, 45% of nuclei now sit within 5 µm of a mutually-nearest
-cell, against 10% before.
+held out before any matching, and is the number to trust for the transform:
+11.0 µm → 4.9 µm. The rounds show the affine voting round did the work; the
+finer TPS round didn't improve the fitting nuclei, so it was rejected.
+
+Registration is then refined: **57,083 nuclei snap exactly onto distinct
+Xenium cells — 77% of the cells** — over four pairing passes, and 17,413 more
+move with their snapped neighbours. The output CSV's `registration_status`
+says which. See [Snapping matched nuclei](alignment.md#snapping-matched-nuclei-onto-their-cells).
+
+![Before registration, after the smooth transform, and after snapping](assets/registration_refinement.png)
 
 The single-round methods can't do this: they match each nucleus to its
 nearest cell before fitting, and with a starting offset close to the cell

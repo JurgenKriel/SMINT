@@ -83,6 +83,11 @@ def _run_centroid(spec) -> dict:
             ),
             "rounds": result.get("rounds"),
             "validation": result.get("validation"),
+            "refinement": (
+                {k: v for k, v in result["refinement"].items()
+                 if k not in ("refined_xy", "status", "target_idx")}
+                if "refinement" in result else None
+            ),
         },
     }
 

@@ -103,3 +103,56 @@ def test_single_round_methods_still_work():
     for method in ("affine", "ransac", "tps", "ransac+tps"):
         result = cr.register_centroids(source, target, method=method)
         assert np.isfinite(result["tre_validation"][0])
+
+
+def true_partner(target, truth):
+    """Index of each source point's true target (-1 for points with none)."""
+    has = np.isfinite(truth[:, 0])
+    idx = np.full(len(truth), -1)
+    d, j = cr.cKDTree(target).query(truth[has])
+    idx[has] = np.where(d < 1e-9, j, -1)
+    return idx
+
+
+def test_refinement_snaps_onto_the_correct_cells():
+    source, target, truth = synthetic_section(seed=7)
+    reg = cr.register_centroids(source, target)
+    ref = cr.refine_by_assignment(source, target, transform=reg["transform"])
+    snapped = ref["status"] == "snapped"
+    correct = ref["target_idx"][snapped] == true_partner(target, truth)[snapped]
+    pairable = true_partner(target, truth) >= 0
+    assert snapped[pairable].mean() > 0.95           # nearly every nucleus with a cell gets it
+    assert correct.mean() > 0.97                     # and nearly all partners are right
+    assert len(ref["snapped_per_pass"]) >= 2         # later passes add pairs
+    assert np.allclose(ref["refined_xy"][snapped], target[ref["target_idx"][snapped]])
+    assert ref["validation"]["median_error"] < 3.0   # neighbours predict held-out pairs well
+
+
+def test_refinement_fills_the_rest_from_neighbours():
+    source, target, truth = synthetic_section(seed=8)
+    transform = cr.register_centroids(source, target)["transform"]
+    ref = cr.refine_by_assignment(source, target, transform=transform)
+    filled = (ref["status"] == "filled") & np.isfinite(truth[:, 0])
+    err = np.linalg.norm(ref["refined_xy"][filled] - truth[filled], axis=1)
+    smooth = np.linalg.norm(transform(source[filled]) - truth[filled], axis=1)
+    # The unsnapped points are the hard ones; filling must not make them worse
+    assert filled.any() and np.median(err) <= 1.05 * np.median(smooth) and np.median(err) < 4.0
+
+
+def test_refinement_rejects_pairs_that_disagree_with_neighbours():
+    rng = np.random.default_rng(9)
+    target = np.mgrid[0:600:15, 0:600:15].reshape(2, -1).T + rng.normal(0, 4, (1600, 2))
+    source = target + rng.normal(0, 1.0, target.shape)
+    source[::50] += np.array([8.0, 0.0])             # every 50th point pushed off by 8 um
+    ref = cr.refine_by_assignment(source, target, consistency_tol=4.0)
+    assert (ref["status"][::50] != "snapped").mean() > 0.8
+
+
+def test_register_centroid_files_writes_refined_and_smooth(tmp_path):
+    source, target, _ = synthetic_section(seed=10)
+    import pandas as pd
+    pd.DataFrame(source, columns=["centroid_x", "centroid_y"]).to_csv(tmp_path / "s.csv", index=False)
+    pd.DataFrame(target, columns=["x_centroid", "y_centroid"]).to_csv(tmp_path / "t.csv", index=False)
+    df, result = cr.register_centroid_files(str(tmp_path / "s.csv"), str(tmp_path / "t.csv"))
+    assert {"x_transformed", "x_transformed_smooth", "registration_status", "target_index"} <= set(df.columns)
+    assert result["refinement"]["n_snapped"] == int((df.registration_status == "snapped").sum())
