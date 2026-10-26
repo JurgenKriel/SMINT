@@ -1,0 +1,6 @@
+# Outputs written when the tutorial notebooks are run from this folder
+segmentation/
+registered/
+landmarks/
+distributed_seg/
+nuclei_registered.csv
