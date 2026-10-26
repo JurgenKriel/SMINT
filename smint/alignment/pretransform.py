@@ -162,12 +162,12 @@ def fit_scale_to_reference(
     sx, sy = float(factors[0]), float(factors[1])
     if preserve_aspect:
         isotropic = min(sx, sy)
-        logger.info(
+        logger.debug(
             "Fitted isotropic scale %.4f (per-axis would be %.4f, %.4f)", isotropic, sx, sy
         )
         return isotropic, isotropic
 
-    logger.info("Fitted anisotropic scale sx=%.4f sy=%.4f", sx, sy)
+    logger.debug("Fitted anisotropic scale sx=%.4f sy=%.4f", sx, sy)
     return sx, sy
 
 
