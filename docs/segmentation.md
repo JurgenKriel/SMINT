@@ -218,27 +218,6 @@ results = process_large_image(
 | `nuclei_summary.csv` | Per nucleus: `global_cell_id`, `x_centroid`, `y_centroid`, `area`, `cell_id` (containing cell) |
 | `cells.zarr`, `nuclei.zarr` | Full-resolution label masks (per-tile IDs, not the stitched IDs) |
 
-## Live Segmentation Viewer
-
-SMINT includes a Tkinter viewer for monitoring segmentation in real time. From
-the command line:
-
-```bash
-smint-viewer path/to/image.ome.tiff results/segmentation results/segmentation/current_tile_info.txt --interval 1000
-```
-
-Or from Python:
-
-```python
-from smint.visualization import run_viewer
-
-run_viewer(
-    full_scan_path="path/to/image.ome.tiff",
-    segmentation_history_dir="results/segmentation",
-    tile_info_path="results/segmentation/current_tile_info.txt",
-    update_interval_ms=1000,  # Update every 1 second
-)
-```
 
 ## Common Issues and Troubleshooting
 
