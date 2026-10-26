@@ -1,0 +1,2120 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Spatial Multi-Omics Integration Toolkit — segment whole slides and register spatial omics modalities into one coordinate system">
+      
+      
+        <meta name="author" content="Jurgen Kriel">
+      
+      
+        <link rel="canonical" href="https://jurgenkriel.github.io/SMINT/concepts/coordinate_frames/">
+      
+      
+        <link rel="prev" href="../registration_methods/">
+      
+      
+        <link rel="next" href="../tiling_and_stitching/">
+      
+      
+      <link rel="icon" href="../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>Coordinate frames - SMINT</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="pink">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#coordinate-frames" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="SMINT" class="md-header__button md-logo" aria-label="SMINT" data-md-component="logo">
+      
+  <img src="../../assets/smint_logo_small.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SMINT
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Coordinate frames
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="pink"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="pink"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/JurgenKriel/SMINT" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JurgenKriel/SMINT
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tutorials/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../visualizations/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Gallery
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../faq/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  About
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="SMINT" class="md-nav__button md-logo" aria-label="SMINT" data-md-component="logo">
+      
+  <img src="../../assets/smint_logo_small.png" alt="logo">
+
+    </a>
+    SMINT
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/JurgenKriel/SMINT" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JurgenKriel/SMINT
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick start
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../tutorials/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Tutorials
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/01_segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Segment a whole slide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/02_same_section_registration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Same-section registration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/03_sequential_registration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Sequential-section registration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/04_distributed_segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed segmentation on SLURM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/05_integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    One table per cell
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Worked examples on real data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    User guide
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            User guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    The SMINT workflow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../registration_methods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Choosing a registration method
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Coordinate frames
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Coordinate frames
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#microns-and-pixels" class="md-nav__link">
+    <span class="md-ellipsis">
+      Microns and pixels
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Microns and pixels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sm-pixel-scaling-scale_xy" class="md-nav__link">
+    <span class="md-ellipsis">
+      SM pixel scaling: scale_xy
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-registration-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-registration order
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stalign-works-in-row-column" class="md-nav__link">
+    <span class="md-ellipsis">
+      STalign works in (row, column)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#which-column-is-in-which-frame" class="md-nav__link">
+    <span class="md-ellipsis">
+      Which column is in which frame
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tiling_and_stitching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tiling and stitching
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Segmentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Alignment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../napari_plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    napari plugin
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc_deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running on HPC
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../r_integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    R integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Command line
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/data_formats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data formats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Python API
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            Python API
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/api/alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Alignment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/api/segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Segmentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/api/jobs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Jobs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../visualizations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gallery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    About
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ & troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../citation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Citation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#microns-and-pixels" class="md-nav__link">
+    <span class="md-ellipsis">
+      Microns and pixels
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Microns and pixels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sm-pixel-scaling-scale_xy" class="md-nav__link">
+    <span class="md-ellipsis">
+      SM pixel scaling: scale_xy
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-registration-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-registration order
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stalign-works-in-row-column" class="md-nav__link">
+    <span class="md-ellipsis">
+      STalign works in (row, column)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#which-column-is-in-which-frame" class="md-nav__link">
+    <span class="md-ellipsis">
+      Which column is in which frame
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/JurgenKriel/SMINT/edit/main/docs/concepts/coordinate_frames.md" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="coordinate-frames">Coordinate frames<a class="headerlink" href="#coordinate-frames" title="Permanent link">&para;</a></h1>
+<p>Most registration failures are not registration failures. They are two tables
+in different units, a flip applied in the wrong order, or x and y swapped on
+the way out of STalign. This page lists every frame your data passes through,
+the conversions between them, and which output column is in which frame, so
+you can check your inputs before you trust an overlay.</p>
+<pre class="mermaid"><code>flowchart LR
+    subgraph IMG ["Image frame · pixels"]
+        SEG["Segmentation outputs&lt;br/&gt;x = column, y = row&lt;br/&gt;origin top-left"]
+    end
+    subgraph SMP ["SM frame · pixels"]
+        SMX["MALDI matrix&lt;br/&gt;x, y on its own grid"]
+    end
+    subgraph ST ["ST frame · µm (the reference)"]
+        XEN["Xenium cells&lt;br/&gt;x_centroid, y_centroid"]
+        OUT["Registered outputs&lt;br/&gt;x_transformed, y_transformed"]
+    end
+    SEG -- "× pixel size&lt;br/&gt;(you do this)" --&gt; UM["Nuclei in µm"]
+    UM -- "centroid registration&lt;br/&gt;+ snapping" --&gt; OUT
+    SMX -- "scale_xy (default × 10)&lt;br/&gt;then pre-registration" --&gt; PRE["SM roughly in&lt;br/&gt;the ST frame"]
+    PRE -- "STalign LDDMM&lt;br/&gt;works in (row, col)" --&gt; RC["(row, col) output"]
+    RC -- "orientation = stalign" --&gt; OUT
+    RC -. "orientation = dataset&lt;br/&gt;(x and y swapped)" .-&gt; BAD["Transposed:&lt;br/&gt;does not overlay ST"]
+
+    classDef ref fill:#ebf4ff,stroke:#2b6cb0,color:#1a365d
+    classDef mov fill:#fff5f7,stroke:#d53f8c,color:#521b41
+    classDef bad fill:#fffaf0,stroke:#dd8a2e,color:#7b341e
+    class XEN,OUT ref
+    class SEG,UM,SMX,PRE,RC mov
+    class BAD bad</code></pre>
+<p>The spatial transcriptomics (ST) frame, in microns, is the reference. Every
+other dataset moves into it, and nothing ever moves the ST data.</p>
+<h2 id="microns-and-pixels">Microns and pixels<a class="headerlink" href="#microns-and-pixels" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Units</th>
+<th>Origin and axes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Xenium cells, transcripts</td>
+<td>µm</td>
+<td>Xenium's own frame</td>
+</tr>
+<tr>
+<td>SMINT segmentation outputs</td>
+<td><strong>pixels</strong> of the full image</td>
+<td>top-left; <code>x</code> is the column, <code>y</code> is the row</td>
+</tr>
+<tr>
+<td>MALDI / SM matrix <code>x, y</code></td>
+<td><strong>pixels</strong> of the SM grid</td>
+<td>as exported by the instrument software</td>
+</tr>
+<tr>
+<td>All registered outputs</td>
+<td>µm, in the ST frame</td>
+<td>as the ST data</td>
+</tr>
+</tbody>
+</table>
+<p>SMINT registration parameters are in microns: <code>max_distance</code> (100), the
+<code>multiround</code> block sizes (500 and 250), <code>snap_radius</code> (10) and the LDDMM raster
+pixel size <code>dx</code> (30). Give them pixel coordinates and every one of those
+defaults is wrong by your pixel size.</p>
+<p>Segmentation does not convert to microns for you. Multiply by the pixel size
+from your image metadata (OME-TIFF <code>PhysicalSizeX</code> / <code>PhysicalSizeY</code>) before
+registering:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">tifffile</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">with</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">TiffFile</span><span class="p">(</span><span class="s2">"slide.ome.tif"</span><span class="p">)</span> <span class="k">as</span> <span class="n">tif</span><span class="p">:</span>          <span class="c1"># the image you segmented</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">pixels</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">xml2dict</span><span class="p">(</span><span class="n">tif</span><span class="o">.</span><span class="n">ome_metadata</span><span class="p">)[</span><span class="s2">"OME"</span><span class="p">][</span><span class="s2">"Image"</span><span class="p">][</span><span class="s2">"Pixels"</span><span class="p">]</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">pixel_size_um</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pixels</span><span class="p">[</span><span class="s2">"PhysicalSizeX"</span><span class="p">])</span>            <span class="c1"># check PhysicalSizeXUnit if set</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">nuclei</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"seg_out/nuclei_summary.csv"</span><span class="p">)</span>       <span class="c1"># x_centroid, y_centroid in pixels</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">nuclei</span><span class="p">[[</span><span class="s2">"x_centroid"</span><span class="p">,</span> <span class="s2">"y_centroid"</span><span class="p">]]</span> <span class="o">*=</span> <span class="n">pixel_size_um</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">nuclei</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">"nuclei_um.csv"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<p>For an OME file holding several images, <code>["Image"]</code> is a list; pick the one
+you segmented.</p>
+<p>If the post-stain image was not acquired in the Xenium frame, the nuclei are
+now in microns but still offset; bring them within <code>max_distance</code> with
+<code>smint-alignment pretransform</code> first (it fits scale from the extents and moves
+the centroid onto the reference).</p>
+<h3 id="sm-pixel-scaling-scale_xy">SM pixel scaling: <code>scale_xy</code><a class="headerlink" href="#sm-pixel-scaling-scale_xy" title="Permanent link">&para;</a></h3>
+<p><code>read_sm_matrix</code> (used by <code>register_sm_to_st</code>, <code>prepare_landmark_inputs</code> and
+<code>smint-alignment st-sm</code>) applies three steps to the SM <code>x, y</code>, in this order:</p>
+<ol>
+<li><strong>Scale</strong> by <code>scale_xy</code> (default <code>10.0</code>, <code>--scale-xy</code>): MALDI pixels to
+   microns for the data SMINT was developed on. Set it to your SM pixel pitch.</li>
+<li><strong>Rotate</strong> 90° anticlockwise if <code>rotate_left_90=True</code>: <code>(x, y) → (−y, x)</code>.</li>
+<li><strong>Shift</strong> so all coordinates are ≥ 0 (<code>keep_positive=True</code>).</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Scale once</p>
+<p>If you already pre-registered the SM table (its coordinates are in µm in the
+ST frame), register it with <code>sm_kwargs={"scale_xy": 1.0, "keep_positive": False}</code>
+(<code>--scale-xy 1 --no-keep-positive</code> on the command line). Otherwise it is
+scaled a second time, and pre-registered coordinates that fall below 0 are
+shifted, which moves the table away from its landmarks. The same applies to
+landmarks: they must be in the frame of the SM coordinates <em>after</em>
+<code>read_sm_matrix</code>. Landmarks from <code>prepare_landmark_inputs</code> are, because it
+rasterises with the same settings; landmarks picked on the CSV as stored
+(for example in napari) are not, unless <code>scale_xy</code> is 1 and <code>keep_positive</code>
+is False.</p>
+</div>
+<h2 id="pre-registration-order">Pre-registration order<a class="headerlink" href="#pre-registration-order" title="Permanent link">&para;</a></h2>
+<p><code>build_pretransform</code> composes one 3 × 3 matrix from four operations, always in
+this order, about the source centroid:</p>
+<p><strong>flip → rotate → scale → translate</strong></p>
+<p>The order matters because flips and rotations do not commute: "flip, then
+rotate 30°" is a different transform from "rotate 30°, then flip". Scale is
+fitted <em>after</em> the flip and rotation, because bounding-box extents change when
+you rotate.</p>
+<figure>
+<p><img alt="Pre-registration steps on a synthetic mirrored, rotated SM section" src="../../assets/concepts/pretransform_order.png" /></p>
+<figcaption>A synthetic SM section that is mirrored, turned 30° and on a grid
+ten times coarser than the reference. Each panel adds one operation from
+<code>build_pretransform(sm_xy, st_xy, rotation=30, flip_x=True)</code>; the
+fitted scale is 10.00 and the overlap score reaches 1.00. Applying the same
+rotation and flip in the other order leaves an overlap of 0.25. Plotted with
+y up.</figcaption>
+</figure>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_pretransform</span><span class="p">,</span> <span class="n">apply_pretransform</span><span class="p">,</span> <span class="n">describe_pretransform</span><span class="p">,</span> <span class="n">overlap_score</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">matrix</span> <span class="o">=</span> <span class="n">build_pretransform</span><span class="p">(</span><span class="n">sm_xy</span><span class="p">,</span> <span class="n">st_xy</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">flip_x</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># (N, 2) x, y arrays</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">moved</span> <span class="o">=</span> <span class="n">apply_pretransform</span><span class="p">(</span><span class="n">sm_xy</span><span class="p">,</span> <span class="n">matrix</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">overlap_score</span><span class="p">(</span><span class="n">moved</span><span class="p">,</span> <span class="n">st_xy</span><span class="p">))</span>      <span class="c1"># 1.0 on the synthetic data above</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">describe_pretransform</span><span class="p">(</span><span class="n">matrix</span><span class="p">))</span>    <span class="c1"># scale_x 10.0, rotation_deg -150.0, reflects True, ...</span>
+</code></pre></div>
+<p><code>describe_pretransform</code> is the quickest sanity check: <code>reflects: True</code> means
+the matrix contains a mirror, so a rotation of −150° here is "flip, then turn
+30°", not a turn of −150°.</p>
+<div class="admonition note">
+<p class="admonition-title">Which way is anticlockwise?</p>
+<p><code>rotation</code> is anticlockwise with the y axis pointing up. Images are usually
+displayed with y pointing down, where the same rotation looks clockwise.</p>
+</div>
+<h2 id="stalign-works-in-row-column">STalign works in (row, column)<a class="headerlink" href="#stalign-works-in-row-column" title="Permanent link">&para;</a></h2>
+<p>STalign stores images as <code>[Y, X]</code> and points as <code>(row, col) = (y, x)</code>.
+SMINT converts at the edges so you can stay in <code>(x, y)</code>:</p>
+<ul>
+<li>Landmark files hold <code>(x, y)</code> per label (the format of STalign's
+  <code>point_annotator.py</code> and of the napari plugin); <code>load_landmarks</code> swaps them to
+  <code>(row, col)</code> for STalign.</li>
+<li>napari layers are also <code>(row, col)</code>; the plugin converts in both directions.</li>
+<li>On the way out, <code>transform_points</code> (and so <code>register_sm_to_st</code> and
+  <code>smint-alignment st-sm</code>) takes an <code>orientation</code>:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><code>orientation</code></th>
+<th><code>x_transformed</code>, <code>y_transformed</code> are</th>
+<th>Use it for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"stalign"</code></td>
+<td>true <code>x, y</code> in the ST frame</td>
+<td>Anything new: overlays, joins, the R scripts</td>
+</tr>
+<tr>
+<td><code>"dataset"</code> (default)</td>
+<td><code>x</code> and <code>y</code> swapped relative to the ST frame</td>
+<td>Reproducing outputs of earlier pipeline runs</td>
+</tr>
+</tbody>
+</table>
+<p>The default is <code>"dataset"</code> so that older analyses keep producing the same
+files. For new work, always pass <code>orientation="stalign"</code> (<code>--orientation
+stalign</code>).</p>
+<figure>
+<p><img alt="The same LDDMM registration written in both orientations" src="../../assets/concepts/stalign_orientation.png" /></p>
+<figcaption>SMINT's sequential path run end to end on synthetic data:
+<code>smint-alignment pretransform</code>, five landmark pairs, then
+<code>register_sm_to_st</code> once per orientation. (a) SM input in pixels.
+(b) After pre-registration the median error is 38 µm. (c) With
+<code>orientation="dataset"</code> the output is the transpose of the right
+answer and does not overlay the ST cells. (d) With
+<code>orientation="stalign"</code> the median error is 7 µm. Plotted with
+y down, as an image.</figcaption>
+</figure>
+<div class="admonition warning">
+<p class="admonition-title">The orientation is not stored in the CSV</p>
+<p><code>register_sm_to_st</code> records it in <code>df.attrs["orientation"]</code>, which lives
+only in memory. Runs launched by <code>smint-alignment</code> or napari record it in
+<code>job_spec.json</code> in the output directory. If you call the function yourself,
+put the orientation in the output file name. A mirrored overlay along the
+diagonal is the signature of a <code>"dataset"</code> output plotted against ST.</p>
+</div>
+<h2 id="which-column-is-in-which-frame">Which column is in which frame<a class="headerlink" href="#which-column-is-in-which-frame" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Columns</th>
+<th>Frame</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cells_outlines.csv</code>, <code>nuclei_outlines.csv</code></td>
+<td><code>global_cell_id</code>, <code>x</code>, <code>y</code></td>
+<td>Image pixels</td>
+</tr>
+<tr>
+<td><code>cells_summary.csv</code>, <code>nuclei_summary.csv</code></td>
+<td><code>x_centroid</code>, <code>y_centroid</code>, <code>area</code></td>
+<td>Image pixels (area in px²)</td>
+</tr>
+<tr>
+<td><code>&lt;base&gt;_cells.csv</code>, <code>&lt;base&gt;_nuclei.csv</code> (<code>process_large_image</code>)</td>
+<td><code>global_cell_id</code>, <code>chunk_id</code>, <code>x</code>, <code>y</code></td>
+<td>Image pixels</td>
+</tr>
+<tr>
+<td><code>cells.zarr</code>, <code>nuclei.zarr</code></td>
+<td>label masks</td>
+<td>Image pixels; per-tile IDs, not the stitched IDs</td>
+</tr>
+<tr>
+<td>Pretransform output CSV</td>
+<td>the source's own coordinate columns, <strong>overwritten</strong></td>
+<td>Reference (ST) frame</td>
+</tr>
+<tr>
+<td><code>&lt;output&gt;.transform.json</code></td>
+<td><code>matrix</code>, <code>described</code></td>
+<td>Maps the original source onto the reference</td>
+</tr>
+<tr>
+<td><code>centroids_transformed.csv</code></td>
+<td>the source's original columns</td>
+<td>Source frame, unchanged</td>
+</tr>
+<tr>
+<td></td>
+<td><code>x_transformed</code>, <code>y_transformed</code></td>
+<td>ST frame (snapped where <code>registration_status</code> is <code>snapped</code> or <code>assigned</code>)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>x_transformed_smooth</code>, <code>y_transformed_smooth</code></td>
+<td>ST frame, transform only</td>
+</tr>
+<tr>
+<td></td>
+<td><code>target_index</code></td>
+<td>Row of the partner in the target table, −1 if none</td>
+</tr>
+<tr>
+<td><code>sm_transformed.csv</code></td>
+<td><code>x</code>, <code>y</code></td>
+<td>SM frame <strong>after</strong> <code>scale_xy</code>, rotation and shift, not the original pixels</td>
+</tr>
+<tr>
+<td></td>
+<td><code>x_transformed</code>, <code>y_transformed</code></td>
+<td>ST frame with <code>orientation="stalign"</code>; transposed with <code>"dataset"</code></td>
+</tr>
+<tr>
+<td>Landmark <code>.npy</code></td>
+<td><code>{label: [(x, y)]}</code></td>
+<td>The frame of the data you clicked on</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Check before you register</p>
+<p><code>smint-alignment columns my_table.csv</code> lists a table's columns and shows
+which pair SMINT would pick. ST tables often carry several coordinate pairs
+from different processing stages, and registering the wrong pair fails
+silently. Pass the columns explicitly when in doubt.</p>
+</div>
+<h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li>See where each conversion happens in the pipeline: <a href="../workflow/">The SMINT workflow</a>.</li>
+<li>File formats in full: <a href="../../reference/data_formats/">Data formats</a>.</li>
+<li>Pre-registration in napari: <a href="../../napari_plugin/">napari plugin</a>.</li>
+<li>A complete sequential run: <a href="../../tutorials/03_sequential_registration/">Sequential-section registration</a>.</li>
+</ul>
+<p><small>Figures are generated by <code>docs/assets/concepts/src/make_registration_figures.py</code>
+and <code>docs/assets/concepts/src/make_stalign_figure.py</code>.</small></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../registration_methods/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Choosing a registration method">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Choosing a registration method
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../tiling_and_stitching/" class="md-footer__link md-footer__link--next" aria-label="Next: Tiling and stitching">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Tiling and stitching
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2024–2026 Jurgen Kriel · MIT licence
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/JurgenKriel/SMINT" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "toc.follow"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>

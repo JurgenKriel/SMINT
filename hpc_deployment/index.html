@@ -6,35 +6,34 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Spatial Multi-Omics Integration Toolkit">
+        <meta name="description" content="Spatial Multi-Omics Integration Toolkit — segment whole slides and register spatial omics modalities into one coordinate system">
       
       
         <meta name="author" content="Jurgen Kriel">
       
       
+        <link rel="canonical" href="https://jurgenkriel.github.io/SMINT/hpc_deployment/">
       
-        <link rel="prev" href="../r_integration/">
+      
+        <link rel="prev" href="../napari_plugin/">
       
       
-        <link rel="next" href="../examples/">
+        <link rel="next" href="../r_integration/">
       
+      
+      <link rel="icon" href="../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>Running on HPC - SMINT</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
       
         
-      
-      
-      <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
-    
-    
-      
-        <title>HPC Deployment - SMINT Documentation</title>
-      
-    
-    
-      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
-      
-        
-        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -53,10 +52,13 @@
       
     
     
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
+    
     
     
   </head>
@@ -64,10 +66,12 @@
   
     
     
+      
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="pink">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -76,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#hpc-deployment" class="md-skip">
+        <a href="#run-smint-on-an-hpc-cluster" class="md-skip">
           Skip to content
         </a>
       
@@ -85,19 +89,16 @@
       
     </div>
     
-      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
-        
-      </div>
-    
     
       
 
-<header class="md-header" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="SMINT Documentation" class="md-header__button md-logo" aria-label="SMINT Documentation" data-md-component="logo">
-      
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="SMINT" class="md-header__button md-logo" aria-label="SMINT" data-md-component="logo">
+      
+  <img src="../assets/smint_logo_small.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -108,13 +109,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            SMINT Documentation
+            SMINT
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              HPC Deployment
+              Running on HPC
             
           </span>
         </div>
@@ -122,7 +123,33 @@
     </div>
     
       
+        <form class="md-header__option" data-md-component="palette">
+  
     
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="pink"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="pink"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
     
     
@@ -151,6 +178,8 @@
         </button>
       </nav>
       
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
@@ -171,7 +200,7 @@
         <a href="https://github.com/JurgenKriel/SMINT" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     JurgenKriel/SMINT
@@ -181,14 +210,8 @@
     
   </nav>
   
-</header>
     
-    <div class="md-container" data-md-component="container">
       
-      
-        
-          
-            
 <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
   <div class="md-grid">
     <ul class="md-tabs__list">
@@ -226,7 +249,29 @@
   
     
   
-  Getting Started
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tutorials/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
 
         </a>
       </li>
@@ -244,13 +289,13 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../segmentation/" class="md-tabs__link">
+        <a href="../concepts/" class="md-tabs__link">
           
   
   
     
   
-  User Guide
+  User guide
 
         </a>
       </li>
@@ -266,13 +311,13 @@
     
     
       <li class="md-tabs__item">
-        <a href="../examples/" class="md-tabs__link">
+        <a href="../reference/" class="md-tabs__link">
           
   
   
     
   
-  Examples
+  Reference
 
         </a>
       </li>
@@ -285,16 +330,35 @@
   
   
   
+    <li class="md-tabs__item">
+      <a href="../visualizations/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Gallery
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
     
     
       <li class="md-tabs__item">
-        <a href="../visualizations/" class="md-tabs__link">
+        <a href="../faq/" class="md-tabs__link">
           
   
   
     
   
-  Visualizations
+  About
 
         </a>
       </li>
@@ -305,7 +369,13 @@
     </ul>
   </div>
 </nav>
-          
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
         
       
       <main class="md-main" data-md-component="main">
@@ -324,20 +394,19 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="SMINT Documentation" class="md-nav__button md-logo" aria-label="SMINT Documentation" data-md-component="logo">
+    <a href=".." title="SMINT" class="md-nav__button md-logo" aria-label="SMINT" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/smint_logo_small.png" alt="logo">
 
     </a>
-    SMINT Documentation
+    SMINT
   </label>
   
     <div class="md-nav__source">
       <a href="https://github.com/JurgenKriel/SMINT" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     JurgenKriel/SMINT
@@ -359,14 +428,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
     Home
-  
-
     
   </span>
-  
   
 
       </a>
@@ -382,6 +446,118 @@
   
     
     
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick start
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
       
         
       
@@ -402,60 +578,53 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../tutorials/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
-    
-  
-    Getting Started
-  
-
+    Tutorials
     
   </span>
   
-  
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
+            </a>
             
-  
-    Getting Started
-  
-
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
               
+            
+              
                 
   
   
   
   
     <li class="md-nav__item">
-      <a href="../installation/" class="md-nav__link">
+      <a href="../tutorials/01_segmentation/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    
-  
-    Installation
-  
-
+    Segment a whole slide
     
   </span>
-  
   
 
       </a>
@@ -471,19 +640,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../dependency_handling/" class="md-nav__link">
+      <a href="../tutorials/02_same_section_registration/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    
-  
-    Dependency Handling
-  
-
+    Same-section registration
     
   </span>
-  
   
 
       </a>
@@ -499,19 +663,83 @@
   
   
     <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
+      <a href="../tutorials/03_sequential_registration/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    
-  
-    Configuration
-  
-
+    Sequential-section registration
     
   </span>
   
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/04_distributed_segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed segmentation on SLURM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/05_integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    One table per cell
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Worked examples on real data
+    
+  </span>
   
 
       </a>
@@ -537,6 +765,16 @@
   
     
     
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
       
         
       
@@ -566,37 +804,129 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../concepts/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
-    
-  
-    User Guide
-  
-
+    User guide
     
   </span>
   
-  
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
+            </a>
             
-  
-    User Guide
-  
-
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            User guide
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    The SMINT workflow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/registration_methods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Choosing a registration method
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/coordinate_frames/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Coordinate frames
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/tiling_and_stitching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tiling and stitching
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -610,14 +940,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
     Segmentation
-  
-
     
   </span>
-  
   
 
       </a>
@@ -638,42 +963,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
     Alignment
-  
-
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../xenium_metabolomics_alignment/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Xenium-Metabolomics
-  
-
-    
-  </span>
-  
   
 
       </a>
@@ -694,42 +986,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
-    napari Plugin
-  
-
+    napari plugin
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../r_integration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    R Integration
-  
-
-    
-  </span>
-  
   
 
       </a>
@@ -759,14 +1018,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
-    HPC Deployment
-  
-
+    Running on HPC
     
   </span>
-  
   
 
           <span class="md-nav__icon md-icon"></span>
@@ -777,14 +1031,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
-    HPC Deployment
-  
-
+    Running on HPC
     
   </span>
-  
   
 
       </a>
@@ -805,34 +1054,55 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#how-jobs-flow" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        Overview
-      
+      How jobs flow
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#installation-on-hpc" class="md-nav__link">
+  <a href="#set-up-the-environments" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        Installation on HPC
-      
+      Set up the environments
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Installation on HPC">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-shared-storage-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      The shared-storage rule
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#segment-on-slurm" class="md-nav__link">
+    <span class="md-ellipsis">
+      Segment on SLURM
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Segment on SLURM">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#using-environment-modules" class="md-nav__link">
+  <a href="#option-1-dask-workers-as-slurm-jobs" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        Using Environment Modules
-      
+      Option 1: Dask workers as SLURM jobs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-one-gpu-job" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 2: one GPU job
     </span>
   </a>
   
@@ -840,6 +1110,75 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#register-on-slurm" class="md-nav__link">
+    <span class="md-ellipsis">
+      Register on SLURM
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Register on SLURM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-the-command-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      From the command line
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      From Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choose-a-partition-and-a-gpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      Choose a partition and a GPU
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-a-job-leaves-in-output_dir" class="md-nav__link">
+    <span class="md-ellipsis">
+      What a job leaves in output_dir
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
+    </span>
+  </a>
   
 </li>
       
@@ -852,71 +1191,6 @@
 
               
             
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Examples
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
               
                 
   
@@ -924,19 +1198,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/" class="md-nav__link">
+      <a href="../r_integration/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
+    R integration
     
   </span>
-  
   
 
       </a>
@@ -962,6 +1231,16 @@
     
       
         
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
       
     
     
@@ -976,37 +1255,155 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <div class="md-nav__link md-nav__container">
+            <a href="../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Command line
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/data_formats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data formats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    
-  
-    Visualizations
-  
-
+    Python API
     
   </span>
-  
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Visualizations
-  
-
+            Python API
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1017,19 +1414,242 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/api/alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Alignment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/api/segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Segmentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/api/jobs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Jobs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../visualizations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    
-  
-    Interactive Plots
-  
-
+    Gallery
     
   </span>
   
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    About
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ & troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../citation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Citation
+    
+  </span>
   
 
       </a>
@@ -1072,34 +1692,55 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#how-jobs-flow" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        Overview
-      
+      How jobs flow
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#installation-on-hpc" class="md-nav__link">
+  <a href="#set-up-the-environments" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        Installation on HPC
-      
+      Set up the environments
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Installation on HPC">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-shared-storage-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      The shared-storage rule
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#segment-on-slurm" class="md-nav__link">
+    <span class="md-ellipsis">
+      Segment on SLURM
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Segment on SLURM">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#using-environment-modules" class="md-nav__link">
+  <a href="#option-1-dask-workers-as-slurm-jobs" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        Using Environment Modules
-      
+      Option 1: Dask workers as SLURM jobs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-one-gpu-job" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 2: one GPU job
     </span>
   </a>
   
@@ -1107,6 +1748,75 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#register-on-slurm" class="md-nav__link">
+    <span class="md-ellipsis">
+      Register on SLURM
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Register on SLURM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-the-command-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      From the command line
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      From Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choose-a-partition-and-a-gpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      Choose a partition and a GPU
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-a-job-leaves-in-output_dir" class="md-nav__link">
+    <span class="md-ellipsis">
+      What a job leaves in output_dir
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
+    </span>
+  </a>
   
 </li>
       
@@ -1120,40 +1830,408 @@
           
           
             <div class="md-content" data-md-component="content">
-              
               <article class="md-content__inner md-typeset">
                 
                   
 
 
   
+    <a href="https://github.com/JurgenKriel/SMINT/edit/main/docs/hpc_deployment.md" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
   
 
 
-<h1 id="hpc-deployment">HPC Deployment<a class="headerlink" href="#hpc-deployment" title="Permanent link">&para;</a></h1>
-<p>SMINT is designed to run efficiently on High-Performance Computing (HPC) clusters, taking advantage of multiple CPUs and GPUs for processing large spatial omics datasets. This page explains how to deploy SMINT on SLURM-based HPC systems.</p>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>Running SMINT on an HPC cluster involves the following steps:</p>
-<ol>
-<li>Install SMINT on the HPC system</li>
-<li>Prepare your configuration file</li>
-<li>Submit jobs using SLURM submission scripts</li>
-<li>Monitor job progress</li>
-<li>Collect and analyze results</li>
-</ol>
-<h2 id="installation-on-hpc">Installation on HPC<a class="headerlink" href="#installation-on-hpc" title="Permanent link">&para;</a></h2>
-<h3 id="using-environment-modules">Using Environment Modules<a class="headerlink" href="#using-environment-modules" title="Permanent link">&para;</a></h3>
-<p>Most HPC systems use environment modules. Load the required modules and install SMINT:</p>
-<p>```bash</p>
-<h1 id="load-required-modules">Load required modules<a class="headerlink" href="#load-required-modules" title="Permanent link">&para;</a></h1>
-<p>module load python/3.11
-module load cuda/11.3
-module load miniconda3</p>
-<h1 id="create-a-conda-environment">Create a conda environment<a class="headerlink" href="#create-a-conda-environment" title="Permanent link">&para;</a></h1>
-<p>conda create -n smint python=3.11
-conda activate smint</p>
-<h1 id="install-smint">Install SMINT<a class="headerlink" href="#install-smint" title="Permanent link">&para;</a></h1>
-<p>pip install "git+https://github.com/JurgenKriel/SMINT.git"</p>
+<h1 id="run-smint-on-an-hpc-cluster">Run SMINT on an HPC cluster<a class="headerlink" href="#run-smint-on-an-hpc-cluster" title="Permanent link">&para;</a></h1>
+<p>This guide shows you how to run SMINT's heavy steps on a SLURM cluster:
+whole-slide segmentation on GPU workers, and registration jobs submitted from
+the command line, Python or the napari plugin. It covers the environments you
+need, the one storage rule that matters, how jobs flow, and what to do when a
+job misbehaves.</p>
+<div class="admonition note">
+<p class="admonition-title">Partition and GPU names</p>
+<p>The examples use the partitions of the cluster SMINT was developed on:
+<code>regular</code> (CPU) and <code>gpuq</code> (GPU, with A30, A100 and P100 cards). Replace
+them with your cluster's; <code>sinfo -s</code> lists them.</p>
+</div>
+<h2 id="how-jobs-flow">How jobs flow<a class="headerlink" href="#how-jobs-flow" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    subgraph login["Login node or interactive session"]
+        A1["run_distributed_segmentation&lt;br/&gt;backend='slurm'"]
+        B1["smint-alignment ... --submit&lt;br/&gt;napari Register widget&lt;br/&gt;jobs.submit(JobSpec)"]
+    end
+    subgraph shared["Shared storage"]
+        IMG[(image, CSVs,&lt;br/&gt;landmarks)]
+        OUT[(output_dir:&lt;br/&gt;job_spec.json, status.json,&lt;br/&gt;logs, results)]
+    end
+    subgraph nodes["Compute nodes"]
+        W1["Dask worker jobs&lt;br/&gt;one tile at a time"]
+        W2["registration worker&lt;br/&gt;python -m smint.cli.register"]
+    end
+    A1 -- "dask-jobqueue&lt;br/&gt;sbatch × n_workers" --&gt; W1
+    W1 -- reads tiles --&gt; IMG
+    W1 -- label masks --&gt; OUT
+    W1 -- outlines --&gt; A1
+    A1 -- stitched CSVs --&gt; OUT
+    B1 -- "writes spec,&lt;br/&gt;sbatch submit.sh" --&gt; OUT
+    OUT --&gt; W2
+    W2 -- reads --&gt; IMG
+    W2 -- "status.json,&lt;br/&gt;transformed CSV" --&gt; OUT
+    B1 -. "poll / --watch" .-&gt; OUT</code></pre>
+<ul>
+<li><strong>Segmentation</strong> keeps a <em>driver</em> process running where you started it. It
+  asks SLURM for worker jobs, sends them tiles, collects the outlines and
+  stitches them. The driver must stay alive until the run finishes.</li>
+<li><strong>Registration</strong> is fire-and-forget: SMINT writes a job spec to
+  <code>output_dir</code>, submits an sbatch script that runs a worker on it, and the
+  worker reports through <code>status.json</code>. You can close the terminal or napari
+  and poll later.</li>
+</ul>
+<h2 id="set-up-the-environments">Set up the environments<a class="headerlink" href="#set-up-the-environments" title="Permanent link">&para;</a></h2>
+<p>You need up to three Python environments, because their requirements
+conflict:</p>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>For</th>
+<th>Key constraint</th>
+<th>Install</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Core / segmentation</strong></td>
+<td>Segmentation, centroid registration, pre-registration, submitting jobs</td>
+<td>Cellpose 3 <em>or</em> 4 with a CUDA build of torch</td>
+<td><code>pip install "smint[distributed] @ git+https://github.com/JurgenKriel/SMINT.git"</code></td>
+</tr>
+<tr>
+<td><strong>STalign worker</strong></td>
+<td>LDDMM registration (<code>st_sm</code> jobs)</td>
+<td><strong>numpy &lt; 2</strong></td>
+<td>see <a href="../installation/#registration-with-stalign">Installation</a></td>
+</tr>
+<tr>
+<td><strong>napari</strong></td>
+<td>The interactive plugin</td>
+<td>Kept apart from the numpy &lt; 2 STalign env (napari works with numpy 1 or 2)</td>
+<td><code>pip install "napari[all]"</code> plus SMINT</td>
+</tr>
+</tbody>
+</table>
+<p>Install them on <strong>shared storage</strong> so compute nodes can run them, and tell
+SMINT which interpreter runs registration workers:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SMINT_WORKER_PYTHON</span><span class="o">=</span>/shared/envs/smint-stalign/bin/python
+</code></pre></div>
+<p>Without it, SMINT looks for an <code>STalign_env/bin/python</code> beside the installed
+package, then falls back to the current interpreter. The centroid round has no
+STalign dependency, so any environment with SMINT can run it.</p>
+<div class="admonition tip">
+<p class="admonition-title">Cellpose 3 or 4 on the cluster</p>
+<p>Cellpose 4 (Cellpose-SAM) is what fine-tuned <code>cpsam</code> models need, and it
+is the version the Sample 3 GPU runs used. Cellpose 3 is lighter and keeps
+the classic <code>cyto3</code> / <code>nuclei</code> models. One environment holds one version;
+see <a href="../installation/#cellpose-3-or-cellpose-4">Installation</a>.</p>
+</div>
+<h2 id="the-shared-storage-rule">The shared-storage rule<a class="headerlink" href="#the-shared-storage-rule" title="Permanent link">&para;</a></h2>
+<div class="admonition danger">
+<p class="admonition-title">Everything a job touches must be on shared storage</p>
+<p>A batch job runs on a different machine. Node-local paths (<code>/tmp</code>,
+<code>/var/tmp</code>, <code>/dev/shm</code>, <code>/run</code>) do not exist there, and the job dies
+<strong>without any log</strong>, because the log directory does not exist either.
+This applies to the image, the input CSVs and landmarks, <code>output_dir</code>, the
+Python environment, and for segmentation the directory you launch from
+(Dask worker logs go to <code>./dask_logs</code>). <code>JobSpec.validate()</code> rejects
+node-local paths before submitting.</p>
+</div>
+<h2 id="segment-on-slurm">Segment on SLURM<a class="headerlink" href="#segment-on-slurm" title="Permanent link">&para;</a></h2>
+<h3 id="option-1-dask-workers-as-slurm-jobs">Option 1: Dask workers as SLURM jobs<a class="headerlink" href="#option-1-dask-workers-as-slurm-jobs" title="Permanent link">&para;</a></h3>
+<p>Each worker is its own SLURM job with one GPU, so you can spread a slide over
+several GPUs on several nodes. Start the driver from a login node, an
+interactive session or a small CPU job:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Python</label><label for="__tabbed_1_2">Command line</label><label for="__tabbed_1_3">YAML config</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">smint.segmentation</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_distributed_segmentation</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">results</span> <span class="o">=</span> <span class="n">run_distributed_segmentation</span><span class="p">(</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="n">image_path</span><span class="o">=</span><span class="s2">"/shared/project/slide.ome.zarr"</span><span class="p">,</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        <span class="n">output_dir</span><span class="o">=</span><span class="s2">"/shared/project/seg_run"</span><span class="p">,</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="n">config_path</span><span class="o">=</span><span class="s2">"configs/segmentation_config.yaml"</span><span class="p">,</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="n">cell_model</span><span class="o">=</span><span class="s2">"/shared/models/cpsam_finetuned"</span><span class="p">,</span>   <span class="c1"># model path or built-in name</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="n">nuclei_model</span><span class="o">=</span><span class="s2">"nuclei"</span><span class="p">,</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>        <span class="n">backend</span><span class="o">=</span><span class="s2">"slurm"</span><span class="p">,</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>        <span class="n">n_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>                                    <span class="c1"># 4 SLURM jobs, 1 GPU each</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>        <span class="n">use_gpu</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>        <span class="n">slurm</span><span class="o">=</span><span class="p">{</span><span class="s2">"queue"</span><span class="p">:</span> <span class="s2">"gpuq"</span><span class="p">,</span> <span class="s2">"gpu_type"</span><span class="p">:</span> <span class="s2">"A30"</span><span class="p">,</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>               <span class="s2">"memory"</span><span class="p">:</span> <span class="s2">"64GB"</span><span class="p">,</span> <span class="s2">"walltime"</span><span class="p">:</span> <span class="s2">"04:00:00"</span><span class="p">},</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    <span class="p">)</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">"total_cells"</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="s2">"cells_summary_path"</span><span class="p">])</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>python<span class="w"> </span>-m<span class="w"> </span>smint.segmentation.distributed_seg<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span>--image_path<span class="w"> </span>/shared/project/slide.ome.zarr<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span>--output_dir<span class="w"> </span>/shared/project/seg_run<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span>--config_path<span class="w"> </span>configs/segmentation_config.yaml<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span>--cell_model<span class="w"> </span>/shared/models/cpsam_finetuned<span class="w"> </span>--nuclei_model<span class="w"> </span>nuclei<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span>--backend<span class="w"> </span>slurm<span class="w"> </span>--n_workers<span class="w"> </span><span class="m">4</span><span class="w"> </span>--use_gpu<span class="w"> </span>--slurm_gpu_type<span class="w"> </span>A30
+</code></pre></div>
+<p>For more SLURM options than the GPU type, use the YAML <code>distributed.slurm</code>
+section (next tab).</p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">use_gpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nt">n_workers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nt">distributed</span><span class="p">:</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">backend</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">slurm</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nt">tile_overlap</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="nt">worker_wait_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600</span><span class="w">       </span><span class="c1"># seconds to wait for the first worker</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="nt">slurm</span><span class="p">:</span><span class="w">                         </span><span class="c1"># passed to dask_jobqueue.SLURMCluster</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpuq</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="nt">gpu_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A30</span><span class="w">                </span><span class="c1"># SMINT adds --gres=gpu:A30:1</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64GB</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="nt">walltime</span><span class="p">:</span><span class="w"> </span><span class="s">"04:00:00"</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span><span class="nt">job_extra_directives</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"--account=myproject"</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>The <code>slurm</code> dictionary is passed to <code>dask_jobqueue.SLURMCluster</code>. SMINT's
+defaults are <code>queue="gpuq"</code>, <code>cores=1</code>, <code>processes=1</code>, <code>memory="64GB"</code>,
+<code>walltime="12:00:00"</code>, <code>log_directory="dask_logs"</code> and the current Python
+interpreter for the workers. <code>gpu_type</code> is SMINT's own key: with
+<code>use_gpu=True</code> it adds <code>--gres=gpu:&lt;type&gt;:1</code> (or <code>--gres=gpu:1</code> without a
+type). The generated worker job script is printed to the log, so you can check
+what was requested.</p>
+<p>On Sample 3, a 4096 × 4096 px crop split into 16 tiles ran on 4 A30 workers in
+0.6 min, using Cellpose 4 with a fine-tuned Cellpose-SAM model. The
+<a href="../tutorials/04_distributed_segmentation/">distributed segmentation tutorial</a>
+walks through it.</p>
+<h3 id="option-2-one-gpu-job">Option 2: one GPU job<a class="headerlink" href="#option-2-one-gpu-job" title="Permanent link">&para;</a></h3>
+<p>For a slide that one GPU can handle, submit a single job that runs
+<code>scripts/run_segmentation.py</code>. The repository has a template in
+<code>scripts/hpc_submit_scripts/slurm_segmentation.sh</code>; a minimal version:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1">#SBATCH --job-name=smint_seg</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">#SBATCH --partition=gpuq</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1">#SBATCH --gres=gpu:A30:1</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1">#SBATCH --cpus-per-task=8</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1">#SBATCH --mem=128G</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1">#SBATCH --time=12:00:00</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1">#SBATCH --output=%x_%j.out</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="nb">source</span><span class="w"> </span>/shared/envs/smint/bin/activate
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONUNBUFFERED</span><span class="o">=</span><span class="m">1</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>python<span class="w"> </span>scripts/run_segmentation.py<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">    </span>--image<span class="w"> </span>/shared/project/slide.ome.tif<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">    </span>--output-dir<span class="w"> </span>/shared/project/seg_single<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">    </span>--config<span class="w"> </span>configs/segmentation_config.yaml<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">    </span>--save-config
+</code></pre></div>
+<p>Add <code>--distributed --use-gpu</code> to run <code>run_distributed_segmentation</code> inside the
+job instead, with local Dask workers (one per GPU when <code>dask-cuda</code> is
+installed). In that mode the models and their parameters come from the config
+file only.</p>
+<h2 id="register-on-slurm">Register on SLURM<a class="headerlink" href="#register-on-slurm" title="Permanent link">&para;</a></h2>
+<h3 id="from-the-command-line">From the command line<a class="headerlink" href="#from-the-command-line" title="Permanent link">&para;</a></h3>
+<p>Add <code>--submit</code> to any <code>smint-alignment</code> registration to send it to SLURM, and
+<code>--watch</code> to wait for the result:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="gp">$ </span>smint-alignment<span class="w"> </span>st-sm<span class="w"> </span>--st<span class="w"> </span>st.csv<span class="w"> </span>--sm<span class="w"> </span>sm.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">      </span>--st-points<span class="w"> </span>st_points.npy<span class="w"> </span>--sm-points<span class="w"> </span>sm_points.npy<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">      </span>--orientation<span class="w"> </span>stalign<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">      </span>--output-dir<span class="w"> </span>/shared/project/reg_b<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">      </span>--submit<span class="w"> </span>--partition<span class="w"> </span>gpuq<span class="w"> </span>--gpus<span class="w"> </span><span class="m">1</span><span class="w"> </span>--memory<span class="w"> </span>64G<span class="w"> </span>--time-limit<span class="w"> </span><span class="m">01</span>:00:00<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">      </span>--watch
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="go">submitted st_sm via sbatch (&lt;job id&gt;)</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="go">output dir: /shared/project/reg_b</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--partition</code></td>
+<td><code>regular</code></td>
+<td>SLURM partition</td>
+</tr>
+<tr>
+<td><code>--cpus</code></td>
+<td>8</td>
+<td>CPUs per task</td>
+</tr>
+<tr>
+<td><code>--memory</code></td>
+<td><code>64G</code></td>
+<td>Memory request</td>
+</tr>
+<tr>
+<td><code>--time-limit</code></td>
+<td><code>04:00:00</code></td>
+<td>Walltime</td>
+</tr>
+<tr>
+<td><code>--gpus</code></td>
+<td>0</td>
+<td>GPUs to request; with <code>--gpus 1</code> the job asks for an A30 (<code>--gres=gpu:A30:1</code>). The GPU type is fixed to A30 on the command line: for another card, or any card, submit with <code>JobSpec</code> / <code>SlurmResources(gpu_type=...)</code> or the napari widget</td>
+</tr>
+<tr>
+<td><code>--worker-python</code></td>
+<td><code>$SMINT_WORKER_PYTHON</code></td>
+<td>Interpreter that runs the worker</td>
+</tr>
+</tbody>
+</table>
+<p>Without <code>--submit</code>, the same job runs as a background process on the current
+machine (log in <code>output_dir/worker.log</code>).</p>
+<h3 id="from-python">From Python<a class="headerlink" href="#from-python" title="Permanent link">&para;</a></h3>
+<p><code>smint.alignment.jobs</code> is the machinery behind the CLI and the napari plugin:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment.jobs</span><span class="w"> </span><span class="kn">import</span> <span class="n">JobSpec</span><span class="p">,</span> <span class="n">SlurmResources</span><span class="p">,</span> <span class="n">poll</span><span class="p">,</span> <span class="n">submit</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">spec</span> <span class="o">=</span> <span class="n">JobSpec</span><span class="p">(</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="nb">round</span><span class="o">=</span><span class="s2">"st_sm"</span><span class="p">,</span>                     <span class="c1"># or "centroid"</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="s2">"st_file"</span><span class="p">:</span> <span class="s2">"st.csv"</span><span class="p">,</span> <span class="s2">"sm_file"</span><span class="p">:</span> <span class="s2">"sm.csv"</span><span class="p">,</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>            <span class="s2">"st_points"</span><span class="p">:</span> <span class="s2">"st_points.npy"</span><span class="p">,</span> <span class="s2">"sm_points"</span><span class="p">:</span> <span class="s2">"sm_points.npy"</span><span class="p">},</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">"niter"</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s2">"orientation"</span><span class="p">:</span> <span class="s2">"stalign"</span><span class="p">},</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">output_dir</span><span class="o">=</span><span class="s2">"/shared/project/reg_b"</span><span class="p">,</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">backend</span><span class="o">=</span><span class="s2">"sbatch"</span><span class="p">,</span>                  <span class="c1"># or "local"</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="n">resources</span><span class="o">=</span><span class="n">SlurmResources</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="s2">"gpuq"</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gpu_type</span><span class="o">=</span><span class="s2">"A30"</span><span class="p">,</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>                             <span class="n">memory</span><span class="o">=</span><span class="s2">"64G"</span><span class="p">,</span> <span class="n">time_limit</span><span class="o">=</span><span class="s2">"01:00:00"</span><span class="p">),</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="p">)</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="n">info</span> <span class="o">=</span> <span class="n">submit</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>                    <span class="c1"># validates, writes job_spec.json, runs sbatch</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">"job_id"</span><span class="p">])</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="nb">print</span><span class="p">(</span><span class="n">poll</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)[</span><span class="s2">"state"</span><span class="p">])</span>  <span class="c1"># queued / running / completed / failed</span>
+</code></pre></div>
+<p>For the <code>centroid</code> round, <code>inputs</code> are <code>source_file</code> and <code>target_file</code>, and
+<code>params</code> are keyword arguments of <code>register_centroid_files</code>.</p>
+<h3 id="choose-a-partition-and-a-gpu">Choose a partition and a GPU<a class="headerlink" href="#choose-a-partition-and-a-gpu" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment.jobs</span><span class="w"> </span><span class="kn">import</span> <span class="n">available_partitions</span><span class="p">,</span> <span class="n">available_gpu_types</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">available_partitions</span><span class="p">()</span>          <span class="c1"># read from sinfo; [] off-cluster</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">available_gpu_types</span><span class="p">(</span><span class="s2">"gpuq"</span><span class="p">)</span>     <span class="c1"># e.g. ['A100', 'A30', 'P100']</span>
+</code></pre></div>
+<p><code>SlurmResources.gpu_type</code> defaults to <code>"A30"</code>, the card registration was
+validated on, and renders as <code>--gres=gpu:A30:1</code>. A bare <code>--gres=gpu:1</code> takes
+whatever card is free, which may be generations older than the one you timed
+a run on. Choose a type explicitly, or accept any card:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">SlurmResources</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="s2">"gpuq"</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gpu_type</span><span class="o">=</span><span class="s2">"A100"</span><span class="p">)</span>   <span class="c1"># --gres=gpu:A100:1</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">SlurmResources</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="s2">"gpuq"</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gpu_type</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>     <span class="c1"># --gres=gpu:1</span>
+</code></pre></div>
+<p>Before submitting, SMINT checks the request against <code>sinfo</code>: an unknown
+partition or a GPU type the partition does not have raises an error that
+lists the valid options, and asking for GPUs on a partition that does not look
+like a GPU partition logs a warning.</p>
+<p>LDDMM uses the GPU automatically when one is allocated. The Sample 2 section
+in the <a href="../alignment/#3-run-lddmm">Alignment guide</a> took about 72 s on one
+A30.</p>
+<h3 id="what-a-job-leaves-in-output_dir">What a job leaves in <code>output_dir</code><a class="headerlink" href="#what-a-job-leaves-in-output_dir" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Written by</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>job_spec.json</code></td>
+<td><code>submit</code></td>
+<td>The full job, re-runnable with <code>python -m smint.cli.register job_spec.json</code></td>
+</tr>
+<tr>
+<td><code>submit.sh</code></td>
+<td><code>submit</code> (sbatch)</td>
+<td>The generated batch script</td>
+</tr>
+<tr>
+<td><code>status.json</code></td>
+<td><code>submit</code>, then the worker</td>
+<td><code>state</code>, <code>message</code>, and on success <code>outputs</code> and <code>metrics</code></td>
+</tr>
+<tr>
+<td><code>&lt;job name&gt;_&lt;job id&gt;.out</code> / <code>.err</code></td>
+<td>SLURM</td>
+<td>Worker stdout and stderr (job name <code>smint_st_sm</code> or <code>smint_centroid</code> from the CLI)</td>
+</tr>
+<tr>
+<td><code>worker.log</code></td>
+<td>local backend</td>
+<td>Worker output</td>
+</tr>
+<tr>
+<td><code>sm_transformed.csv</code> / <code>centroids_transformed.csv</code></td>
+<td>worker</td>
+<td>The registered table</td>
+</tr>
+</tbody>
+</table>
+<p><code>poll()</code> reconciles <code>status.json</code> with <code>squeue</code>/<code>sacct</code>, so a job killed for
+running out of memory or time shows as <code>failed</code> rather than "running" forever.</p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<details class="question">
+<summary>The job failed immediately and there are no logs</summary>
+<p>A path is node-local or otherwise invisible to the compute node, often
+<code>output_dir</code> under <code>/tmp</code>. Move everything to shared storage.</p>
+</details>
+<details class="question">
+<summary>The job sits in the queue forever</summary>
+<p>You asked for a GPU on a CPU partition (SMINT logs a warning), or for a
+GPU type that is busy. Check with <code>squeue -j &lt;id&gt; --start</code>; use
+<code>gpu_type=None</code> to accept any card.</p>
+</details>
+<details class="question">
+<summary><code>Invalid partition name</code> or <code>Invalid generic resource</code></summary>
+<p>SMINT raises these locally with the valid options when <code>sinfo</code> is
+available. Check <code>available_partitions()</code> and
+<code>available_gpu_types(partition)</code>.</p>
+</details>
+<details class="question">
+<summary><code>status.json</code> says failed: SLURM completed but the worker did not report success</summary>
+<p>The worker crashed before writing its status. Read the <code>.err</code> file in
+<code>output_dir</code>; for <code>st_sm</code> jobs the most common cause is a worker
+interpreter without STalign or with numpy ≥ 2 (<code>--worker-python</code> /
+<code>SMINT_WORKER_PYTHON</code>).</p>
+</details>
+<details class="question">
+<summary>The worker imports packages from the wrong environment</summary>
+<p>sbatch exports the submitting shell's environment. SMINT unsets
+<code>PYTHONPATH</code>, <code>PYTHONHOME</code>, <code>PYTHONSTARTUP</code> and <code>LD_PRELOAD</code> in the batch
+script and for local workers, so install SMINT <em>into</em> the worker
+environment rather than relying on <code>PYTHONPATH</code>.</p>
+</details>
+<details class="question">
+<summary>Distributed segmentation times out waiting for workers</summary>
+<p>The worker jobs are still queued. Raise <code>worker_wait_timeout</code>, pick a less
+busy queue, or ask for fewer workers. Worker logs are in <code>./dask_logs</code>.</p>
+</details>
+<details class="question">
+<summary>Workers start but every tile fails</summary>
+<p>The workers cannot read the image or load the model: both must be on
+shared storage, and the workers use the driver's Python interpreter by
+default, so that environment must exist on the compute nodes.</p>
+</details>
+<h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../segmentation/">Segmentation guide</a> · <a href="../alignment/">Alignment guide</a></li>
+<li>Launch registration jobs from the viewer: <a href="../napari_plugin/">napari plugin</a></li>
+<li><a href="../reference/api/jobs/">Jobs API reference</a></li>
+</ul>
 
 
 
@@ -1176,16 +2254,62 @@ conda activate smint</p>
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
       </main>
       
         <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../napari_plugin/" class="md-footer__link md-footer__link--prev" aria-label="Previous: napari plugin">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                napari plugin
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../r_integration/" class="md-footer__link md-footer__link--next" aria-label="Next: R integration">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                R integration
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2024 Jurgen Kriel
+      Copyright &copy; 2024–2026 Jurgen Kriel · MIT licence
     </div>
   
   
@@ -1196,8 +2320,7 @@ conda activate smint</p>
   
 </div>
       
-        
-<div class="md-social">
+        <div class="md-social">
   
     
     
@@ -1207,7 +2330,7 @@ conda activate smint</p>
       
     
     <a href="https://github.com/JurgenKriel/SMINT" target="_blank" rel="noopener" title="github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
     </a>
   
 </div>
@@ -1224,11 +2347,10 @@ conda activate smint</p>
     
     
       
-      
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "toc.follow"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
   </body>

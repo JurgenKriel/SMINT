@@ -6,35 +6,34 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Spatial Multi-Omics Integration Toolkit">
+        <meta name="description" content="Spatial Multi-Omics Integration Toolkit — segment whole slides and register spatial omics modalities into one coordinate system">
       
       
         <meta name="author" content="Jurgen Kriel">
       
       
+        <link rel="canonical" href="https://jurgenkriel.github.io/SMINT/napari_plugin/">
       
-        <link rel="prev" href="../xenium_metabolomics_alignment/">
+      
+        <link rel="prev" href="../alignment/">
       
       
-        <link rel="next" href="../r_integration/">
+        <link rel="next" href="../hpc_deployment/">
       
+      
+      <link rel="icon" href="../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>napari plugin - SMINT</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
       
         
-      
-      
-      <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
-    
-    
-      
-        <title>napari Plugin - SMINT Documentation</title>
-      
-    
-    
-      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
-      
-        
-        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -53,10 +52,13 @@
       
     
     
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
+    
     
     
   </head>
@@ -64,10 +66,12 @@
   
     
     
+      
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="pink">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -85,19 +89,16 @@
       
     </div>
     
-      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
-        
-      </div>
-    
     
       
 
-<header class="md-header" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="SMINT Documentation" class="md-header__button md-logo" aria-label="SMINT Documentation" data-md-component="logo">
-      
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="SMINT" class="md-header__button md-logo" aria-label="SMINT" data-md-component="logo">
+      
+  <img src="../assets/smint_logo_small.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -108,13 +109,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            SMINT Documentation
+            SMINT
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              napari Plugin
+              napari plugin
             
           </span>
         </div>
@@ -122,7 +123,33 @@
     </div>
     
       
+        <form class="md-header__option" data-md-component="palette">
+  
     
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="pink"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="pink"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
     
     
@@ -151,6 +178,8 @@
         </button>
       </nav>
       
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
@@ -171,7 +200,7 @@
         <a href="https://github.com/JurgenKriel/SMINT" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     JurgenKriel/SMINT
@@ -181,14 +210,8 @@
     
   </nav>
   
-</header>
     
-    <div class="md-container" data-md-component="container">
       
-      
-        
-          
-            
 <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
   <div class="md-grid">
     <ul class="md-tabs__list">
@@ -226,7 +249,29 @@
   
     
   
-  Getting Started
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tutorials/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
 
         </a>
       </li>
@@ -244,13 +289,13 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../segmentation/" class="md-tabs__link">
+        <a href="../concepts/" class="md-tabs__link">
           
   
   
     
   
-  User Guide
+  User guide
 
         </a>
       </li>
@@ -266,13 +311,13 @@
     
     
       <li class="md-tabs__item">
-        <a href="../examples/" class="md-tabs__link">
+        <a href="../reference/" class="md-tabs__link">
           
   
   
     
   
-  Examples
+  Reference
 
         </a>
       </li>
@@ -285,16 +330,35 @@
   
   
   
+    <li class="md-tabs__item">
+      <a href="../visualizations/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Gallery
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
     
     
       <li class="md-tabs__item">
-        <a href="../visualizations/" class="md-tabs__link">
+        <a href="../faq/" class="md-tabs__link">
           
   
   
     
   
-  Visualizations
+  About
 
         </a>
       </li>
@@ -305,7 +369,13 @@
     </ul>
   </div>
 </nav>
-          
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
         
       
       <main class="md-main" data-md-component="main">
@@ -324,20 +394,19 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="SMINT Documentation" class="md-nav__button md-logo" aria-label="SMINT Documentation" data-md-component="logo">
+    <a href=".." title="SMINT" class="md-nav__button md-logo" aria-label="SMINT" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/smint_logo_small.png" alt="logo">
 
     </a>
-    SMINT Documentation
+    SMINT
   </label>
   
     <div class="md-nav__source">
       <a href="https://github.com/JurgenKriel/SMINT" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     JurgenKriel/SMINT
@@ -359,14 +428,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
     Home
-  
-
     
   </span>
-  
   
 
       </a>
@@ -382,6 +446,118 @@
   
     
     
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick start
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
       
         
       
@@ -402,60 +578,53 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../tutorials/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
-    
-  
-    Getting Started
-  
-
+    Tutorials
     
   </span>
   
-  
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
+            </a>
             
-  
-    Getting Started
-  
-
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
               
+            
+              
                 
   
   
   
   
     <li class="md-nav__item">
-      <a href="../installation/" class="md-nav__link">
+      <a href="../tutorials/01_segmentation/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    
-  
-    Installation
-  
-
+    Segment a whole slide
     
   </span>
-  
   
 
       </a>
@@ -471,19 +640,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../dependency_handling/" class="md-nav__link">
+      <a href="../tutorials/02_same_section_registration/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    
-  
-    Dependency Handling
-  
-
+    Same-section registration
     
   </span>
-  
   
 
       </a>
@@ -499,19 +663,83 @@
   
   
     <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
+      <a href="../tutorials/03_sequential_registration/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    
-  
-    Configuration
-  
-
+    Sequential-section registration
     
   </span>
   
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/04_distributed_segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed segmentation on SLURM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/05_integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    One table per cell
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Worked examples on real data
+    
+  </span>
   
 
       </a>
@@ -537,6 +765,16 @@
   
     
     
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
       
         
       
@@ -566,37 +804,129 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../concepts/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
-    
-  
-    User Guide
-  
-
+    User guide
     
   </span>
   
-  
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
+            </a>
             
-  
-    User Guide
-  
-
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            User guide
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    The SMINT workflow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/registration_methods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Choosing a registration method
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/coordinate_frames/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Coordinate frames
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/tiling_and_stitching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tiling and stitching
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -610,14 +940,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
     Segmentation
-  
-
     
   </span>
-  
   
 
       </a>
@@ -638,42 +963,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
     Alignment
-  
-
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../xenium_metabolomics_alignment/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Xenium-Metabolomics
-  
-
-    
-  </span>
-  
   
 
       </a>
@@ -703,14 +995,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
-    napari Plugin
-  
-
+    napari plugin
     
   </span>
-  
   
 
           <span class="md-nav__icon md-icon"></span>
@@ -721,14 +1008,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
-    napari Plugin
-  
-
+    napari plugin
     
   </span>
-  
   
 
       </a>
@@ -749,11 +1031,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
+  <a href="#install-and-launch" class="md-nav__link">
     <span class="md-ellipsis">
+      Install and launch
+    </span>
+  </a>
+  
+</li>
       
-        Architecture
-      
+        <li class="md-nav__item">
+  <a href="#how-it-fits-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      How it fits together
     </span>
   </a>
   
@@ -762,9 +1051,7 @@
         <li class="md-nav__item">
   <a href="#1-load-datasets" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        1. Load datasets
-      
+      1. Load datasets
     </span>
   </a>
   
@@ -773,9 +1060,7 @@
         <li class="md-nav__item">
   <a href="#2-pre-register" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        2. Pre-register
-      
+      2. Pre-register
     </span>
   </a>
   
@@ -784,9 +1069,7 @@
         <li class="md-nav__item">
   <a href="#3-landmarks" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        3. Landmarks
-      
+      3. Landmarks
     </span>
   </a>
   
@@ -795,9 +1078,7 @@
         <li class="md-nav__item">
   <a href="#4-register" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        4. Register
-      
+      4. Register
     </span>
   </a>
   
@@ -805,13 +1086,35 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#gpu" class="md-nav__link">
+  <a href="#what-happens-when-you-click-submit" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        GPU
-      
+      What happens when you click Submit
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gpu-or-cpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      GPU or CPU
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GPU or CPU">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rerun-or-adjust-a-job-outside-the-widget" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rerun or adjust a job outside the widget
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -823,9 +1126,16 @@
         <li class="md-nav__item">
   <a href="#troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
       
-        Troubleshooting
-      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
     </span>
   </a>
   
@@ -847,47 +1157,37 @@
   
   
     <li class="md-nav__item">
-      <a href="../r_integration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    R Integration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../hpc_deployment/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    
-  
-    HPC Deployment
-  
-
+    Running on HPC
     
   </span>
   
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../r_integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    R integration
+    
+  </span>
   
 
       </a>
@@ -913,6 +1213,16 @@
     
       
         
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
       
     
     
@@ -927,37 +1237,155 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <div class="md-nav__link md-nav__container">
+            <a href="../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Command line
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/data_formats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data formats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
+    Python API
     
   </span>
-  
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Examples
-  
-
+            Python API
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -968,19 +1396,60 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/" class="md-nav__link">
+      <a href="../reference/api/alignment/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
+    Alignment
     
   </span>
   
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/api/segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Segmentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/api/jobs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Jobs
+    
+  </span>
   
 
       </a>
@@ -995,67 +1464,17 @@
     </li>
   
 
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Visualizations
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Visualizations
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
               
-                
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
   
   
   
@@ -1066,14 +1485,153 @@
   
   
   <span class="md-ellipsis">
-    
-  
-    Interactive Plots
-  
-
+    Gallery
     
   </span>
   
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    About
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ & troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../citation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Citation
+    
+  </span>
   
 
       </a>
@@ -1116,11 +1674,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
+  <a href="#install-and-launch" class="md-nav__link">
     <span class="md-ellipsis">
+      Install and launch
+    </span>
+  </a>
+  
+</li>
       
-        Architecture
-      
+        <li class="md-nav__item">
+  <a href="#how-it-fits-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      How it fits together
     </span>
   </a>
   
@@ -1129,9 +1694,7 @@
         <li class="md-nav__item">
   <a href="#1-load-datasets" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        1. Load datasets
-      
+      1. Load datasets
     </span>
   </a>
   
@@ -1140,9 +1703,7 @@
         <li class="md-nav__item">
   <a href="#2-pre-register" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        2. Pre-register
-      
+      2. Pre-register
     </span>
   </a>
   
@@ -1151,9 +1712,7 @@
         <li class="md-nav__item">
   <a href="#3-landmarks" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        3. Landmarks
-      
+      3. Landmarks
     </span>
   </a>
   
@@ -1162,9 +1721,7 @@
         <li class="md-nav__item">
   <a href="#4-register" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        4. Register
-      
+      4. Register
     </span>
   </a>
   
@@ -1172,13 +1729,35 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#gpu" class="md-nav__link">
+  <a href="#what-happens-when-you-click-submit" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        GPU
-      
+      What happens when you click Submit
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gpu-or-cpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      GPU or CPU
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GPU or CPU">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rerun-or-adjust-a-job-outside-the-widget" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rerun or adjust a job outside the widget
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1190,9 +1769,16 @@
         <li class="md-nav__item">
   <a href="#troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
       
-        Troubleshooting
-      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
     </span>
   </a>
   
@@ -1208,153 +1794,751 @@
           
           
             <div class="md-content" data-md-component="content">
-              
               <article class="md-content__inner md-typeset">
                 
                   
 
 
   
+    <a href="https://github.com/JurgenKriel/SMINT/edit/main/docs/napari_plugin.md" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
   
 
 
-<h1 id="napari-plugin">napari Plugin<a class="headerlink" href="#napari-plugin" title="Permanent link">&para;</a></h1>
-<p>SMINT ships a napari plugin for the interactive parts of registration: loading
-datasets, pre-registering them by eye, placing landmarks, and launching the
-registration itself as a batch or local job.</p>
-<p>Launch napari from an environment that has both napari and SMINT, then open
-<strong>Plugins → SMINT Registration</strong>.</p>
-<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
-<p>The plugin <strong>never imports STalign</strong>. Registration is handed to a separate
-worker interpreter through a job spec on disk:</p>
-<div class="highlight"><pre><span></span><code>┌─ napari process ─────────────────────────────┐
-│  load → pre-register → landmarks → submit     │
-│  writes *_points.npy + job_spec.json          │
-└───────────────┬───────────────────────────────┘
-                │  sbatch  │  or  local subprocess
-┌───────────────▼───────────────────────────────┐
-│  worker (STalign_env)                         │
-│  smint-register → registration → status.json  │
-└───────────────────────────────────────────────┘
-</code></pre></div>
-<p>This is not incidental. napari and <code>napari_spatialdata</code> need numpy ≥ 2, while
-STalign requires numpy &lt; 2 — they cannot share a process. Passing a job spec
-between them sidesteps that entirely, keeps the viewer responsive during a
-multi-minute LDDMM, and means a failed registration cannot take napari down.</p>
-<p>Point the worker at a suitable interpreter with:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">SMINT_WORKER_PYTHON</span><span class="o">=</span>/path/to/STalign_env/bin/python
-</code></pre></div>
-<p>Otherwise SMINT looks for an <code>STalign_env</code> beside the installed package, then
-falls back to the current interpreter.</p>
-<hr />
-<h2 id="1-load-datasets">1. Load datasets<a class="headerlink" href="#1-load-datasets" title="Permanent link">&para;</a></h2>
-<p>Reads a source/target pair into Points layers, optionally with a smoothed
-density Image for anatomical context.</p>
-<p>Coordinate columns are auto-detected across the conventions in use —
-<code>x_final</code>/<code>y_final</code> (ST annotations), <code>x_centroid</code>/<code>y_centroid</code> (Xenium),
-<code>centroid_x</code>/<code>centroid_y</code> (segmented nuclei), or plain <code>x</code>/<code>y</code>.</p>
-<p>Only coordinate columns are read, and display is capped at 200,000 points.
-Neither affects registration, which always reads the full file in the worker.</p>
-<hr />
-<h2 id="2-pre-register">2. Pre-register<a class="headerlink" href="#2-pre-register" title="Permanent link">&para;</a></h2>
-<p>Scale, rotate and flip the source onto the target's coordinate system before
-landmarking. Adjustments update a preview layer live.</p>
-<ul>
-<li><strong>Rotation</strong> — slider, degrees counter-clockwise</li>
-<li><strong>Flip horizontally / vertically</strong></li>
-<li><strong>Scale</strong> — <code>extent</code> (match bounding-box spans), <code>max</code> (match maxima),
-  <code>none</code>, or <code>manual</code></li>
-<li><strong>Search rotation/flip</strong> — grid search over orientations, scored by overlap</li>
-</ul>
-<p>The status line reports an <strong>overlap score</strong> (0–1, fraction of occupied target
-bins the source also occupies). It needs no correspondences, so it is fast
-enough to update as you drag a slider — a full registration per adjustment
-would not be.</p>
-<p><strong>Apply and save</strong> writes the transformed CSV plus a <code>.pretransform.json</code>
-recording the matrix and its decomposition, so a coarse transform can be
-reproduced later instead of being an unrecorded manual step.</p>
-<hr />
-<h2 id="3-landmarks">3. Landmarks<a class="headerlink" href="#3-landmarks" title="Permanent link">&para;</a></h2>
-<p>Creates paired <code>SM landmarks</code> / <code>ST landmarks</code> Points layers. Place landmarks
-with napari's native Points tool directly on the data, in real-world units —
-there is no raster grid and so no pixel-to-micron conversion in the
-registration path.</p>
-<div class="admonition warning">
-<p class="admonition-title">Order is the correspondence</p>
-<p>Pick the <strong>same anatomical features in the same order</strong> in both layers.
-Correspondence is positional; an ordering mismatch silently produces a
-wrong registration rather than an error.</p>
-</div>
-<p><strong>Check pairing</strong> validates counts and the three-pair minimum an affine needs.
-<strong>Save landmark pair</strong> writes <code>&lt;prefix&gt;_sm_points.npy</code> and
-<code>&lt;prefix&gt;_st_points.npy</code> in exactly the format STalign's <code>point_annotator.py</code> uses, so
-plugin output and existing landmark files are interchangeable.</p>
-<hr />
-<h2 id="4-register">4. Register<a class="headerlink" href="#4-register" title="Permanent link">&para;</a></h2>
-<p>Builds a job spec and submits it.</p>
+<h1 id="napari-plugin">napari plugin<a class="headerlink" href="#napari-plugin" title="Permanent link">&para;</a></h1>
+<p>The SMINT napari plugin covers the hands-on part of registration. You load two
+datasets, line them up roughly by eye, place matching landmarks, and send the
+registration to a SLURM job or a local worker without leaving the viewer. The
+plugin has four dock widgets, numbered in the order you use them. This page
+goes through each one: every control, what it writes to disk, and the mistakes
+that most often cost an afternoon.</p>
+<figure>
+<p><img alt="The napari window with the four SMINT widgets docked on the right" src="../assets/napari/overview.png" />
+  </p>
+<figcaption>The four SMINT widgets docked in napari after <b>1. Load datasets</b>:
+  (1) Load datasets, (2) Pre-register, (3) Landmarks, (4) Register. The canvas shows
+  a Sample 2 Xenium section (grey density) with the MALDI section still in its own pixel
+  grid (white blob, top left). Screenshots on this page were taken with napari 0.5.5.</figcaption>
+</figure>
 <table>
 <thead>
 <tr>
-<th>Field</th>
-<th>Applies to</th>
+<th>Widget</th>
+<th>Use it to</th>
+<th>Writes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Round</strong></td>
-<td><code>st_sm</code> (needs landmarks) or <code>centroid</code></td>
+<td><a href="#1-load-datasets"><strong>1. Load datasets</strong></a></td>
+<td>Show a source and a target table as Points layers, with optional density images</td>
+<td>nothing</td>
 </tr>
 <tr>
-<td><strong>Run via</strong></td>
-<td><code>sbatch</code> or <code>local</code></td>
+<td><a href="#2-pre-register"><strong>2. Pre-register</strong></a></td>
+<td>Coarsely scale, rotate and flip the source onto the target</td>
+<td><code>&lt;name&gt;.csv</code> + <code>&lt;name&gt;.pretransform.json</code></td>
 </tr>
 <tr>
-<td><strong>Method</strong>, <strong>Max match distance</strong></td>
-<td>centroid round</td>
+<td><a href="#3-landmarks"><strong>3. Landmarks</strong></a></td>
+<td>Place, check and save paired landmarks</td>
+<td><code>&lt;prefix&gt;_sm_points.npy</code>, <code>&lt;prefix&gt;_st_points.npy</code></td>
 </tr>
 <tr>
-<td><strong>LDDMM iterations</strong></td>
-<td>st_sm round</td>
-</tr>
-<tr>
-<td><strong>Partition / CPUs / Memory / Time limit</strong></td>
-<td>sbatch only</td>
+<td><a href="#4-register"><strong>4. Register</strong></a></td>
+<td>Submit the registration and load the result back</td>
+<td>a job directory with <code>job_spec.json</code>, <code>status.json</code>, logs and the transformed CSV</td>
 </tr>
 </tbody>
 </table>
-<p>Progress is polled in a background thread, so the viewer stays usable. On
-completion the transformed points are added as a new layer and the held-out TRE
-is reported; on failure the error is surfaced as a notification.</p>
+<div class="admonition tip">
+<p class="admonition-title">Which widgets you need</p>
+<p><strong>Sequential sections</strong> (for example Xenium and MALDI on neighbouring sections) use all
+four widgets and the <code>st_sm</code> round, which runs STalign LDDMM from your landmarks.
+<strong>The same section</strong> (post-Xenium staining segmented into nuclei) needs only widgets 1 and 4,
+with the <code>centroid</code> round. That round matches centroids itself, so you place no landmarks.
+For help choosing, see <a href="../concepts/registration_methods/">Choosing a registration method</a>.</p>
+</div>
+<h2 id="install-and-launch">Install and launch<a class="headerlink" href="#install-and-launch" title="Permanent link">&para;</a></h2>
+<p>You need two Python environments. They cannot be merged.</p>
+<ul>
+<li><strong>The napari environment</strong> runs the viewer and the widgets. napari works with
+  numpy 2.</li>
+<li><strong>The worker environment</strong> runs the registration. The <code>st_sm</code> round needs STalign, and
+  STalign needs numpy &lt; 2. This environment must also have SMINT installed, because the worker
+  imports <code>smint</code> and does not inherit your <code>PYTHONPATH</code> (see <a href="#how-it-fits-together">How it fits together</a>).</li>
+</ul>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">napari environment</label><label for="__tabbed_1_2">Worker environment</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>napari-env
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>napari-env/bin/pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"napari[pyqt5]"</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># SMINT's own dependencies include Cellpose and torch, which the plugin does not use:</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>napari-env/bin/pip<span class="w"> </span>install<span class="w"> </span>--no-deps<span class="w"> </span>-e<span class="w"> </span>/path/to/SMINT
+</code></pre></div>
+<p>napari already brings numpy, pandas, scipy and magicgui, which are all the plugin imports.</p>
+</div>
+<div class="tabbed-block">
+<p>Set up the STalign environment described in <a href="../installation/">Installation</a>, install
+SMINT into it, and tell the plugin where its interpreter is. <strong>Set the variable before
+you start napari</strong>, because the plugin reads it when you click <em>Submit</em>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">SMINT_WORKER_PYTHON</span><span class="o">=</span>/path/to/stalign-env/bin/python
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>napari
+</code></pre></div>
+<p>If <code>SMINT_WORKER_PYTHON</code> is not set, SMINT looks for <code>STalign_env/bin/python</code> in the
+directory that holds your SMINT checkout. If it finds nothing there, it falls back to the
+interpreter napari itself is running in. That fallback is fine for the <code>centroid</code> round
+but fails for <code>st_sm</code>.</p>
+</div>
+</div>
+</div>
+<p>Open the widgets from <strong>Plugins → SMINT Registration</strong>. You can also dock all four from a
+script, which is how the screenshots on this page were made:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">napari</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">viewer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">Viewer</span><span class="p">()</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"1. Load datasets"</span><span class="p">,</span> <span class="s2">"2. Pre-register"</span><span class="p">,</span> <span class="s2">"3. Landmarks"</span><span class="p">,</span> <span class="s2">"4. Register"</span><span class="p">):</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">viewer</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">add_plugin_dock_widget</span><span class="p">(</span><span class="s2">"smint"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">napari</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="how-it-fits-together">How it fits together<a class="headerlink" href="#how-it-fits-together" title="Permanent link">&para;</a></h2>
+<p>The plugin <strong>never imports STalign</strong>. The <em>Register</em> widget writes a job spec to disk and
+starts a separate worker interpreter. The worker runs the registration and reports back
+through a <code>status.json</code> file, which the widget checks every 10 seconds.</p>
+<pre class="mermaid"><code>flowchart LR
+  subgraph NP["napari process (numpy 2, no STalign)"]
+    direction TB
+    W1["1. Load datasets"] --&gt; W2["2. Pre-register"]
+    W2 --&gt; W3["3. Landmarks"]
+    W3 --&gt; W4["4. Register"]
+  end
+  W2 -- "Apply and save" --&gt; PRE[("pre-registered CSV&lt;br/&gt;+ .pretransform.json")]
+  W3 -- "Save landmark pair" --&gt; LM[("prefix_sm_points.npy&lt;br/&gt;prefix_st_points.npy")]
+  W4 -- "Submit" --&gt; SPEC[("output_dir/job_spec.json")]
+  SPEC --&gt; RUN{"Run via"}
+  RUN -- "sbatch" --&gt; SB["submit.sh&lt;br/&gt;SLURM job"]
+  RUN -- "local" --&gt; LO["detached&lt;br/&gt;subprocess"]
+  SB --&gt; WK["worker interpreter&lt;br/&gt;python -m smint.cli.register job_spec.json&lt;br/&gt;(STalign env, numpy below 2)"]
+  LO --&gt; WK
+  WK --&gt; ST[("status.json&lt;br/&gt;+ transformed CSV")]
+  ST -. "polled every 10 s" .-&gt; W4
+  W4 -. "adds the registered layer" .-&gt; NP</code></pre>
+<p>There are three reasons for the split. napari and STalign need different numpy major versions,
+so they cannot share a process. A multi-minute LDDMM run in the background leaves the viewer
+responsive. And if a registration crashes, napari keeps running.</p>
+<p>The batch and local paths differ only in how the worker starts. On both paths SMINT removes
+<code>PYTHONPATH</code>, <code>PYTHONHOME</code>, <code>PYTHONSTARTUP</code> and <code>LD_PRELOAD</code> from the worker's environment, so
+packages from the napari environment cannot get into the worker.</p>
+<p>Everything a run produces lands in the <strong>Output directory</strong> you choose in widget 4:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>When</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>job_spec.json</code></td>
+<td>always</td>
+<td>Round, inputs, parameters, SLURM resources and the worker interpreter. You can re-run it (see <a href="#rerun-or-adjust-a-job-outside-the-widget">below</a>).</td>
+</tr>
+<tr>
+<td><code>status.json</code></td>
+<td>always</td>
+<td><code>state</code> (<code>submitted</code> → <code>queued</code> or <code>running</code> → <code>completed</code> / <code>failed</code>), a message, and on success <code>outputs</code> and <code>metrics</code></td>
+</tr>
+<tr>
+<td><code>submit.sh</code></td>
+<td>sbatch</td>
+<td>The generated batch script</td>
+</tr>
+<tr>
+<td><code>smint_&lt;round&gt;_&lt;jobid&gt;.out</code> / <code>.err</code></td>
+<td>sbatch</td>
+<td>Worker stdout and stderr</td>
+</tr>
+<tr>
+<td><code>worker.log</code></td>
+<td>local</td>
+<td>Worker stdout and stderr</td>
+</tr>
+<tr>
+<td><code>sm_transformed.csv</code></td>
+<td><code>st_sm</code> round</td>
+<td>The SM table with <code>x_transformed</code> / <code>y_transformed</code> appended</td>
+</tr>
+<tr>
+<td><code>centroids_transformed.csv</code></td>
+<td><code>centroid</code> round</td>
+<td>The source table with transformed (and refined) coordinates appended</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-load-datasets">1. Load datasets<a class="headerlink" href="#1-load-datasets" title="Permanent link">&para;</a></h2>
+<figure>
+<p><img alt="The Load datasets widget with numbered controls" src="../assets/napari/load_panel.png" width="420" /></p>
+</figure>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Control</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Source (SM / moving)</strong></td>
+<td>The CSV that will be moved, such as the MALDI pixel table or segmented nuclei</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Target (ST / fixed)</strong></td>
+<td>The CSV that stays put, such as the Xenium cells</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Density pixel size</strong></td>
+<td>Bin size of the density images in coordinate units, 1–500 (default 30). One value is used for <strong>both</strong> datasets.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Show density images</strong></td>
+<td>Also adds a smoothed 2D histogram of each dataset (Gaussian sigma of 1 bin, grey, additive, 60 % opacity)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Load</strong></td>
+<td>Reads both files and adds the layers below, then resets the view</td>
+</tr>
+</tbody>
+</table>
+<p>Clicking <strong>Load</strong> adds up to four layers:
+<code>ST / target density</code> and <code>SM / source density</code> (images), then <code>ST / target</code> (cyan points) and
+<code>SM / source</code> (magenta points).</p>
+<p><strong>Coordinate columns are detected automatically.</strong> The widget uses the first match in this
+list, ignoring case: <code>x_final</code>, <code>x_centroid</code>, <code>centroid_x</code>, <code>x_transformed</code>, <code>x</code>, <code>X</code> (and the
+<code>y</code> equivalents). Only those two columns are read. A 450 MB metabolomics matrix with hundreds
+of m/z columns therefore loads in seconds.</p>
+<p><strong>Display is capped at 200,000 points per dataset.</strong> Larger tables are randomly subsampled
+(fixed seed) for display only. The worker always reads every row.</p>
+<div class="admonition tip">
+<p class="admonition-title">Make the data visible</p>
+<p>Points are drawn 6 coordinate units wide. On a whole section in µm that is smaller than a
+screen pixel, so the density images are what you actually see when zoomed out. To see the
+points, zoom in or raise <strong>point size</strong> in napari's layer controls. In the screenshots on
+this page, the point and landmark sizes were raised this way.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Different units in the two files</p>
+<p>The density pixel size applies to both datasets. If the source is still in raw instrument
+pixels while the target is in µm, as in the overview above, the source density image comes
+out as a coarse blob. That is expected, and widget 2 fixes the scale.</p>
+</div>
+<hr />
+<h2 id="2-pre-register">2. Pre-register<a class="headerlink" href="#2-pre-register" title="Permanent link">&para;</a></h2>
+<p>Spatial metabolomics data usually arrives on its own pixel grid, and is often rotated or
+mirrored relative to the Xenium section. LDDMM cannot recover from a large orientation error,
+so first bring the source roughly onto the target.</p>
+<figure>
+<p><img alt="Pre-registration preview before and after the orientation search" src="../assets/napari/prereg_before_after.png" />
+  </p>
+<figcaption>The orange <code>Pre-registered preview</code> layer over the Sample 2 Xenium section.
+  <b>Left:</b> scale fitted, no rotation (overlap 0.596). <b>Right:</b> after <b>Search rotation/flip</b>
+  (90°, scale 12.161, overlap 0.953). The leftover mismatch at the tissue edges is what the
+  landmarks and LDDMM correct.</figcaption>
+</figure>
+<figure>
+<p><img alt="The Pre-register widget with numbered controls" src="../assets/napari/prereg_panel.png" width="420" /></p>
+</figure>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Control</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Source (moving)</strong></td>
+<td>Any Points layer in the viewer. The list updates whenever layers are added or removed.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Target (fixed)</strong></td>
+<td>The Points layer to align to</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Rotation (deg)</strong></td>
+<td>−180 to 180, counter-clockwise, about the source centroid</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Flip horizontally</strong></td>
+<td>Mirror the source left–right</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Flip vertically</strong></td>
+<td>Mirror the source top–bottom</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Scale</strong></td>
+<td><code>extent</code> matches the bounding-box span on each axis (default, robust to different origins). <code>max</code> matches the maximum coordinates, which only works when both datasets start near zero. <code>none</code> keeps the source scale. <code>manual</code> uses control 7.</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Manual scale</strong></td>
+<td>An isotropic factor, used only when Scale is <code>manual</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Preserve aspect ratio</strong></td>
+<td>With <code>extent</code> / <code>max</code>, use one isotropic factor (the smaller of the two axis factors), so the tissue is not stretched</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Update preview</strong></td>
+<td>Recompute the preview. Changing controls 3–8 also does this automatically.</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>Search rotation/flip</strong></td>
+<td>Try every 15° from −180° to 165° under all four flip combinations (96 candidates), keep the one with the highest overlap, and set controls 3–5 to match</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Apply and save transformed CSV</strong></td>
+<td>Ask for the <em>original source CSV</em> and an output path, transform the coordinate columns of <strong>every row</strong>, and save</td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>Status</strong></td>
+<td>The overlap score, fitted scale and rotation, plus <code>reflected</code> if the transform mirrors the data</td>
+</tr>
+</tbody>
+</table>
+<p>The transform applies the flip first, then the rotation, then the scale, all about the source
+centroid. A final translation then puts the source centroid on the target centroid. Scale is
+fitted <em>after</em> orientation, because bounding-box extents change when the data rotates.</p>
+<p>The <strong>overlap score</strong> is the fraction of occupied 50-unit target bins that the source also
+occupies, from 0 to 1, where higher is better. It needs no correspondences, so it is cheap
+enough to recompute every time you move the slider.</p>
+<p><strong>Apply and save</strong> writes two files: the transformed table, and a JSON file beside it with the
+same stem (for example <code>sm_prereg.csv</code> and <code>sm_prereg.pretransform.json</code>). The JSON records the
+3×3 matrix, its decomposition (scale, rotation, reflection), and the slider and checkbox
+settings, so you can reproduce the coarse step later.</p>
+<div class="admonition warning">
+<p class="admonition-title">Pitfalls</p>
+<ul>
+<li><strong>Pick the same file you loaded</strong> when <em>Apply</em> asks for the original source CSV. The
+  matrix was fitted to the loaded layer and is applied to whatever file you choose.</li>
+<li>The preview layer is itself a Points layer, so it appears in the Source and Target lists.
+  Do not select it as the source.</li>
+<li>The matrix is fitted on the displayed points. For tables above 200,000 rows those points
+  are a random subsample, so extents and centroid can differ very slightly from the full
+  table.</li>
+<li>A few stray points stretch the bounding box and shrink the fitted scale. Remove debris
+  first, or switch to <code>manual</code>.</li>
+</ul>
+</div>
+<hr />
+<h2 id="3-landmarks">3. Landmarks<a class="headerlink" href="#3-landmarks" title="Permanent link">&para;</a></h2>
+<figure>
+<p><img alt="Eleven landmark pairs numbered in click order" src="../assets/napari/landmarks_canvas.png" width="560" />
+  </p>
+<figcaption>The 11 landmark pairs for the Sample 2 sequential example, numbered in order, over the
+  pre-registered preview. Red: <code>SM landmarks</code>. Yellow: <code>ST landmarks</code>.
+  Pair <i>n</i> in one layer corresponds to pair <i>n</i> in the other. The consistent offset
+  between partners is the misalignment left after pre-registration.</figcaption>
+</figure>
+<figure>
+<p><img alt="The Landmarks widget with numbered controls" src="../assets/napari/landmarks_panel.png" width="470" /></p>
+</figure>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Control</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Create landmark layers</strong></td>
+<td>Add <code>ST landmarks</code> (yellow) and <code>SM landmarks</code> (red) Points layers, or reuse them if they already exist. It then selects <code>SM landmarks</code> in add mode, so your next click places a point.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Check pairing</strong></td>
+<td>Report whether the pair is ready (see the messages below)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Save landmark pair</strong></td>
+<td>Ask for an <em>output prefix</em> and write <code>&lt;prefix&gt;_sm_points.npy</code> and <code>&lt;prefix&gt;_st_points.npy</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Load existing landmarks</strong></td>
+<td>Ask for an SM and an ST <code>.npy</code> file and replace the contents of both landmark layers</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Status</strong></td>
+<td>Feedback from the buttons</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Placing landmarks.</strong> You place landmarks with napari's own Points tools, directly on the
+data and in the data's coordinates, so no raster and no pixel-to-µm conversion is involved.
+Click a feature in <code>SM landmarks</code>, select <code>ST landmarks</code> in the layer list, switch it to add
+mode (the ⊕ button in the layer controls), and click the same feature there. Repeat, keeping
+the order the same in both layers.</p>
+<div class="admonition warning">
+<p class="admonition-title">Order is the correspondence</p>
+<p>SMINT pairs landmarks by position in the list: point 1 with point 1, point 2 with point 2.
+If you skip or delete a point in one layer only, every later pair shifts by one. There is
+no error message. You just get a wrong registration.</p>
+</div>
+<p><strong>Check pairing</strong> reports one of:</p>
+<ul>
+<li><code>No landmarks placed yet.</code></li>
+<li><code>Counts differ: 5 source vs 4 target. Each landmark needs a partner, in the same order.</code></li>
+<li><code>Need at least 3 pairs for an affine, have 2.</code></li>
+<li><code>11 landmark pairs ready.</code></li>
+</ul>
+<p><strong>Save landmark pair</strong> refuses to save until the check passes. The files use the same format as
+STalign's <code>point_annotator.py</code>: a pickled <code>{"1": [(x, y)], "2": [(x, y)], ...}</code> dict in click
+order. That means landmark files from the plugin and from the annotator work interchangeably.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tips</p>
+<ul>
+<li>Landmark markers are 14 coordinate units wide. On a section in µm, raise <strong>point size</strong>
+  in the layer controls (the figure above uses 220) so you can see them.</li>
+<li>Use features both modalities show clearly: tissue corners, the ends of folds or tears,
+  and the edges of large structures. Spread them over the whole section rather than
+  clustering them.</li>
+<li><strong>Landmarks are in the coordinates of the layer you click on.</strong> If you click on the
+  <code>Pre-registered preview</code>, your SM landmarks are in the pre-registered frame, so the file
+  you register in widget 4 must be the CSV written by <em>Apply and save</em>, not the original.</li>
+</ul>
+</div>
+<hr />
+<h2 id="4-register">4. Register<a class="headerlink" href="#4-register" title="Permanent link">&para;</a></h2>
+<figure>
+<p><img alt="The Register widget for the st_sm and centroid rounds" src="../assets/napari/register_panels.png" />
+  </p>
+<figcaption>The <b>Register</b> widget filled in for each round. The fields that do not apply
+  are hidden: landmarks and LDDMM iterations appear only for <code>st_sm</code>; method and
+  match distance only for <code>centroid</code>.</figcaption>
+</figure>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Control</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Round</strong></td>
+<td><code>st_sm</code>: STalign LDDMM for sequential sections, initialised from landmarks. <code>centroid</code>: correspondence fitting for the same section.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Run via</strong></td>
+<td><code>sbatch</code> submits a SLURM job. <code>local</code> starts a detached subprocess on the machine running napari.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Source (moving)</strong></td>
+<td>Source CSV. Choosing a file fills controls 4 from its header.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>source x / source y</strong></td>
+<td>Which source columns to register. The widget guesses from the list in <a href="#1-load-datasets">widget 1</a>. <strong>Check the guess.</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Target (fixed)</strong></td>
+<td>Target CSV</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>target x / target y</strong></td>
+<td>Which target columns to register. Same guess and same caution as 4.</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Source landmarks</strong></td>
+<td><code>&lt;prefix&gt;_sm_points.npy</code> (<code>st_sm</code> only)</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Target landmarks</strong></td>
+<td><code>&lt;prefix&gt;_st_points.npy</code> (<code>st_sm</code> only)</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Output directory</strong></td>
+<td>Where the job spec, status, logs and results go. For <code>sbatch</code> it must be on shared storage.</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>LDDMM iterations</strong></td>
+<td>1–20,000 (default 1000; <code>st_sm</code> only)</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Partition</strong></td>
+<td>The partitions <code>sinfo</code> reports on your cluster, so a typo cannot reach <code>sbatch</code>. <strong>The first one in the list is preselected, so check it.</strong></td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>CPUs</strong></td>
+<td>1–64 (default 8)</td>
+</tr>
+<tr>
+<td>13</td>
+<td><strong>Memory</strong></td>
+<td>16G, 32G, 64G (default), 128G or 256G</td>
+</tr>
+<tr>
+<td>14</td>
+<td><strong>Time limit</strong></td>
+<td>00:30:00, 02:00:00, 04:00:00 (default), 12:00:00 or 1-00:00:00</td>
+</tr>
+<tr>
+<td>15</td>
+<td><strong>GPUs</strong></td>
+<td>0–4 (default 0)</td>
+</tr>
+<tr>
+<td>16</td>
+<td><strong>GPU type</strong></td>
+<td><code>any</code> plus the GPU types <code>sinfo</code> reports for the selected partition. Defaults to <code>A30</code>, the card registration is validated on, if that partition has one.</td>
+</tr>
+<tr>
+<td>17</td>
+<td><strong>Submit registration</strong></td>
+<td>Validate, write the job, submit it and start watching it</td>
+</tr>
+<tr>
+<td>18</td>
+<td><strong>Status</strong></td>
+<td>Column counts after you choose a file, then the job ID or PID after you submit</td>
+</tr>
+<tr>
+<td>19</td>
+<td><strong>Method (centroid)</strong></td>
+<td><code>multiround</code> (default), <code>affine</code>, <code>ransac</code>, <code>tps</code> or <code>ransac+tps</code></td>
+</tr>
+<tr>
+<td>20</td>
+<td><strong>Max match distance</strong></td>
+<td>Largest distance at which two centroids can be matched, in coordinate units (default 100)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Pick the coordinate columns explicitly</p>
+<p>ST tables often carry several coordinate pairs from successive processing steps (here
+<code>x_centroid</code> beside <code>x_new</code>). The wrong pair gives a wrong registration without any error.
+The guess only follows the priority list, so always check controls 4 and 6.</p>
+</div>
+<h3 id="what-happens-when-you-click-submit">What happens when you click Submit<a class="headerlink" href="#what-happens-when-you-click-submit" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Checks in the widget.</strong> You get an error notification if the source, target or output
+   directory is missing, or if the <code>st_sm</code> round has no landmark pair.</li>
+<li><strong>Validation of the job spec.</strong> Every input file must exist. The partition must be one
+   <code>sinfo</code> lists, and the GPU type must be one that partition offers. For <code>sbatch</code>, no path may
+   be node-local (<code>/tmp</code>, <code>/var/tmp</code>, <code>/dev/shm</code>, <code>/run</code>). Any failure appears as a notification
+   and in the status line, and nothing is submitted.</li>
+<li><strong>Submission.</strong> SMINT writes <code>job_spec.json</code> and <code>status.json</code>. With <code>sbatch</code>, it also writes
+   and submits <code>submit.sh</code> (job name <code>smint_st_sm</code> or <code>smint_centroid</code>) and records the job ID.
+   With <code>local</code>, it starts the worker and records the PID.</li>
+<li><strong>Watching.</strong> A background thread reads <code>status.json</code> every 10 seconds and asks SLURM about
+   the job. A job that SLURM kills for running out of memory or time is therefore reported as
+   failed, instead of staying "running" forever.</li>
+<li><strong>Result.</strong> On success, the transformed CSV is added as a lime Points layer named
+   <code>st_sm registered</code> or <code>centroid registered</code>. The <code>centroid</code> round also shows
+   <code>Done. matched=… TRE &lt;before&gt; -&gt; &lt;after&gt; (held-out)</code>. A failure shows the worker's error
+   message.</li>
+</ol>
 <div class="admonition danger">
 <p class="admonition-title">Batch jobs need shared storage</p>
-<p>An sbatch job runs on a different machine, so node-local paths (<code>/tmp</code>,
-<code>/var/tmp</code>, <code>/dev/shm</code>) are unreachable — the job dies with no logs at all,
-because the log directory does not exist there. SMINT rejects these before
-submitting. Use <code>/vast/scratch</code> or <code>/vast/projects</code>.</p>
+<p>An sbatch job runs on a different machine, so it cannot see node-local paths such as <code>/tmp</code>
+on the node where you run napari. SMINT rejects them before submitting. Without that check,
+the job would die with no logs at all, because its log directory would not exist on the
+compute node. Put inputs and the output directory on a shared file system.</p>
 </div>
-<h3 id="gpu">GPU<a class="headerlink" href="#gpu" title="Permanent link">&para;</a></h3>
-<p>Request a GPU with a GPU partition and <code>gpus=1</code>. LDDMM uses CUDA automatically
-when available, and GPU results are bit-identical to CPU. The speedup is modest
-at typical raster sizes — 82 s versus 112 s on 8 CPU cores for a Sample 2
-section — so CPU is a perfectly reasonable default.</p>
-<p><strong>GPU type</strong> picks the card. <code>gpuq</code> holds a mix of A30, A100 and P100, and
-"any" takes whichever is free, so a run can land on a much older card than the
-one it was timed on. It defaults to the A30, which registration is validated
-against. The dropdown lists what the cluster actually advertises.</p>
+<h3 id="gpu-or-cpu">GPU or CPU<a class="headerlink" href="#gpu-or-cpu" title="Permanent link">&para;</a></h3>
+<p>To run LDDMM on a GPU, choose a GPU partition, set <strong>GPUs</strong> to 1 and leave <strong>GPU type</strong> at
+<code>A30</code> (or choose another card). LDDMM uses CUDA when the job has a GPU and the CPU otherwise.
+For the Sample 2 sequential example (11 landmarks, 459,969 SM pixels, 53,622 ST cells), the
+registration took about 72 s on one A30.</p>
+<p>Choose the GPU type deliberately. <code>any</code> requests <code>--gres=gpu:1</code>, which takes whichever card is
+free. On a partition with mixed hardware, that can be a card several generations older than
+the one you timed. Two combinations are allowed but only produce a warning in the job's
+log: GPUs on a partition that does not look like a GPU partition (the job sits in the queue),
+and a GPU partition with <strong>GPUs</strong> at 0 (no GPU is allocated, so the job runs on the CPU).</p>
+<div class="admonition warning">
+<p class="admonition-title">Known limitations of the <code>st_sm</code> round from the widget</p>
+<p>Two behaviours of the current code affect <code>st_sm</code> jobs submitted from this widget. Until
+they are fixed, submit sequential registrations with the Python snippet below.</p>
+<ol>
+<li><strong>SM coordinates are rescaled in the worker.</strong> The worker reads the SM table with the
+   defaults of <code>read_sm_matrix</code>, which multiply <code>x</code>/<code>y</code> by 10 (MALDI pixels to µm) and shift
+   the data to non-negative coordinates. The widget does not change these defaults.
+   Landmarks you place on the displayed coordinates are therefore in a different frame from
+   the one the worker registers. Landmark files made with <code>prepare_landmark_inputs</code> and
+   <code>point_annotator.py</code> already use the scaled frame and are not affected. We tested this
+   on the Sample 2 example shown on this page, with pre-registered SM and landmarks placed
+   in that frame. With the widget's defaults, the transformed SM pixels ended up tens of
+   millimetres from the tissue. With the snippet below, the median distance to the nearest
+   ST cell was 16.4 µm.</li>
+<li><strong>The output is transposed by default.</strong> <code>x_transformed</code> / <code>y_transformed</code> are written
+   with <code>orientation="dataset"</code>. Those coordinates are transposed relative to the ST cells
+   (see <a href="../concepts/coordinate_frames/">Coordinate frames</a>), so the <code>st_sm registered</code> layer
+   does not overlay the target.</li>
+</ol>
+</div>
+<h4 id="rerun-or-adjust-a-job-outside-the-widget">Rerun or adjust a job outside the widget<a class="headerlink" href="#rerun-or-adjust-a-job-outside-the-widget" title="Permanent link">&para;</a></h4>
+<p>A job spec is plain data, so you can build one in Python with any parameter the worker accepts.
+You can also re-run an existing <code>job_spec.json</code> from a shell in the worker environment.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Python</label><label for="__tabbed_2_2">Command line</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment.jobs</span><span class="w"> </span><span class="kn">import</span> <span class="n">JobSpec</span><span class="p">,</span> <span class="n">SlurmResources</span><span class="p">,</span> <span class="n">poll</span><span class="p">,</span> <span class="n">submit</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">spec</span> <span class="o">=</span> <span class="n">JobSpec</span><span class="p">(</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="nb">round</span><span class="o">=</span><span class="s2">"st_sm"</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">inputs</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        <span class="s2">"st_file"</span><span class="p">:</span> <span class="s2">"st_cells.csv"</span><span class="p">,</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        <span class="s2">"sm_file"</span><span class="p">:</span> <span class="s2">"sm_prereg.csv"</span><span class="p">,</span>                  <span class="c1"># written by "Apply and save"</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        <span class="s2">"st_points"</span><span class="p">:</span> <span class="s2">"landmarks/pair_st_points.npy"</span><span class="p">,</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        <span class="s2">"sm_points"</span><span class="p">:</span> <span class="s2">"landmarks/pair_sm_points.npy"</span><span class="p">,</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="p">},</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>        <span class="s2">"niter"</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>        <span class="s2">"st_x_col"</span><span class="p">:</span> <span class="s2">"x_final"</span><span class="p">,</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>        <span class="s2">"st_y_col"</span><span class="p">:</span> <span class="s2">"y_final"</span><span class="p">,</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>        <span class="c1"># landmarks were placed on this CSV's own coordinates: read them unchanged</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>        <span class="s2">"sm_kwargs"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"scale_xy"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">"keep_positive"</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>        <span class="c1"># write x/y_transformed as true xy in the ST frame</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>        <span class="s2">"orientation"</span><span class="p">:</span> <span class="s2">"stalign"</span><span class="p">,</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>    <span class="p">},</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>    <span class="n">output_dir</span><span class="o">=</span><span class="s2">"results/sm_to_st"</span><span class="p">,</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>    <span class="n">backend</span><span class="o">=</span><span class="s2">"sbatch"</span><span class="p">,</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>    <span class="n">resources</span><span class="o">=</span><span class="n">SlurmResources</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="s2">"gpuq"</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gpu_type</span><span class="o">=</span><span class="s2">"A30"</span><span class="p">),</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="p">)</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="nb">print</span><span class="p">(</span><span class="n">submit</span><span class="p">(</span><span class="n">spec</span><span class="p">))</span>                   <span class="c1"># {'backend': 'sbatch', 'job_id': ..., ...}</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="nb">print</span><span class="p">(</span><span class="n">poll</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)[</span><span class="s2">"state"</span><span class="p">])</span>  <span class="c1"># queued -&gt; running -&gt; completed</span>
+</code></pre></div>
+<p>Run this from a directory on shared storage, in any environment that has SMINT. Set
+<code>SMINT_WORKER_PYTHON</code> as above, or pass <code>worker_python=</code> to <code>JobSpec</code>.</p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># In the worker environment: run an existing spec here, without SLURM</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>smint-register<span class="w"> </span>results/sm_to_st/job_spec.json
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># equivalent:</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>python<span class="w"> </span>-m<span class="w"> </span>smint.cli.register<span class="w"> </span>results/sm_to_st/job_spec.json
+</code></pre></div>
+<p>The worker updates <code>status.json</code> in the spec's output directory as it goes. To change a
+parameter, edit <code>params</code> in <code>job_spec.json</code> first.</p>
+</div>
+</div>
+</div>
+<p>See the <a href="../reference/api/jobs/">Jobs API reference</a> for every field of <code>JobSpec</code> and
+<code>SlurmResources</code>.</p>
 <hr />
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
-<p><strong>Widget fails with <code>missing 1 required positional argument: 'viewer'</code></strong>
-napari only injects the viewer into <code>QWidget</code>/magicgui <code>Widget</code> subclasses and
-<code>MagicFactory</code> instances. A plain function contribution is called with no
-arguments. Widgets needing the viewer must be classes.</p>
-<p><strong>Plugin does not appear in the Plugins menu</strong>
-Reinstall so the <code>napari.manifest</code> entry point is registered:</p>
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="w"> </span>--no-deps<span class="w"> </span>--no-build-isolation
+<dl>
+<dt><strong>SMINT Registration does not appear in the Plugins menu</strong></dt>
+<dd>
+<p>Install SMINT into the environment napari runs from (<code>pip install --no-deps -e /path/to/SMINT</code>),
+then restart napari. To check that napari can find the plugin:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import npe2; pm = npe2.PluginManager.instance(); pm.discover(); print(pm.get_manifest('smint').display_name)"</span>
 </code></pre></div>
-<p><strong><code>stalign_available()</code> is False in the napari environment</strong>
-Expected — napari environments run numpy ≥ 2. The worker interpreter is what
-needs STalign, not napari. The centroid and pre-registration paths work in
-either.</p>
+<p>The command should print <code>SMINT Registration</code>.</p>
+</dd>
+<dt><strong><code>Partition 'x' does not exist on this cluster. Available: …</code></strong></dt>
+<dd>The partition was checked against <code>sinfo</code> before submission. Choose one from the list.</dd>
+<dt><strong><code>GPU type 'A30' is not offered by partition 'x'. Available: …</code></strong></dt>
+<dd>Choose a GPU partition, or set <strong>GPU type</strong> to <code>any</code>.</dd>
+<dt><strong><code>sbatch jobs run on a different machine, so node-local paths are unreachable</code></strong></dt>
+<dd>An input or the output directory is under <code>/tmp</code>, <code>/var/tmp</code>, <code>/dev/shm</code> or <code>/run</code>. Move it
+to shared storage, or use <strong>Run via</strong> <code>local</code>.</dd>
+<dt><strong><code>sbatch not found on PATH</code></strong></dt>
+<dd>napari is running on a machine without SLURM. Use <code>local</code>, or start napari on a cluster node.</dd>
+<dt><strong><code>Registration failed: STalign is not importable in this interpreter</code></strong></dt>
+<dd>The worker ran in the napari environment. Set <code>SMINT_WORKER_PYTHON</code> to the STalign
+environment's interpreter <strong>before</strong> launching napari.</dd>
+<dt><strong>The worker cannot import <code>smint</code></strong></dt>
+<dd>The worker does not inherit <code>PYTHONPATH</code>, so SMINT must be installed in the worker
+environment itself.</dd>
+<dt><strong><code>SLURM reported OUT_OF_MEMORY</code> / <code>TIMEOUT</code></strong></dt>
+<dd>Raise <strong>Memory</strong> or <strong>Time limit</strong> and submit again.</dd>
+<dt><strong><code>SLURM completed but the worker did not report success; check the .err log</code></strong></dt>
+<dd>The job ended without writing a final status. The traceback is in
+<code>smint_&lt;round&gt;_&lt;jobid&gt;.err</code> in the output directory.</dd>
+<dt><strong>The status stays at "queued"</strong></dt>
+<dd>The job is waiting for resources. Check with <code>squeue --me</code>. GPU requests on a busy
+partition can wait a while.</dd>
+<dt><strong>Widget fails with <code>missing 1 required positional argument: 'viewer'</code></strong></dt>
+<dd>napari passes the viewer only to <code>QWidget</code> or magicgui <code>Widget</code> subclasses and to
+<code>magic_factory</code> widgets. A plain function contribution is called with no arguments.
+Widgets that need the viewer must be classes.</dd>
+<dt><strong><code>stalign_available()</code> is <code>False</code> in the napari environment</strong></dt>
+<dd>This is expected, because the napari environment has numpy 2. Only the worker environment
+needs STalign. Pre-registration and the <code>centroid</code> round work in either environment.</dd>
+</dl>
+<details class="note">
+<summary>How the screenshots were made</summary>
+<p>The figures were captured from the running plugin, not mocked up.
+<a href="https://github.com/JurgenKriel/SMINT/blob/main/docs/assets/napari/src/capture_screenshots.py"><code>capture_screenshots.py</code></a> registers the
+plugin manifest with npe2, docks the four widgets with <code>add_plugin_dock_widget</code>, presses
+their buttons, and saves <code>viewer.screenshot()</code> and <code>QWidget.grab()</code> images under a virtual X
+server. <a href="https://github.com/JurgenKriel/SMINT/blob/main/docs/assets/napari/src/annotate_screenshots.py"><code>annotate_screenshots.py</code></a> crops the
+images and adds the numbered callouts at widget positions recorded during capture.</p>
+<p>The data are de-identified coordinates from Sample 2. The landmark pairs were set from the
+saved landmark files instead of being clicked, and the file paths displayed in the fields
+were replaced with neutral ones under <code>/shared/smint-demo</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>xvfb-run<span class="w"> </span>-s<span class="w"> </span><span class="s2">"-screen 0 1920x1200x24"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span>python<span class="w"> </span>docs/assets/napari/src/capture_screenshots.py<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span>--source<span class="w"> </span>sm_pixels.csv<span class="w"> </span>--target<span class="w"> </span>st_cells.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span>--source-landmarks<span class="w"> </span>pair_sm_points.npy<span class="w"> </span>--target-landmarks<span class="w"> </span>pair_st_points.npy<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span>--centroid-source<span class="w"> </span>nuclei_centroids.csv<span class="w"> </span>--centroid-target<span class="w"> </span>xenium_cells.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span>--out<span class="w"> </span>raw
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>python<span class="w"> </span>docs/assets/napari/src/annotate_screenshots.py<span class="w"> </span>raw<span class="w"> </span>docs/assets/napari
+</code></pre></div>
+</details>
+<h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../tutorials/03_sequential_registration/">Sequential-section registration tutorial</a>: the
+  same <code>st_sm</code> workflow in code, from raw tables to the registered overlay.</li>
+<li><a href="../tutorials/02_same_section_registration/">Same-section registration tutorial</a>: the
+  <code>centroid</code> round with multiround matching and snapping refinement.</li>
+<li><a href="../hpc_deployment/">Running on HPC</a>: partitions, GPUs and shared storage for batch jobs.</li>
+<li><a href="../concepts/coordinate_frames/">Coordinate frames</a>: <code>dataset</code> versus <code>stalign</code> orientation
+  and why it matters for overlays.</li>
+</ul>
 
 
 
@@ -1377,16 +2561,62 @@ either.</p>
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
       </main>
       
         <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../alignment/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Alignment">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Alignment
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../hpc_deployment/" class="md-footer__link md-footer__link--next" aria-label="Next: Running on HPC">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Running on HPC
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2024 Jurgen Kriel
+      Copyright &copy; 2024–2026 Jurgen Kriel · MIT licence
     </div>
   
   
@@ -1397,8 +2627,7 @@ either.</p>
   
 </div>
       
-        
-<div class="md-social">
+        <div class="md-social">
   
     
     
@@ -1408,7 +2637,7 @@ either.</p>
       
     
     <a href="https://github.com/JurgenKriel/SMINT" target="_blank" rel="noopener" title="github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
     </a>
   
 </div>
@@ -1425,11 +2654,10 @@ either.</p>
     
     
       
-      
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "toc.follow"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
   </body>

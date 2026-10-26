@@ -6,35 +6,34 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Spatial Multi-Omics Integration Toolkit">
+        <meta name="description" content="Spatial Multi-Omics Integration Toolkit — segment whole slides and register spatial omics modalities into one coordinate system">
       
       
         <meta name="author" content="Jurgen Kriel">
       
       
+        <link rel="canonical" href="https://jurgenkriel.github.io/SMINT/examples/">
       
-        <link rel="prev" href="../hpc_deployment/">
+      
+        <link rel="prev" href="../tutorials/05_integration/">
       
       
-        <link rel="next" href="../visualizations/">
+        <link rel="next" href="../concepts/">
       
+      
+      <link rel="icon" href="../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>Worked examples on real data - SMINT</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
       
         
-      
-      
-      <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
-    
-    
-      
-        <title>Examples - SMINT Documentation</title>
-      
-    
-    
-      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
-      
-        
-        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -53,10 +52,13 @@
       
     
     
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
+    
     
     
   </head>
@@ -64,10 +66,12 @@
   
     
     
+      
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="pink">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -76,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#examples" class="md-skip">
+        <a href="#worked-examples-on-real-data" class="md-skip">
           Skip to content
         </a>
       
@@ -85,19 +89,16 @@
       
     </div>
     
-      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
-        
-      </div>
-    
     
       
 
-<header class="md-header" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="SMINT Documentation" class="md-header__button md-logo" aria-label="SMINT Documentation" data-md-component="logo">
-      
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="SMINT" class="md-header__button md-logo" aria-label="SMINT" data-md-component="logo">
+      
+  <img src="../assets/smint_logo_small.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -108,13 +109,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            SMINT Documentation
+            SMINT
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Examples
+              Worked examples on real data
             
           </span>
         </div>
@@ -122,7 +123,33 @@
     </div>
     
       
+        <form class="md-header__option" data-md-component="palette">
+  
     
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="pink"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="pink"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
     
     
@@ -151,6 +178,8 @@
         </button>
       </nav>
       
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
@@ -171,7 +200,7 @@
         <a href="https://github.com/JurgenKriel/SMINT" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     JurgenKriel/SMINT
@@ -181,14 +210,8 @@
     
   </nav>
   
-</header>
     
-    <div class="md-container" data-md-component="container">
       
-      
-        
-          
-            
 <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
   <div class="md-grid">
     <ul class="md-tabs__list">
@@ -226,29 +249,7 @@
   
     
   
-  Getting Started
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../segmentation/" class="md-tabs__link">
-          
-  
-  
-    
-  
-  User Guide
+  Getting started
 
         </a>
       </li>
@@ -266,13 +267,13 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+        <a href="../tutorials/" class="md-tabs__link">
           
   
   
     
   
-  Examples
+  Tutorials
 
         </a>
       </li>
@@ -288,13 +289,76 @@
     
     
       <li class="md-tabs__item">
-        <a href="../visualizations/" class="md-tabs__link">
+        <a href="../concepts/" class="md-tabs__link">
           
   
   
     
   
-  Visualizations
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../visualizations/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Gallery
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../faq/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  About
 
         </a>
       </li>
@@ -305,7 +369,13 @@
     </ul>
   </div>
 </nav>
-          
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
         
       
       <main class="md-main" data-md-component="main">
@@ -324,20 +394,19 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="SMINT Documentation" class="md-nav__button md-logo" aria-label="SMINT Documentation" data-md-component="logo">
+    <a href=".." title="SMINT" class="md-nav__button md-logo" aria-label="SMINT" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/smint_logo_small.png" alt="logo">
 
     </a>
-    SMINT Documentation
+    SMINT
   </label>
   
     <div class="md-nav__source">
       <a href="https://github.com/JurgenKriel/SMINT" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     JurgenKriel/SMINT
@@ -359,14 +428,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
     Home
-  
-
     
   </span>
-  
   
 
       </a>
@@ -387,8 +451,6 @@
       
         
       
-        
-      
     
     
     
@@ -402,9 +464,7 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -412,14 +472,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
-    Getting Started
-  
-
+    Getting started
     
   </span>
-  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -428,11 +483,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Getting Started
-  
-
+            Getting started
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -448,14 +499,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
     Installation
-  
-
     
   </span>
-  
   
 
       </a>
@@ -471,290 +517,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../dependency_handling/" class="md-nav__link">
+      <a href="../quickstart/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    
-  
-    Dependency Handling
-  
-
+    Quick start
     
   </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Configuration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    User Guide
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    User Guide
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../segmentation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Segmentation
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../alignment/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Alignment
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../xenium_metabolomics_alignment/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Xenium-Metabolomics
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../napari_plugin/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    napari Plugin
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../r_integration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    R Integration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../hpc_deployment/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    HPC Deployment
-  
-
-    
-  </span>
-  
   
 
       </a>
@@ -780,6 +550,20 @@
   
     
     
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
       
         
       
@@ -799,37 +583,152 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../tutorials/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
+    Tutorials
     
   </span>
   
-  
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
+            </a>
             
-  
-    Examples
-  
-
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/01_segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Segment a whole slide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/02_same_section_registration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Same-section registration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/03_sequential_registration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Sequential-section registration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/04_distributed_segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed segmentation on SLURM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/05_integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    One table per cell
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -852,14 +751,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
+    Worked examples on real data
     
   </span>
-  
   
 
           <span class="md-nav__icon md-icon"></span>
@@ -870,14 +764,9 @@
   
   
   <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
+    Worked examples on real data
     
   </span>
-  
   
 
       </a>
@@ -900,70 +789,16 @@
         <li class="md-nav__item">
   <a href="#1-spatial-metabolomics-spatial-transcriptomics" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        1. Spatial metabolomics → spatial transcriptomics
-      
+      1. Spatial metabolomics → spatial transcriptomics
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="1. Spatial metabolomics → spatial transcriptomics">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#step-1-rasterise-both-modalities-for-landmarking" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 1 — rasterise both modalities for landmarking
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#step-2-place-landmarks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 2 — place landmarks
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#step-3-register-on-a-gpu-node" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 3 — register on a GPU node
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#step-4-check-the-result" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 4 — check the result
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#2-coarse-pre-registration-with-an-orientation-search" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        2. Coarse pre-registration with an orientation search
-      
+      2. Coarse pre-registration with an orientation search
     </span>
   </a>
   
@@ -972,20 +807,16 @@
         <li class="md-nav__item">
   <a href="#3-same-section-registration-nuclei-onto-xenium-cells" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        3. Same-section registration: nuclei onto Xenium cells
-      
+      3. Same-section registration: nuclei onto Xenium cells
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-segmenting-a-whole-slide-image-on-one-gpu" class="md-nav__link">
+  <a href="#4-segmenting-an-image-on-one-gpu-2048-px-crop" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        4. Segmenting a whole-slide image on one GPU
-      
+      4. Segmenting an image on one GPU (2048 px crop)
     </span>
   </a>
   
@@ -994,9 +825,16 @@
         <li class="md-nav__item">
   <a href="#5-distributed-segmentation-on-slurm-gpus" class="md-nav__link">
     <span class="md-ellipsis">
+      5. Distributed segmentation on SLURM GPUs
+    </span>
+  </a>
+  
+</li>
       
-        5. Distributed segmentation on SLURM GPUs
-      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
     </span>
   </a>
   
@@ -1028,6 +866,26 @@
     
       
         
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
       
     
     
@@ -1042,37 +900,435 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <div class="md-nav__link md-nav__container">
+            <a href="../concepts/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    User guide
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            User guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    The SMINT workflow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/registration_methods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Choosing a registration method
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/coordinate_frames/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Coordinate frames
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/tiling_and_stitching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tiling and stitching
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Segmentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Alignment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../napari_plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    napari plugin
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hpc_deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running on HPC
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../r_integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    R integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Command line
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/data_formats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data formats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    
-  
-    Visualizations
-  
-
+    Python API
     
   </span>
-  
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Visualizations
-  
-
+            Python API
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1083,19 +1339,242 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/api/alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Alignment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/api/segmentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Segmentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/api/jobs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Jobs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../visualizations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    
-  
-    Interactive Plots
-  
-
+    Gallery
     
   </span>
   
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    About
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ & troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../citation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Citation
+    
+  </span>
   
 
       </a>
@@ -1140,70 +1619,16 @@
         <li class="md-nav__item">
   <a href="#1-spatial-metabolomics-spatial-transcriptomics" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        1. Spatial metabolomics → spatial transcriptomics
-      
+      1. Spatial metabolomics → spatial transcriptomics
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="1. Spatial metabolomics → spatial transcriptomics">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#step-1-rasterise-both-modalities-for-landmarking" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 1 — rasterise both modalities for landmarking
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#step-2-place-landmarks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 2 — place landmarks
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#step-3-register-on-a-gpu-node" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 3 — register on a GPU node
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#step-4-check-the-result" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 4 — check the result
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#2-coarse-pre-registration-with-an-orientation-search" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        2. Coarse pre-registration with an orientation search
-      
+      2. Coarse pre-registration with an orientation search
     </span>
   </a>
   
@@ -1212,20 +1637,16 @@
         <li class="md-nav__item">
   <a href="#3-same-section-registration-nuclei-onto-xenium-cells" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        3. Same-section registration: nuclei onto Xenium cells
-      
+      3. Same-section registration: nuclei onto Xenium cells
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-segmenting-a-whole-slide-image-on-one-gpu" class="md-nav__link">
+  <a href="#4-segmenting-an-image-on-one-gpu-2048-px-crop" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        4. Segmenting a whole-slide image on one GPU
-      
+      4. Segmenting an image on one GPU (2048 px crop)
     </span>
   </a>
   
@@ -1234,9 +1655,16 @@
         <li class="md-nav__item">
   <a href="#5-distributed-segmentation-on-slurm-gpus" class="md-nav__link">
     <span class="md-ellipsis">
+      5. Distributed segmentation on SLURM GPUs
+    </span>
+  </a>
+  
+</li>
       
-        5. Distributed segmentation on SLURM GPUs
-      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
     </span>
   </a>
   
@@ -1252,24 +1680,81 @@
           
           
             <div class="md-content" data-md-component="content">
-              
               <article class="md-content__inner md-typeset">
                 
                   
 
 
   
+    <a href="https://github.com/JurgenKriel/SMINT/edit/main/docs/examples.md" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
   
 
 
-<h1 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h1>
-<p>Worked examples on real data from the two brain tumour samples, run on the WEHI
-Milton cluster. Timings and results are from those runs; your numbers will
-depend on the data and hardware.</p>
-<p>To try the API without any of these datasets, run the synthetic examples
-shipped with the repository:</p>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>examples/alignment_example.py<span class="w">    </span><span class="c1"># pre-registration, centroid fitting, job specs</span>
-</code></pre></div>
+<h1 id="worked-examples-on-real-data">Worked examples on real data<a class="headerlink" href="#worked-examples-on-real-data" title="Permanent link">&para;</a></h1>
+<p>Five end-to-end runs on the full-size Sample 2 and Sample 3 datasets, on a
+SLURM cluster with NVIDIA A30 GPUs. The commands, logs and numbers are from
+those runs; yours will depend on your data and hardware.</p>
+<p>Each example has a matching <a href="../tutorials/">tutorial</a> that runs the same
+calls on a small crop of the same data, shipped with the repository, so you can
+reproduce the steps before pointing them at your own files.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Example</th>
+<th>Data</th>
+<th>Result</th>
+<th>Time</th>
+<th>Try it on a crop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><a href="#1-spatial-metabolomics-spatial-transcriptomics">SM → ST, sequential sections</a></td>
+<td>459,969 MALDI pixels, 53,622 Xenium cells</td>
+<td>16.4 µm median to nearest ST cell</td>
+<td>72 s, one A30</td>
+<td><a href="../tutorials/03_sequential_registration/">Tutorial 3</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td><a href="#2-coarse-pre-registration-with-an-orientation-search">Orientation search</a></td>
+<td>the same MALDI section</td>
+<td>recovers the 90° rotation</td>
+<td>52 s</td>
+<td><a href="../tutorials/03_sequential_registration/">Tutorial 3</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td><a href="#3-same-section-registration-nuclei-onto-xenium-cells">Nuclei → Xenium, same section</a></td>
+<td>88,906 nuclei, 74,247 cells</td>
+<td>held-out TRE 11.0 → 4.9 µm; 88% of cells get a nucleus</td>
+<td>3 s</td>
+<td><a href="../tutorials/02_same_section_registration/">Tutorial 2</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td><a href="#4-segmenting-an-image-on-one-gpu-2048-px-crop">Segmentation on one GPU</a></td>
+<td>2048 px crop, 3 channels</td>
+<td>33 cells, 29 nuclei</td>
+<td>23 s, one A30</td>
+<td><a href="../tutorials/01_segmentation/">Tutorial 1</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td><a href="#5-distributed-segmentation-on-slurm-gpus">Distributed segmentation</a></td>
+<td>4096 px tile scan, 16 tiles</td>
+<td>44 cells, 44 nuclei</td>
+<td>0.6 min, four A30s</td>
+<td><a href="../tutorials/04_distributed_segmentation/">Tutorial 4</a></td>
+</tr>
+</tbody>
+</table>
 <hr />
 <h2 id="1-spatial-metabolomics-spatial-transcriptomics">1. Spatial metabolomics → spatial transcriptomics<a class="headerlink" href="#1-spatial-metabolomics-spatial-transcriptomics" title="Permanent link">&para;</a></h2>
 <p>MALDI spatial metabolomics (SM) acquired on a section neighbouring a Xenium
@@ -1278,7 +1763,6 @@ this uses STalign LDDMM guided by manual landmarks.</p>
 <p><img alt="Sequential-section registration: SM onto ST, before, landmarks and after LDDMM" src="../assets/registration_sequential.png" /></p>
 <p><em>Sample 2, Xenium section Z2 and MALDI section B. 459,969 SM pixels,
 53,622 ST cells, 11 landmark pairs.</em></p>
-<p><strong>Inputs</strong></p>
 <table>
 <thead>
 <tr>
@@ -1301,123 +1785,133 @@ this uses STalign LDDMM guided by manual landmarks.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="step-1-rasterise-both-modalities-for-landmarking">Step 1 — rasterise both modalities for landmarking<a class="headerlink" href="#step-1-rasterise-both-modalities-for-landmarking" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_landmark_inputs</span>
-
-<span class="n">out</span> <span class="o">=</span> <span class="n">prepare_landmark_inputs</span><span class="p">(</span>
-    <span class="n">st_file</span><span class="o">=</span><span class="s2">"sample2_xenium_z2.csv"</span><span class="p">,</span>
-    <span class="n">sm_file</span><span class="o">=</span><span class="s2">"sample2_maldi_section_B.csv"</span><span class="p">,</span>
-    <span class="n">output_prefix</span><span class="o">=</span><span class="s2">"sample2_z2"</span><span class="p">,</span>
-    <span class="n">sm_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">scale_xy</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">rotate_left_90</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>   <span class="c1"># MALDI pixels -&gt; microns</span>
-<span class="p">)</span>
+<p><strong>Step 1 — rasterise both modalities for landmarking.</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_landmark_inputs</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">out</span> <span class="o">=</span> <span class="n">prepare_landmark_inputs</span><span class="p">(</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">st_file</span><span class="o">=</span><span class="s2">"sample2_xenium_z2.csv"</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">sm_file</span><span class="o">=</span><span class="s2">"sample2_maldi_section_B.csv"</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">output_prefix</span><span class="o">=</span><span class="s2">"sample2_z2"</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">sm_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">scale_xy</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">rotate_left_90</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>   <span class="c1"># MALDI pixels -&gt; microns</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">)</span>
 </code></pre></div>
-<h3 id="step-2-place-landmarks">Step 2 — place landmarks<a class="headerlink" href="#step-2-place-landmarks" title="Permanent link">&para;</a></h3>
-<p>Open the two datasets in the <a href="../napari_plugin/">napari plugin</a> (<strong>Plugins →
-SMINT Registration → 3. Landmarks</strong>), or run STalign's <code>point_annotator.py</code> on
-the two <code>.npz</code> files. Pick the <strong>same features in the same order</strong> in both;
-correspondence is positional.</p>
-<h3 id="step-3-register-on-a-gpu-node">Step 3 — register on a GPU node<a class="headerlink" href="#step-3-register-on-a-gpu-node" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>smint-alignment<span class="w"> </span>st-sm<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--st<span class="w"> </span>sample2_xenium_z2.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--sm<span class="w"> </span>sample2_maldi_section_B.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--st-points<span class="w"> </span>sample2_z2_st_points.npy<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--sm-points<span class="w"> </span>sample2_z2_sm_points.npy<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--rotate-left-90<span class="w"> </span>--orientation<span class="w"> </span>stalign<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--output-dir<span class="w"> </span>/vast/scratch/<span class="nv">$USER</span>/sample2_z2<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--submit<span class="w"> </span>--watch<span class="w"> </span>--partition<span class="w"> </span>gpuq<span class="w"> </span>--gpus<span class="w"> </span><span class="m">1</span><span class="w"> </span>--memory<span class="w"> </span>64G<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--worker-python<span class="w"> </span>/path/to/STalign_env/bin/python
+<p><strong>Step 2 — place landmarks.</strong> Open the two datasets in the
+<a href="../napari_plugin/">napari plugin</a> (<strong>Plugins → SMINT Registration →
+3. Landmarks</strong>), or run STalign's <code>point_annotator.py</code> on the two <code>.npz</code> files.
+Pick the <strong>same features in the same order</strong> in both; correspondence is
+positional.</p>
+<p><strong>Step 3 — register on a GPU node.</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Command line</label><label for="__tabbed_1_2">Python</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>smint-alignment<span class="w"> </span>st-sm<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span>--st<span class="w"> </span>sample2_xenium_z2.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span>--sm<span class="w"> </span>sample2_maldi_section_B.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span>--st-points<span class="w"> </span>sample2_z2_st_points.npy<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span>--sm-points<span class="w"> </span>sample2_z2_sm_points.npy<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span>--rotate-left-90<span class="w"> </span>--orientation<span class="w"> </span>stalign<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span>--output-dir<span class="w"> </span>sample2_z2_registration<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span>--submit<span class="w"> </span>--watch<span class="w"> </span>--partition<span class="w"> </span>gpuq<span class="w"> </span>--gpus<span class="w"> </span><span class="m">1</span><span class="w"> </span>--memory<span class="w"> </span>64G<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span>--worker-python<span class="w"> </span>/path/to/stalign-env/bin/python
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>submitted st_sm via sbatch (30527655)
-state: completed -- st_sm round finished
-{"transformed_csv": "/vast/scratch/.../sample2_z2/sm_transformed.csv"}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>submitted st_sm via sbatch (30527655)
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>state: completed -- st_sm round finished
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>{"transformed_csv": ".../sample2_z2_registration/sm_transformed.csv"}
 </code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_sm_to_st</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">sm</span> <span class="o">=</span> <span class="n">register_sm_to_st</span><span class="p">(</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">st_file</span><span class="o">=</span><span class="s2">"sample2_xenium_z2.csv"</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">sm_file</span><span class="o">=</span><span class="s2">"sample2_maldi_section_B.csv"</span><span class="p">,</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">st_points_file</span><span class="o">=</span><span class="s2">"sample2_z2_st_points.npy"</span><span class="p">,</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">sm_points_file</span><span class="o">=</span><span class="s2">"sample2_z2_sm_points.npy"</span><span class="p">,</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="n">sm_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">scale_xy</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">rotate_left_90</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="n">orientation</span><span class="o">=</span><span class="s2">"stalign"</span><span class="p">,</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">output_path</span><span class="o">=</span><span class="s2">"sm_transformed.csv"</span><span class="p">,</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
 <p>The worker ran LDDMM (1,000 iterations) on one A30; from submission to
-finished output, including queueing, took 72 s. The output keeps every m/z column and adds
-<code>x_transformed</code> / <code>y_transformed</code>.</p>
-<p>The same run from Python:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_sm_to_st</span>
-
-<span class="n">sm</span> <span class="o">=</span> <span class="n">register_sm_to_st</span><span class="p">(</span>
-    <span class="n">st_file</span><span class="o">=</span><span class="s2">"sample2_xenium_z2.csv"</span><span class="p">,</span>
-    <span class="n">sm_file</span><span class="o">=</span><span class="s2">"sample2_maldi_section_B.csv"</span><span class="p">,</span>
-    <span class="n">st_points_file</span><span class="o">=</span><span class="s2">"sample2_z2_st_points.npy"</span><span class="p">,</span>
-    <span class="n">sm_points_file</span><span class="o">=</span><span class="s2">"sample2_z2_sm_points.npy"</span><span class="p">,</span>
-    <span class="n">sm_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">scale_xy</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">rotate_left_90</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-    <span class="n">orientation</span><span class="o">=</span><span class="s2">"stalign"</span><span class="p">,</span>
-    <span class="n">output_path</span><span class="o">=</span><span class="s2">"sm_transformed.csv"</span><span class="p">,</span>
-<span class="p">)</span>
-</code></pre></div>
+finished output, including queueing, took 72 s. The output keeps every m/z
+column and adds <code>x_transformed</code> / <code>y_transformed</code>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Pass <code>orientation=\"stalign\"</code> to overlay on ST</p>
 <p>The default, <code>"dataset"</code>, reproduces historical outputs but is transposed
 relative to the ST cells. Plotted over ST it looks like a failed
-registration. See <a href="../alignment/#coordinate-orientation">Coordinate orientation</a>.</p>
+registration. See <a href="../concepts/coordinate_frames/#stalign-works-in-row-column">STalign works in row-column order</a>.</p>
 </div>
-<h3 id="step-4-check-the-result">Step 4 — check the result<a class="headerlink" href="#step-4-check-the-result" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="o">,</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">cKDTree</span>
-
-<span class="n">st</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"sample2_xenium_z2.csv"</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">"x_final"</span><span class="p">,</span> <span class="s2">"y_final"</span><span class="p">])</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-<span class="n">sm</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"sm_transformed.csv"</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">"x_transformed"</span><span class="p">,</span> <span class="s2">"y_transformed"</span><span class="p">])</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-<span class="n">d</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">st</span><span class="p">)</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">sm</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"median distance to nearest ST cell: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> um"</span><span class="p">)</span>
+<p><strong>Step 4 — check the result.</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="o">,</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">cKDTree</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">st</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"sample2_xenium_z2.csv"</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">"x_final"</span><span class="p">,</span> <span class="s2">"y_final"</span><span class="p">])</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">sm</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"sm_transformed.csv"</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">"x_transformed"</span><span class="p">,</span> <span class="s2">"y_transformed"</span><span class="p">])</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">d</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">st</span><span class="p">)</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">sm</span><span class="p">)</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"median distance to nearest ST cell: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> um"</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>median distance to nearest ST cell: 16.4 um
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>median distance to nearest ST cell: 16.4 um
 </code></pre></div>
-<p>That is about half a 30 µm MALDI pixel. Because the sections differ, there
-is no ground truth to score against; this distance and the overlay are the
-practical checks.</p>
+<p>That is about half a 30 µm raster pixel. Because the sections differ, there is
+no ground truth to score against; this distance and the overlay are the
+practical checks. <a href="../tutorials/03_sequential_registration/">Tutorial 3</a>
+runs the same registration on a quarter of these MALDI pixels, and adds a
+synthetic pair where the true error is known.</p>
 <hr />
 <h2 id="2-coarse-pre-registration-with-an-orientation-search">2. Coarse pre-registration with an orientation search<a class="headerlink" href="#2-coarse-pre-registration-with-an-orientation-search" title="Permanent link">&para;</a></h2>
-<p>Before landmarking, bring a dataset roughly into the target frame. MALDI
-pixels from MALDI section B (converted to microns) arrive rotated relative to the Z2
-Xenium cells:</p>
-<div class="highlight"><pre><span></span><code>smint-alignment<span class="w"> </span>pretransform<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--source<span class="w"> </span>sample2_sm_xy.csv<span class="w"> </span>--target<span class="w"> </span>sample2_xenium_z2.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--search<span class="w"> </span>--output<span class="w"> </span>sample2_sm_pre.csv
+<p>Before landmarking, bring a dataset roughly into the target frame. MALDI pixels
+from section B (converted to microns) arrive rotated relative to the Z2 Xenium
+cells:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>smint-alignment<span class="w"> </span>pretransform<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span>--source<span class="w"> </span>sample2_sm_xy.csv<span class="w"> </span>--target<span class="w"> </span>sample2_xenium_z2.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span>--search<span class="w"> </span>--output<span class="w"> </span>sample2_sm_pre.csv
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>INFO smint.cli.align: Best: rotation=90 flip_x=False flip_y=False
-scale        : 1.2161, 1.2161
-rotation     : 90.00 deg
-reflects     : False
-overlap      : 0.954
-wrote        : sample2_sm_pre.csv
-transform    : sample2_sm_pre.csv.transform.json
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>INFO smint.cli.align: Best: rotation=90 flip_x=False flip_y=False
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>scale        : 1.2161, 1.2161
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>rotation     : 90.00 deg
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>reflects     : False
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>overlap      : 0.954
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>wrote        : sample2_sm_pre.csv
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>transform    : sample2_sm_pre.csv.transform.json
 </code></pre></div>
 <p><code>--search</code> tries every 15° rotation with and without each flip and keeps the
-best overlap score. Here it recovered the 90° rotation that the MALDI section B
-pipeline otherwise applies by hand (<code>rotate_left_90=True</code>), in 52 s for
-459,969 pixels. The matrix and its decomposition are saved next to the
-output, so the step can be reproduced exactly. The napari plugin's
-<strong>2. Pre-register</strong> widget does the same interactively.</p>
+best overlap score. Here it recovered the 90° rotation that the MALDI pipeline
+otherwise applies by hand (<code>rotate_left_90=True</code>), in 52 s for 459,969 pixels.
+The matrix and its decomposition are saved next to the output, so the step can
+be reproduced exactly. The napari plugin's <strong>2. Pre-register</strong> widget does the
+same interactively, and <a href="../tutorials/03_sequential_registration/">Tutorial 3</a>
+runs the search in Python.</p>
 <hr />
 <h2 id="3-same-section-registration-nuclei-onto-xenium-cells">3. Same-section registration: nuclei onto Xenium cells<a class="headerlink" href="#3-same-section-registration-nuclei-onto-xenium-cells" title="Permanent link">&para;</a></h2>
 <p>When a second modality is acquired on the <em>same</em> section — here, nuclei
 segmented from a post-Xenium stain of Sample 2 section z5 — centroids
 correspond one-to-one:</p>
-<div class="highlight"><pre><span></span><code>smint-alignment<span class="w"> </span>centroid<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--source<span class="w"> </span>transformed_nuc_points_in_global.csv<span class="w"> </span>--source-cols<span class="w"> </span>x_centroid<span class="w"> </span>y_centroid<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--target<span class="w"> </span>z5_pre_aligned_coordinates.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--output-dir<span class="w"> </span>/vast/scratch/<span class="nv">$USER</span>/z5_nuc_to_xenium
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>smint-alignment<span class="w"> </span>centroid<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span>--source<span class="w"> </span>sample2_nuclei_z5.csv<span class="w"> </span>--source-cols<span class="w"> </span>x_centroid<span class="w"> </span>y_centroid<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span>--target<span class="w"> </span>sample2_xenium_z5.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span>--output-dir<span class="w"> </span>z5_nuclei_to_xenium
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>{
-  "method": "multiround",
-  "n_matched": 49206,
-  "tre_initial": 10.96,
-  "tre_fit": 4.45,
-  "tre_validation": 4.93,
-  "refinement": {"n_snapped": 57083, "n_assigned": 8266, "n_filled": 9147,
-                 "fraction_targets_matched": 0.88,
-                 "median_deviation": {"snapped": 4.14, "assigned": 8.54},
-                 "snapped_per_pass": [55208, 56923, 57069, 57083]},
-  "rounds": [
-    {"stage": "initial", "median_nn": 12.40},
-    {"stage": "affine", "block_size": 500.0, "blocks": 300, "consistent_blocks": 0.91,
-     "median_nn": 5.38, "accepted": true},
-    {"stage": "tps", "block_size": 250.0, "blocks": 1013, "consistent_blocks": 0.77,
-     "median_nn": 5.43, "accepted": false}
-  ]
-}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>{
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  "method": "multiround",
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  "n_matched": 49206,
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  "tre_initial": 10.96,
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>  "tre_fit": 4.45,
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>  "tre_validation": 4.93,
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>  "refinement": {"n_snapped": 57083, "n_assigned": 8266, "n_filled": 9147,
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>                 "fraction_targets_matched": 0.88,
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>                 "median_deviation": {"snapped": 4.14, "assigned": 8.54},
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>                 "snapped_per_pass": [55208, 56923, 57069, 57083]},
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>  "rounds": [
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>    {"stage": "initial", "median_nn": 12.40},
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>    {"stage": "affine", "block_size": 500.0, "blocks": 300, "consistent_blocks": 0.91,
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>     "median_nn": 5.38, "accepted": true},
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>    {"stage": "tps", "block_size": 250.0, "blocks": 1013, "consistent_blocks": 0.77,
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>     "median_nn": 5.43, "accepted": false}
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>  ]
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>}
 </code></pre></div>
 <p><img alt="Post-stain nuclei registered to Xenium cells, before and after" src="../assets/registration_same_section_sample2.png" /></p>
 <p><em>88,906 nuclei and 74,247 Xenium cells, about 17 µm apart; 3 s.</em></p>
@@ -1431,74 +1925,94 @@ neighbourhood, and 8,266 more are assigned to the free cells around them —
 <strong>88% of Xenium cells</strong> now carry a nucleus. The assigned pairs deviate twice
 as much from their neighbourhood (8.5 µm against 4.1 µm), so treat them as
 unverified; the output CSV's <code>registration_status</code> and <code>neighbour_deviation</code>
-say which is which. See <a href="../alignment/#snapping-matched-nuclei-onto-their-cells">Snapping matched nuclei</a>.</p>
+say which is which. See <a href="../alignment/#snapping-nuclei-onto-their-cells">Snapping nuclei onto their cells</a>.</p>
 <p><img alt="Before registration, after the smooth transform, and after snapping" src="../assets/registration_refinement_sample2.png" /></p>
 <p>The single-round methods can't do this: they match each nucleus to its
 nearest cell before fitting, and with a starting offset close to the cell
 spacing most of those matches are wrong. <code>--method ransac+tps</code> only reaches
-11.5 µm here. See <a href="../alignment/#why-multiple-rounds">Why multiple rounds</a>.</p>
+11.5 µm here. See <a href="../alignment/#what-multiround-does">What multiround does</a>.</p>
+<p><a href="../tutorials/02_same_section_registration/">Tutorial 2</a> runs the same two
+steps on a 1.5 mm × 1.5 mm crop of this section — where the pattern repeats:
+the affine round is kept, the spline round rejected — and on a synthetic pair
+where every placement can be checked against the truth.</p>
 <hr />
-<h2 id="4-segmenting-a-whole-slide-image-on-one-gpu">4. Segmenting a whole-slide image on one GPU<a class="headerlink" href="#4-segmenting-a-whole-slide-image-on-one-gpu" title="Permanent link">&para;</a></h2>
+<h2 id="4-segmenting-an-image-on-one-gpu-2048-px-crop">4. Segmenting an image on one GPU (2048 px crop)<a class="headerlink" href="#4-segmenting-an-image-on-one-gpu-2048-px-crop" title="Permanent link">&para;</a></h2>
+<p>The same call works on a whole slide: it segments the image chunk by chunk, so
+only run time grows. The image itself is read into memory, so for slides that
+do not fit, use distributed segmentation (<a href="#5-distributed-segmentation-on-slurm-gpus">example 5</a>).</p>
 <p>A fine-tuned Cellpose-SAM model segments cells, and Cellpose's base model
 segments nuclei, chunk by chunk:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.segmentation</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_large_image</span>
-
-<span class="n">results</span> <span class="o">=</span> <span class="n">process_large_image</span><span class="p">(</span>
-    <span class="n">image_path</span><span class="o">=</span><span class="s2">"r6_crop.ome.tif"</span><span class="p">,</span>            <span class="c1"># (C, Y, X): ch0 nuclei, ch1 GFAP</span>
-    <span class="n">csv_base_path</span><span class="o">=</span><span class="s2">"seg/r6"</span><span class="p">,</span>
-    <span class="n">chunk_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">),</span>
-    <span class="n">cell_model_path</span><span class="o">=</span><span class="s2">"/path/to/models/cpsam_20260225_153049"</span><span class="p">,</span>
-    <span class="n">cells_diameter</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">cells_flow_threshold</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">cells_cellprob_threshold</span><span class="o">=-</span><span class="mf">2.5</span><span class="p">,</span>
-    <span class="n">cells_channels</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>                  <span class="c1"># main = channel 2 (GFAP), nuclear = channel 1</span>
-    <span class="n">nuclei_model_path</span><span class="o">=</span><span class="s2">"nuclei"</span><span class="p">,</span>             <span class="c1"># Cellpose 4: falls back to cpsam, with a warning</span>
-    <span class="n">nuclei_diameter</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">nuclei_flow_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">nuclei_cellprob_threshold</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
-    <span class="n">nuclei_channels</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="n">visualize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">visualize_output_dir</span><span class="o">=</span><span class="s2">"seg/vis"</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">"total_cells"</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="s2">"total_nuclei"</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">smint.segmentation</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_large_image</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">results</span> <span class="o">=</span> <span class="n">process_large_image</span><span class="p">(</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="n">image_path</span><span class="o">=</span><span class="s2">"sample3_crop.ome.tif"</span><span class="p">,</span>      <span class="c1"># (C, Y, X): ch0 nuclei, ch1 GFAP</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="n">csv_base_path</span><span class="o">=</span><span class="s2">"seg/sample3"</span><span class="p">,</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="n">chunk_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">),</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>    <span class="n">cell_model_path</span><span class="o">=</span><span class="s2">"/path/to/models/cpsam_finetuned"</span><span class="p">,</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>    <span class="n">cells_diameter</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">cells_flow_threshold</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">cells_cellprob_threshold</span><span class="o">=-</span><span class="mf">2.5</span><span class="p">,</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>    <span class="n">cells_channels</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>                  <span class="c1"># main = channel 2 (GFAP), nuclear = channel 1</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="n">nuclei_model_path</span><span class="o">=</span><span class="s2">"nuclei"</span><span class="p">,</span>             <span class="c1"># Cellpose 4: falls back to cpsam, with a warning</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>    <span class="n">nuclei_diameter</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">nuclei_flow_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">nuclei_cellprob_threshold</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>    <span class="n">nuclei_channels</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>    <span class="n">visualize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">visualize_output_dir</span><span class="o">=</span><span class="s2">"seg/vis"</span><span class="p">,</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="p">)</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">"total_cells"</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="s2">"total_nuclei"</span><span class="p">])</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>33 29
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>33 29
 </code></pre></div>
 <p><img alt="Nuclei, GFAP and phalloidin with cell and nucleus outlines on one 1024 px chunk" src="../assets/segmentation_gfap_phalloidin.jpg" /></p>
 <p><em>Sample 3, one 1024 px chunk of a 2048 × 2048 px crop; Cellpose 4 on one A30
 took 23 s for the crop. Cyan: nuclei; green: GFAP; magenta: phalloidin. Right:
 cell outlines (white) and nucleus outlines (yellow).</em></p>
 <p><code>channels</code> follows Cellpose 3's convention (<code>[main, nuclear]</code>, 1-based, 0 =
-none) and selects the same input on Cellpose 3 and 4.</p>
+none) and selects the same input on Cellpose 3 and 4.
+<a href="../tutorials/01_segmentation/">Tutorial 1</a> runs <code>process_large_image</code> with
+Cellpose 3's built-in models on a synthetic image and on a downsampled Sample 3
+crop.</p>
 <hr />
 <h2 id="5-distributed-segmentation-on-slurm-gpus">5. Distributed segmentation on SLURM GPUs<a class="headerlink" href="#5-distributed-segmentation-on-slurm-gpus" title="Permanent link">&para;</a></h2>
 <p>For a whole slide, tiles are spread across GPU workers that SMINT launches
 through SLURM, then stitched and reconciled:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.segmentation</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_distributed_segmentation</span>
-
-<span class="n">results</span> <span class="o">=</span> <span class="n">run_distributed_segmentation</span><span class="p">(</span>
-    <span class="n">image_path</span><span class="o">=</span><span class="s2">"sample3_tile_scan.ome.tif"</span><span class="p">,</span>       <span class="c1"># OME-TIFF or OME-Zarr, on shared storage</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">"/vast/scratch/me/r6_seg"</span><span class="p">,</span>
-    <span class="n">cell_model</span><span class="o">=</span><span class="s2">"/path/to/models/cpsam_20260225_153049"</span><span class="p">,</span>
-    <span class="n">nuclei_model</span><span class="o">=</span><span class="s2">"nuclei"</span><span class="p">,</span>
-    <span class="n">cell_params</span><span class="o">=</span><span class="p">{</span><span class="s2">"diameter"</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">"flow_threshold"</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
-                 <span class="s2">"cellprob_threshold"</span><span class="p">:</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="s2">"channels"</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span>
-    <span class="n">nuclei_params</span><span class="o">=</span><span class="p">{</span><span class="s2">"diameter"</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s2">"flow_threshold"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
-                   <span class="s2">"cellprob_threshold"</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s2">"channels"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]},</span>
-    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">1048</span><span class="p">,</span> <span class="n">tile_overlap</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
-    <span class="n">backend</span><span class="o">=</span><span class="s2">"slurm"</span><span class="p">,</span> <span class="n">n_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">slurm</span><span class="o">=</span><span class="p">{</span><span class="s2">"queue"</span><span class="p">:</span> <span class="s2">"gpuq"</span><span class="p">,</span> <span class="s2">"gpu_type"</span><span class="p">:</span> <span class="s2">"A30"</span><span class="p">,</span> <span class="s2">"memory"</span><span class="p">:</span> <span class="s2">"64GB"</span><span class="p">},</span>
-<span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">smint.segmentation</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_distributed_segmentation</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">results</span> <span class="o">=</span> <span class="n">run_distributed_segmentation</span><span class="p">(</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">image_path</span><span class="o">=</span><span class="s2">"sample3_tile_scan.ome.tif"</span><span class="p">,</span>       <span class="c1"># OME-TIFF or OME-Zarr, on shared storage</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="n">output_dir</span><span class="o">=</span><span class="s2">"sample3_segmentation"</span><span class="p">,</span>            <span class="c1"># on shared storage too</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">cell_model</span><span class="o">=</span><span class="s2">"/path/to/models/cpsam_finetuned"</span><span class="p">,</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="n">nuclei_model</span><span class="o">=</span><span class="s2">"nuclei"</span><span class="p">,</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    <span class="n">cell_params</span><span class="o">=</span><span class="p">{</span><span class="s2">"diameter"</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">"flow_threshold"</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>                 <span class="s2">"cellprob_threshold"</span><span class="p">:</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="s2">"channels"</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="n">nuclei_params</span><span class="o">=</span><span class="p">{</span><span class="s2">"diameter"</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s2">"flow_threshold"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>                   <span class="s2">"cellprob_threshold"</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s2">"channels"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]},</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">1048</span><span class="p">,</span> <span class="n">tile_overlap</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>    <span class="n">backend</span><span class="o">=</span><span class="s2">"slurm"</span><span class="p">,</span> <span class="n">n_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>    <span class="n">slurm</span><span class="o">=</span><span class="p">{</span><span class="s2">"queue"</span><span class="p">:</span> <span class="s2">"gpuq"</span><span class="p">,</span> <span class="s2">"gpu_type"</span><span class="p">:</span> <span class="s2">"A30"</span><span class="p">,</span> <span class="s2">"memory"</span><span class="p">:</span> <span class="s2">"64GB"</span><span class="p">},</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>Tiles: 16 of 1048 px, 256 px overlap
-4 worker(s) ready
-Stitched 66 polygons: 44 after merging, 44 after trim/remove
-30 of 103 cell outlines touch no nucleus and were dropped
-Stitched 73 polygons: 43 after merging, 43 after trim/remove
-Reconciled 43 cells / 44 nuclei -&gt; 44 cells / 44 nuclei
-Done in 0.6 min
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Tiles: 16 of 1048 px, 256 px overlap
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>4 worker(s) ready
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>Stitched 66 polygons: 44 after merging, 44 after trim/remove
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>30 of 103 cell outlines touch no nucleus and were dropped
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>Stitched 73 polygons: 43 after merging, 43 after trim/remove
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>Reconciled 43 cells / 44 nuclei -&gt; 44 cells / 44 nuclei
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>Done in 0.6 min
 </code></pre></div>
-<p>Run the coordinator itself as a small CPU job (<code>sbatch</code> on <code>regular</code>); it
+<p>Run the coordinator itself as a small CPU job (<code>sbatch</code> on a CPU partition); it
 submits the GPU workers and only stitches. The output directory then holds
 <code>cells_outlines.csv</code> / <code>nuclei_outlines.csv</code> (outline vertices),
 <code>cells_summary.csv</code> / <code>nuclei_summary.csv</code> (centroids, areas, and which cell
 each nucleus belongs to) and full-resolution label masks. See
-<a href="../segmentation/#stitching-tiles">Segmentation</a> for how tiles are stitched.</p>
+<a href="../concepts/tiling_and_stitching/">Tiling and stitching</a> for how tiles are
+stitched, and <a href="../tutorials/04_distributed_segmentation/">Tutorial 4</a> to run
+the same pipeline on local CPU workers and read its log line by line.</p>
+<h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Apply this to your own data: <a href="../concepts/workflow/">The SMINT workflow</a>.</li>
+<li>Run it on the cluster: <a href="../hpc_deployment/">Running on HPC</a>.</li>
+<li>Transcripts and metabolites per cell: <a href="../tutorials/05_integration/">Tutorial 5</a>
+  and <a href="../r_integration/">R integration</a>.</li>
+<li>Every command-line option: <a href="../reference/cli/">Command line</a>.</li>
+</ul>
 
 
 
@@ -1521,16 +2035,62 @@ each nucleus belongs to) and full-resolution label masks. See
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
       </main>
       
         <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../tutorials/05_integration/" class="md-footer__link md-footer__link--prev" aria-label="Previous: One table per cell">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                One table per cell
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../concepts/" class="md-footer__link md-footer__link--next" aria-label="Next: User guide">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                User guide
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2024 Jurgen Kriel
+      Copyright &copy; 2024–2026 Jurgen Kriel · MIT licence
     </div>
   
   
@@ -1541,8 +2101,7 @@ each nucleus belongs to) and full-resolution label masks. See
   
 </div>
       
-        
-<div class="md-social">
+        <div class="md-social">
   
     
     
@@ -1552,7 +2111,7 @@ each nucleus belongs to) and full-resolution label masks. See
       
     
     <a href="https://github.com/JurgenKriel/SMINT" target="_blank" rel="noopener" title="github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
     </a>
   
 </div>
@@ -1569,11 +2128,10 @@ each nucleus belongs to) and full-resolution label masks. See
     
     
       
-      
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "toc.follow"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
   </body>
