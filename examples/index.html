@@ -1423,12 +1423,12 @@ segments nuclei, chunk by chunk:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.segmentation</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_large_image</span>
 
 <span class="n">results</span> <span class="o">=</span> <span class="n">process_large_image</span><span class="p">(</span>
-    <span class="n">image_path</span><span class="o">=</span><span class="s2">"r6_crop.ome.tif"</span><span class="p">,</span>            <span class="c1"># (C, Y, X): ch0 nuclear, ch1 cell</span>
+    <span class="n">image_path</span><span class="o">=</span><span class="s2">"r6_crop.ome.tif"</span><span class="p">,</span>            <span class="c1"># (C, Y, X): ch0 nuclei, ch1 GFAP</span>
     <span class="n">csv_base_path</span><span class="o">=</span><span class="s2">"seg/r6"</span><span class="p">,</span>
     <span class="n">chunk_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">),</span>
     <span class="n">cell_model_path</span><span class="o">=</span><span class="s2">"/path/to/models/cpsam_20260225_153049"</span><span class="p">,</span>
     <span class="n">cells_diameter</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">cells_flow_threshold</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">cells_cellprob_threshold</span><span class="o">=-</span><span class="mf">2.5</span><span class="p">,</span>
-    <span class="n">cells_channels</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>                  <span class="c1"># main = channel 2 (cell), nuclear = channel 1</span>
+    <span class="n">cells_channels</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>                  <span class="c1"># main = channel 2 (GFAP), nuclear = channel 1</span>
     <span class="n">nuclei_model_path</span><span class="o">=</span><span class="s2">"nuclei"</span><span class="p">,</span>             <span class="c1"># Cellpose 4: falls back to cpsam, with a warning</span>
     <span class="n">nuclei_diameter</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">nuclei_flow_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">nuclei_cellprob_threshold</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
     <span class="n">nuclei_channels</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
@@ -1438,9 +1438,10 @@ segments nuclei, chunk by chunk:</p>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>33 29
 </code></pre></div>
-<p><img alt="Cell (red) and nucleus (cyan) outlines on one 1024 px chunk" src="../assets/segmentation_example.jpg" /></p>
-<p><em>Venture 6, 2048 × 2048 px crop, Cellpose 4 on one A30: 23 s. Green: nuclear
-channel; blue: cell channel.</em></p>
+<p><img alt="Nuclei, GFAP and phalloidin with cell and nucleus outlines on one 1024 px chunk" src="../assets/segmentation_example.jpg" /></p>
+<p><em>Venture 6, one 1024 px chunk of a 2048 × 2048 px crop; Cellpose 4 on one A30
+took 23 s for the crop. Cyan: nuclei; green: GFAP; magenta: phalloidin. Right:
+cell outlines (white) and nucleus outlines (yellow).</em></p>
 <p><code>channels</code> follows Cellpose 3's convention (<code>[main, nuclear]</code>, 1-based, 0 =
 none) and selects the same input on Cellpose 3 and 4.</p>
 <hr />
