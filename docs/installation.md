@@ -111,28 +111,3 @@ separately and requires numpy < 2 (see [Alignment](alignment.md#environments)):
 pip install --upgrade "git+https://github.com/JEFworks-Lab/STalign.git"
 ```
 
-## Graceful Dependency Handling
-
-SMINT is designed to degrade gracefully when optional dependencies are missing:
-
-1. **Missing a dependency?** SMINT will log a warning but continue to operate with limited functionality.
-2. **Function that requires a missing dependency?** You'll get a clear error message explaining which package you need to install.
-3. **Want to check available functionality?** Run the following code:
-
-```python
-import smint
-print(f"SMINT package version: {smint.__version__}")
-print("Available modules:")
-[print(f"- {module}") for module in smint.__all__]
-```
-
-You can also check specific dependency availability:
-
-```python
-# Check cellpose availability
-try:
-    import cellpose
-    print("Cellpose is available")
-except ImportError:
-    print("Cellpose is not available")
-```
