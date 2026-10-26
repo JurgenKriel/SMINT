@@ -823,6 +823,46 @@ def register_centroids(
     }
 
 
+def _assign_one_to_one(points, targets, point_idx, target_idx, radius):
+    """
+    Minimum-total-distance one-to-one assignment of ``points[point_idx]`` to
+    ``targets[target_idx]``, using only pairs within ``radius``.
+
+    The candidate graph is split into connected components and each is solved
+    exactly with the Hungarian algorithm, so cost stays proportional to the
+    size of the largest local cluster, not the whole section.
+
+    Returns ``(rows, cols)``: indices into ``points`` and ``targets``.
+    """
+    from scipy.optimize import linear_sum_assignment
+    from scipy.sparse import coo_matrix as _coo
+    from scipy.sparse.csgraph import connected_components as _components
+
+    if len(point_idx) == 0 or len(target_idx) == 0:
+        return np.empty(0, dtype=int), np.empty(0, dtype=int)
+    P, T = points[point_idx], targets[target_idx]
+    neighbours = cKDTree(T).query_ball_point(P, radius)
+    pi = np.repeat(np.arange(len(P)), [len(n) for n in neighbours])
+    ti = np.fromiter((j for n in neighbours for j in n), dtype=int, count=len(pi))
+    if len(pi) == 0:
+        return np.empty(0, dtype=int), np.empty(0, dtype=int)
+    n_p = len(P)
+    graph = _coo((np.ones(len(pi)), (pi, n_p + ti)), shape=(n_p + len(T), n_p + len(T)))
+    _, labels = _components(graph, directed=False)
+    edge_label = labels[pi]
+    rows, cols = [], []
+    order = np.argsort(edge_label, kind="stable")
+    for group in np.split(order, np.flatnonzero(np.diff(edge_label[order])) + 1):
+        gp, gt = np.unique(pi[group]), np.unique(ti[group])
+        cost = np.full((len(gp), len(gt)), 1e9)
+        r = np.searchsorted(gp, pi[group]); c = np.searchsorted(gt, ti[group])
+        cost[r, c] = np.linalg.norm(P[pi[group]] - T[ti[group]], axis=1)
+        rr, cc = linear_sum_assignment(cost)
+        ok = cost[rr, cc] < 1e9
+        rows.extend(gp[rr[ok]]); cols.extend(gt[cc[ok]])
+    return np.asarray(point_idx)[np.asarray(rows, dtype=int)], np.asarray(target_idx)[np.asarray(cols, dtype=int)]
+
+
 def refine_by_assignment(
     source_xy: np.ndarray,
     target_xy: np.ndarray,
@@ -835,6 +875,8 @@ def refine_by_assignment(
     validation_fraction: float = 0.1,
     random_state: Optional[int] = 0,
     passes: int = 4,
+    assign_remaining: bool = True,
+    assign_radius: Optional[float] = None,
 ) -> dict:
     """
     Snap registered source points exactly onto their partner targets.
@@ -855,6 +897,12 @@ def refine_by_assignment(
     5. Repeat: the moved, still-unsnapped points are paired again with the
        still-unmatched targets, and kept if they agree with the snapped field
        around them -- up to ``passes`` times, until nothing new snaps.
+    6. Assign what is left: the filled points and the still-unmatched targets
+       are paired by a minimum-total-distance one-to-one assignment within
+       ``assign_radius``, and each assigned point moves onto its target
+       (status ``'assigned'``). These pairs skipped the consistency test, so
+       they are less certain than ``'snapped'`` ones; filter on the status if
+       that matters.
 
     Snapped points coincide with their targets by construction, so their
     residual says nothing about correctness. The check is ``validation``: a
@@ -881,6 +929,11 @@ def refine_by_assignment(
         are not snapped.
     passes : int
         Pairing passes (step 5); 1 disables re-pairing.
+    assign_remaining : bool
+        Run step 6.
+    assign_radius : float, optional
+        Maximum distance for step 6. Default 0.75 x the target's median
+        nearest-neighbour spacing.
     k_fill : int
         Snapped neighbours whose median offset moves an unsnapped point.
     validation_fraction : float
@@ -889,8 +942,11 @@ def refine_by_assignment(
     Returns
     -------
     dict
-        ``refined_xy`` (``(N, 2)``), ``status`` (``'snapped'``, ``'filled'`` or
-        ``'unmoved'`` per point), ``target_idx`` (partner index, -1 if none),
+        ``refined_xy`` (``(N, 2)``), ``status`` (``'snapped'``, ``'assigned'``,
+        ``'filled'`` or ``'unmoved'`` per point), ``target_idx`` (partner
+        index, -1 if none), ``neighbour_deviation`` (per placed point: distance
+        between its offset and its snapped neighbourhood's median offset --
+        small for right pairs, about a cell spacing for wrong ones),
         ``n_snapped``, ``fraction_snapped`` (of source points),
         ``fraction_targets_matched``, ``consistency_tol`` and ``validation``
         (``median_error``, ``within_2``, ``within_5`` for the held-out pairs).
@@ -900,9 +956,11 @@ def refine_by_assignment(
     moved = transform(source_xy) if transform is not None else source_xy.copy()
     n = len(moved)
 
+    spacing = float(np.median(cKDTree(target_xy).query(target_xy, k=2)[0][:, 1]))
     if consistency_tol is None:
-        spacing = cKDTree(target_xy).query(target_xy, k=2)[0][:, 1]
-        consistency_tol = 0.4 * float(np.median(spacing))
+        consistency_tol = 0.4 * spacing
+    if assign_radius is None:
+        assign_radius = 0.75 * spacing
 
     si, ti, _ = match_centroids(moved, target_xy, max_distance=snap_radius, mutual=True)
     offsets = target_xy[ti] - moved[si]
@@ -994,23 +1052,62 @@ def refine_by_assignment(
         passes_snapped.append(int(np.sum(status == "snapped")))
         fill()
 
+    if assign_remaining:
+        rows, cols = _assign_one_to_one(refined, target_xy, np.flatnonzero(status == "filled"),
+                                        np.setdiff1d(np.arange(len(target_xy)), partner[partner >= 0]),
+                                        assign_radius)
+        refined[rows] = target_xy[cols]
+        status[rows] = "assigned"
+        partner[rows] = cols
+
+    # How far each placed pair's offset is from its snapped neighbourhood's:
+    # ~ the nucleus-in-cell scatter for right pairs, ~ a cell spacing for wrong ones
+    deviation = np.full(n, np.nan)
+    placed = np.flatnonzero(partner >= 0)
+    snapped_idx = np.flatnonzero(status == "snapped")
+    if len(placed) and len(snapped_idx) > min_neighbours:
+        field = target_xy[partner[snapped_idx]] - moved[snapped_idx]
+        k = min(k_fill + 1, len(snapped_idx))
+        d, j = cKDTree(moved[snapped_idx]).query(moved[placed], k=k, distance_upper_bound=neighbour_radius)
+        position = {int(v): i for i, v in enumerate(snapped_idx)}
+        for row, (dd, jj) in zip(placed, zip(d, j)):
+            own = position.get(int(row), -1)
+            nb = [x for x, ok in zip(jj, np.isfinite(dd)) if ok and x != own][:k_fill]
+            if len(nb) >= min(min_neighbours, k_fill):
+                deviation[row] = np.linalg.norm((target_xy[partner[row]] - moved[row])
+                                                - np.median(field[nb], axis=0))
+
     result = {
         "refined_xy": refined, "status": status, "target_idx": partner,
+        "neighbour_deviation": deviation,
+        "n_assigned": int(np.sum(status == "assigned")),
+        "median_deviation": {
+            k: float(np.nanmedian(deviation[status == k])) if np.any(status == k) else float("nan")
+            for k in ("snapped", "assigned")
+        },
         "n_snapped": int(np.sum(status == "snapped")),
         "fraction_snapped": float(np.sum(status == "snapped") / max(n, 1)),
-        "fraction_targets_matched": float(np.sum(status == "snapped") / max(len(target_xy), 1)),
+        "fraction_targets_matched": float(np.sum(partner >= 0) / max(len(target_xy), 1)),
         "snapped_per_pass": passes_snapped,
         "n_filled": int(np.sum(status == "filled")),
         "consistency_tol": float(consistency_tol),
         "validation": validation,
     }
     logger.info(
-        "Refinement: %d points snapped (%.1f%% of source, %.1f%% of targets), %d filled from "
-        "neighbours; held-out field check: median %.2f, %.0f%% within 2, %.0f%% within 5",
-        result["n_snapped"], 100 * result["fraction_snapped"], 100 * result["fraction_targets_matched"],
-        result["n_filled"], validation["median_error"], 100 * validation["within_2"],
-        100 * validation["within_5"],
+        "Refinement: %d snapped and %d assigned (%.1f%% of targets placed), %d filled from "
+        "neighbours; median neighbourhood deviation snapped %.1f / assigned %.1f; held-out field "
+        "check: median %.2f, %.0f%% within 5",
+        result["n_snapped"], result["n_assigned"], 100 * result["fraction_targets_matched"],
+        result["n_filled"], result["median_deviation"]["snapped"], result["median_deviation"]["assigned"],
+        validation["median_error"], 100 * validation["within_5"],
     )
+    if result["n_assigned"] and (result["median_deviation"]["assigned"]
+                                 > 1.5 * result["median_deviation"]["snapped"]):
+        logger.warning(
+            "Assigned pairs deviate from their neighbourhood by a median %.1f (snapped: %.1f): many "
+            "are probably nuclei without a target placed on a neighbour's. Filter on "
+            "neighbour_deviation, or use assign_remaining=False.",
+            result["median_deviation"]["assigned"], result["median_deviation"]["snapped"])
     return result
 
 
@@ -1091,6 +1188,7 @@ def register_centroid_files(
         moved = refinement["refined_xy"]
         result_df["registration_status"] = refinement["status"]
         result_df["target_index"] = refinement["target_idx"]
+        result_df["neighbour_deviation"] = refinement["neighbour_deviation"]
     result_df[x_col] = moved[:, 0]
     result_df[y_col] = moved[:, 1]
 

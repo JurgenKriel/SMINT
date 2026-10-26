@@ -154,5 +154,24 @@ def test_register_centroid_files_writes_refined_and_smooth(tmp_path):
     pd.DataFrame(source, columns=["centroid_x", "centroid_y"]).to_csv(tmp_path / "s.csv", index=False)
     pd.DataFrame(target, columns=["x_centroid", "y_centroid"]).to_csv(tmp_path / "t.csv", index=False)
     df, result = cr.register_centroid_files(str(tmp_path / "s.csv"), str(tmp_path / "t.csv"))
-    assert {"x_transformed", "x_transformed_smooth", "registration_status", "target_index"} <= set(df.columns)
+    assert {"x_transformed", "x_transformed_smooth", "registration_status", "target_index",
+            "neighbour_deviation"} <= set(df.columns)
     assert result["refinement"]["n_snapped"] == int((df.registration_status == "snapped").sum())
+
+
+def test_assigned_pairs_are_placed_and_flagged_by_their_deviation():
+    source, target, truth = synthetic_section(seed=12)
+    ref = cr.refine_by_assignment(source, target, transform=cr.register_centroids(source, target)["transform"])
+    assigned, snapped = ref["status"] == "assigned", ref["status"] == "snapped"
+    assert assigned.any()
+    assert np.allclose(ref["refined_xy"][assigned], target[ref["target_idx"][assigned]])
+    assert len(set(ref["target_idx"][ref["target_idx"] >= 0])) == np.sum(ref["target_idx"] >= 0)  # one-to-one
+    # Synthetic leftovers mostly have no true cell; their deviation must show it
+    assert ref["median_deviation"]["assigned"] > 2 * ref["median_deviation"]["snapped"]
+
+
+def test_assign_remaining_can_be_disabled():
+    source, target, _ = synthetic_section(seed=12)
+    ref = cr.refine_by_assignment(source, target, transform=cr.register_centroids(source, target)["transform"],
+                                  assign_remaining=False)
+    assert not np.any(ref["status"] == "assigned")
