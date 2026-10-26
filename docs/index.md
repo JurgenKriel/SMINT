@@ -1,72 +1,103 @@
 # SMINT: Spatial Multi-Omics Integration
 
-SMINT is a Python package for Spatial Multi-Omics Integration with enhanced segmentation capabilities and streamlined workflow.
-
-## Overview
-
-SMINT provides a comprehensive toolkit for processing and analyzing spatial omics data, including:
-
-- Multi-GPU cell segmentation for whole-slide images
-- Distributed segmentation using Dask for improved performance
-- Live segmentation monitoring with intuitive visualization tools
-- Registration of spatial transcriptomics with metabolomics and post-stain imaging
-- Integration with R analysis scripts
-- Comprehensive documentation with step-by-step guides
-- HPC deployment scripts for SLURM-based clusters
+SMINT brings spatial omics modalities into one coordinate system. It segments
+cells and nuclei across whole-slide images, then registers spatial
+transcriptomics, spatial metabolomics and post-stain imaging onto each other —
+interactively in napari, from the command line, or as SLURM jobs.
 
 ![SMINT Workflow](https://github.com/JurgenKriel/SMINT/raw/main/SpatialSegPaper_v2.png)
 
-## Key Features
+## Install
 
-### Enhanced Segmentation
+SMINT is installed from GitHub (it is not on PyPI). Python 3.10+:
 
-- **Multi-GPU Support**: Utilize multiple GPUs for faster processing of large whole-slide images
-- **Distributed Computing**: Use Dask to distribute segmentation tasks across multiple nodes
-- **Live Monitoring**: Track segmentation progress in real-time with the built-in viewer
-- **Adaptive Segmentation**: Automatically adjust segmentation parameters for optimal results
-- **Dual-Model Segmentation**: Simultaneously segment cells and nuclei with specialized models
+```bash
+pip install "git+https://github.com/JurgenKriel/SMINT.git"
+```
 
-### Registration
+STalign, used for sequential-section registration, and napari, for the
+interactive plugin, are installed separately — see [Installation](installation.md).
 
-- **Two Regimes**: STalign LDDMM for sequential sections; correspondence fitting
-  (RANSAC / affine / TPS) for post-staining on the same section
-- **Coarse Pre-registration**: Scale to a reference coordinate system, rotate and flip
-  before fine registration
-- **Manual Landmarks**: Interactive landmark annotation, in napari or standalone
-- **Honest Metrics**: Target Registration Error on held-out pairs, so a transform
-  cannot flatter itself by memorising correspondences
-- **HPC Native**: Submit to SLURM (CPU or GPU) or run locally, from Python or napari
+## Registration
 
-### R Integration
+Two registration regimes, chosen by how the modalities were acquired:
 
-- **Seamless Python-R Bridge**: Call R scripts and functions directly from Python
-- **Data Transfer**: Convert data between Python and R formats
-- **Existing R Scripts**: Use your existing R analysis scripts within the SMINT workflow
+| Situation | Method |
+|---|---|
+| **Sequential sections** — modalities from different physical sections | STalign LDDMM, guided by manual landmarks |
+| **Same section, post-staining** — a second modality on the exact same section | Correspondence fitting: affine, RANSAC or thin-plate spline |
 
-### Visualization
+- **napari plugin** — load datasets, pre-register by eye (scale, rotate, flip),
+  place paired landmarks, and launch registration without leaving the viewer.
+  Open **Plugins → SMINT Registration**. See [napari Plugin](napari_plugin.md).
+- **`smint-alignment` CLI** — the same machinery from the shell:
 
-- **Live Viewer**: Monitor segmentation progress with a live viewer
-- **Segmentation Overlays**: Visualize segmentation results overlaid on the original image
-- **RGB Composites**: Combine channels into composite images for review
+    ```bash
+    # Sequential sections: STalign LDDMM from saved landmarks
+    smint-alignment st-sm --st st.csv --sm sm.csv \
+        --st-points st_points.npy --sm-points sm_points.npy --output-dir run1
 
-### HPC Deployment
+    # Same section: fit nuclei centroids onto Xenium cells
+    smint-alignment centroid --source nuclei.csv --target xenium.csv --output-dir run2
 
-- **SLURM Integration**: Ready-to-use SLURM submission scripts for HPC deployment
-- **Registration Jobs**: Submit registration to SLURM (CPU or GPU) from Python or napari
+    # Coarse scale / rotate / flip, searching orientations by overlap
+    smint-alignment pretransform --source sm.csv --target xenium.csv --search --output sm_pre.csv
+    ```
 
-## Getting Started
+- **Honest metrics** — Target Registration Error is reported on held-out pairs,
+  so a flexible transform cannot flatter itself by memorising correspondences.
+- **HPC native** — add `--submit` to run on SLURM (CPU or GPU) instead of
+  locally; napari submits the same jobs and polls them in the background.
 
-- [Installation](installation.md): Install SMINT and its dependencies
-- [Segmentation](segmentation.md): Run cell segmentation on whole-slide images
-- [Alignment](alignment.md): Align spatial transcriptomics data
-- [napari Plugin](napari_plugin.md): Interactive pre-registration, landmarks and job submission
-- [R Integration](r_integration.md): Use R scripts and functions with SMINT
-- [Examples](examples.md): Complete examples of SMINT workflows
-- [Configuration](configuration.md): Configure SMINT for your specific needs
-- [HPC Deployment](hpc_deployment.md): Run SMINT on HPC clusters
-- [Visualizations](visualizations.md): Interactive 3D multi-omics plots from the BCRL patient cohort
+See [Alignment](alignment.md) for the full workflow.
+
+## Segmentation
+
+- **Dual-model segmentation** — cells and nuclei with Cellpose, in chunks across
+  whole-slide images
+- **Adaptive nuclei** — retries nuclear segmentation with relaxed thresholds
+  when too few nuclei are found
+- **Distributed processing** — tiles spread across Dask workers on multiple GPUs
+- **Live monitoring** — watch segmentation progress tile by tile with
+  `smint-viewer`
+
+See [Segmentation](segmentation.md).
+
+## Also in SMINT
+
+- **R integration** — run existing R analysis scripts from Python
+  ([R Integration](r_integration.md))
+- **Visualization** — segmentation overlays, outline plots and RGB composites
+- **HPC** — SLURM submission scripts for preprocessing and segmentation
+  ([HPC Deployment](hpc_deployment.md))
+- **Interactive 3D plots** — multi-omics data from the BCRL patient cohort
+  ([Visualizations](visualizations.md))
+
+## Documentation
+
+- [Installation](installation.md) · [Configuration](configuration.md) ·
+  [Dependency Handling](dependency_handling.md)
+- [Alignment](alignment.md) · [napari Plugin](napari_plugin.md) ·
+  [Xenium–Metabolomics](xenium_metabolomics_alignment.md)
+- [Segmentation](segmentation.md) · [Examples](examples.md)
+- [R Integration](r_integration.md) · [HPC Deployment](hpc_deployment.md)
 
 ## Citation
 
 If you use SMINT in your research, please cite:
 
+> Kriel, J. *SMINT — Spatial Multi-Omics Integration Toolkit* (v0.1.0).
+> [https://github.com/JurgenKriel/SMINT](https://github.com/JurgenKriel/SMINT)
+
+```bibtex
+@software{kriel_smint,
+  author  = {Kriel, Jurgen},
+  title   = {SMINT - Spatial Multi-Omics Integration Toolkit},
+  version = {0.1.0},
+  url     = {https://github.com/JurgenKriel/SMINT},
+  license = {MIT}
+}
+```
+
+GitHub's **Cite this repository** button provides the same citation from
+`CITATION.cff`.
