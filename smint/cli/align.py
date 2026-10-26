@@ -68,7 +68,8 @@ def build_parser() -> argparse.ArgumentParser:
     st_sm.add_argument("--epv", type=float, default=200.0, help="Velocity regularisation")
     st_sm.add_argument(
         "--orientation", default="dataset", choices=["dataset", "stalign"],
-        help="Output frame; 'dataset' restores the source dataset's orientation",
+        help="Output frame: 'stalign' is x/y in the ST frame (overlays ST); "
+             "'dataset' reproduces historical outputs, transposed relative to ST",
     )
     st_sm.add_argument("--st-x-col", default=None,
                        help="ST column to register (default: auto-detect)")

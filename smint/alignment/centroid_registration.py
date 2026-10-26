@@ -555,6 +555,14 @@ def register_centroids(
         "TRE after %s -- fit: %.4f | held-out validation: %.4f",
         method, tre_fit[0], tre_validation[0],
     )
+    if len(val_idx) and np.isfinite(tre_validation[0]) and tre_validation[0] >= tre_initial[0]:
+        logger.warning(
+            "Held-out TRE (%.4f) is no better than the initial TRE (%.4f): the "
+            "transform does not improve the alignment. The data may already be "
+            "as aligned as a global transform allows, with the residual being "
+            "correspondence ambiguity; compare it with the target's cell spacing.",
+            tre_validation[0], tre_initial[0],
+        )
     if len(val_idx) and np.isfinite(tre_validation[0]) and tre_fit[0] > 0:
         if tre_validation[0] > 5 * max(tre_fit[0], 1e-9):
             logger.warning(
