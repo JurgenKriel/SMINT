@@ -53,8 +53,14 @@ These dependencies are automatically installed when you install SMINT:
 - **dask**: For parallel computing (base package)
 - **scikit-image**: For image processing
 - **tifffile**: For reading/writing OME-TIFF files
-- **cellpose**: For cell segmentation models
+- **cellpose** (3.x): For cell segmentation models
 - **opencv-python**: For image processing and contour extraction
+
+!!! note "Cellpose 3 is required"
+    SMINT's segmentation requires **Cellpose 3** (`cellpose>=3,<4`), which is
+    installed automatically. Cellpose 4 ships only its SAM-based `cpsam` model and
+    ignores the `cyto`/`nuclei` model types and `channels` this pipeline uses, so
+    don't upgrade it in a SMINT environment.
 
 ### Optional Dependencies
 

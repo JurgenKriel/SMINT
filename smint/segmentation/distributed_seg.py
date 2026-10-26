@@ -45,7 +45,7 @@ except Exception as exc:
     )
 
 try:
-    from cellpose import models
+    from cellpose import core, models
     CELLPOSE_AVAILABLE = True
 except Exception as exc:
     CELLPOSE_AVAILABLE = False
@@ -107,7 +107,7 @@ def setup_dask_client(n_workers=None, use_gpu=True, memory_limit='16GB'):
                 threads_per_worker=1,
                 memory_limit=memory_limit
             )
-            logger.info(f"Created LocalCUDACluster with {cluster.n_workers} workers")
+            logger.info(f"Created LocalCUDACluster with {len(cluster.workers)} workers")
         except Exception as e:
             logger.warning(f"Failed to create LocalCUDACluster: {e}. Falling back to LocalCluster.")
             cluster = LocalCluster(
@@ -121,7 +121,7 @@ def setup_dask_client(n_workers=None, use_gpu=True, memory_limit='16GB'):
             threads_per_worker=1,
             memory_limit=memory_limit
         )
-        logger.info(f"Created LocalCluster with {cluster.n_workers} workers")
+        logger.info(f"Created LocalCluster with {len(cluster.workers)} workers")
     
     client = Client(cluster)
     logger.info(f"Dask dashboard available at: {client.dashboard_link}")
@@ -223,7 +223,7 @@ def load_segmentation_models(model_paths):
         
         try:
             # Check if GPU is available
-            use_gpu = models.use_gpu()
+            use_gpu = core.use_gpu()
             logger.info(f"Using GPU for model {model_name}: {use_gpu}")
             
             # Load the model

@@ -189,7 +189,7 @@ def visualize_roi_combined(image_data_stack, roi_position, roi_size,
             roi_df_nuclei['x_rel'] = roi_df_nuclei['x'] - x_offset_for_plot
             roi_df_nuclei['y_rel'] = roi_df_nuclei['y'] - y_offset_for_plot
             for obj_id, group in roi_df_nuclei.groupby('global_cell_id'):
-                ax.plot(group['x_rel'], group['y_rel'], 'cyan-', linewidth=1.0, alpha=0.7)
+                ax.plot(group['x_rel'], group['y_rel'], color='cyan', linestyle='-', linewidth=1.0, alpha=0.7)
             outline_info.append(f"Nuclei({roi_df_nuclei['global_cell_id'].nunique()}):Cyan")
 
     if outline_info:
@@ -410,10 +410,11 @@ def process_large_image(
         
     try:
         # Import locally to avoid circular imports
-        from cellpose import models
+        from cellpose import core, models
         
-        # Check for GPU
-        use_gpu = models.use_gpu()
+        # Check for GPU. use_gpu lives in cellpose.core; cellpose.models never
+        # re-exported it in Cellpose 3.
+        use_gpu = core.use_gpu()
         logger.info(f"GPU available and will be used: {use_gpu}")
     
         # Load cell model

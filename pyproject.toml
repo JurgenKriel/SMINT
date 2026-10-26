@@ -16,7 +16,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "cellpose",
+    "cellpose>=3,<4",  # 4.x drops the cyto/nuclei models this pipeline uses
     "dask>=2024.11.2",
     "email-validator>=2.2.0",
     "flask>=3.1.0",
@@ -47,7 +47,7 @@ smint = "smint.napari:napari.yaml"
 
 [project.optional-dependencies]
 r_integration = ["rpy2>=3.4.0"]
-segmentation = ["cellpose"]
+segmentation = ["cellpose>=3,<4"]
 visualization = ["matplotlib>=3.10.3"]
 gui = []
 docs = ["mkdocs", "mkdocs-material"]

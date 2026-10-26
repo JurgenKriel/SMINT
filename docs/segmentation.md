@@ -31,6 +31,12 @@ For optimal segmentation results, input images should have:
 - **Bit depth**: 8-bit or 16-bit grayscale per channel
 - **Quality**: Minimal noise, good contrast between cells and background
 
+!!! note "Cellpose 3 is required"
+    SMINT's segmentation requires **Cellpose 3** (`cellpose>=3,<4`), which is
+    installed automatically. Cellpose 4 ships only its SAM-based `cpsam` model and
+    ignores the `cyto`/`nuclei` model types and `channels` this pipeline uses, so
+    don't upgrade it in a SMINT environment.
+
 ## Quick Start
 
 Segmentation is run with `scripts/run_segmentation.py` from a source checkout.
