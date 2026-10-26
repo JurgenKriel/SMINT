@@ -36,14 +36,18 @@ def get_default_config_path():
 
 def load_config(config_path=None):
     """
-    Load a configuration file.
+    Load a YAML configuration file.
     
     Args:
         config_path (str, optional): Path to the configuration file.
-            If None, searches in default locations.
+            If None, the first that exists of ``./configs/segmentation_config.yaml``,
+            ``~/.smint/config.yaml`` and the repository's
+            ``configs/segmentation_config.yaml`` (see
+            [`get_default_config_path`][smint.utils.config.get_default_config_path]).
     
     Returns:
-        dict: Configuration dictionary.
+        dict: Configuration dictionary; empty (with a logged warning or error)
+            if the file is missing or cannot be parsed.
     """
     logger = logging.getLogger(__name__)
     
@@ -140,8 +144,11 @@ def validate_config(config, schema=None):
         config (dict): Configuration dictionary to validate.
         schema (dict, optional): Schema dictionary. If None, uses a basic schema.
     
+    The default schema requires ``model_paths`` and ``output_dir`` and checks
+    that ``model_paths`` and ``chunk_size``, when present, are lists.
+    
     Returns:
-        tuple: (is_valid, errors) where is_valid is a boolean and errors is a list of error messages.
+        tuple: ``(is_valid, errors)``: a bool and a list of error messages.
     """
     logger = logging.getLogger(__name__)
     
@@ -193,10 +200,10 @@ def get_config_value(config, key_path, default=None):
     Args:
         config (dict): Configuration dictionary.
         key_path (str): Path to the key, using dots to separate levels (e.g., 'model_params.diameter').
-        default: Default value to return if the key is not found.
+        default (Any): Value to return if the key is not found.
     
     Returns:
-        The value at the specified key path, or the default if not found.
+        Any: The value at the specified key path, or ``default`` if not found.
     """
     keys = key_path.split('.')
     result = config

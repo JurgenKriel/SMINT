@@ -23,7 +23,7 @@ centroid unless a centre is given::
 
 Fixing the order matters: rotation and flips do not commute, so "flip x then
 rotate 90" is not "rotate 90 then flip x". Composing your own matrices with
-:func:`compose` lets you depart from this order deliberately.
+[`compose`][smint.alignment.compose] lets you depart from this order deliberately.
 """
 
 import json
@@ -131,7 +131,10 @@ def fit_scale_to_reference(
 
     Returns
     -------
-    (sx, sy)
+    sx : float
+        Scale factor along x.
+    sy : float
+        Scale factor along y (equal to ``sx`` when ``preserve_aspect``).
 
     Notes
     -----
@@ -201,7 +204,7 @@ def build_pretransform(
         Explicit ``(sx, sy)``. Overrides fitting against the reference.
     scale_mode : {'extent', 'max', 'none'}, optional
         Fitting mode when ``scale`` is not given. See
-        :func:`fit_scale_to_reference`.
+        [`fit_scale_to_reference`][smint.alignment.fit_scale_to_reference].
     preserve_aspect : bool, optional
         Isotropic scaling when fitting.
     rotation : float, optional
@@ -217,7 +220,7 @@ def build_pretransform(
     -------
     numpy.ndarray
         3x3 homogeneous affine, applicable with
-        :func:`smint.alignment.centroid_registration.apply_affine`.
+        [`apply_affine`][smint.alignment.apply_affine].
     """
     source_xy = _as_xy(source_xy)
     if source_xy.shape[0] == 0:
@@ -261,7 +264,7 @@ def apply_pretransform(coords, matrix: np.ndarray) -> np.ndarray:
     """
     Apply a 3x3 affine to ``(N, 2)`` ``(x, y)`` coordinates.
 
-    Thin wrapper over :func:`smint.alignment.centroid_registration.apply_affine`
+    Thin wrapper over [`apply_affine`][smint.alignment.apply_affine]
     so pre-registration reads naturally on its own.
     """
     from .centroid_registration import apply_affine
@@ -343,7 +346,7 @@ def save_transform(matrix: np.ndarray, path: str, **metadata) -> Path:
 
 def load_transform(path: str) -> np.ndarray:
     """
-    Load a 3x3 affine saved by :func:`save_transform`.
+    Load a 3x3 affine saved by [`save_transform`][smint.alignment.save_transform].
 
     Returns
     -------

@@ -31,8 +31,10 @@ def detect_coordinate_columns(
 
     Returns
     -------
-    (x_col, y_col)
-        Either may be None if nothing matched.
+    x_col : str or None
+        The x column, or None if nothing matched.
+    y_col : str or None
+        The y column, or None if nothing matched.
     """
     lookup = {str(c).lower(): c for c in columns}
     x_col = next((lookup[c.lower()] for c in X_CANDIDATES if c.lower() in lookup), None)
@@ -43,6 +45,20 @@ def detect_coordinate_columns(
 def require_coordinate_columns(columns: Sequence[str], source: str = "table"):
     """
     Detect coordinate columns, raising a useful error when they are missing.
+
+    Parameters
+    ----------
+    columns : sequence of str
+        The table's column names.
+    source : str, optional
+        Name of the table, used in the error message.
+
+    Returns
+    -------
+    x_col : str
+        The x column.
+    y_col : str
+        The y column.
 
     Raises
     ------

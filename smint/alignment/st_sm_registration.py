@@ -47,7 +47,7 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
-#: Column names written by :func:`save_transformed_data`.
+#: Column names written by [`save_transformed_data`][smint.alignment.save_transformed_data].
 TRANSFORMED_X_COL = "x_transformed"
 TRANSFORMED_Y_COL = "y_transformed"
 
@@ -287,7 +287,7 @@ def read_sm_matrix(
     Notes
     -----
     This returns the whole DataFrame rather than a ``(coords, data, mz)``
-    tuple; use :func:`sm_coordinates` to pull the coordinate array out.
+    tuple; use [`sm_coordinates`][smint.alignment.sm_coordinates] to pull the coordinate array out.
     """
     if not os.path.exists(mtx_file):
         raise FileNotFoundError(f"Metabolomics file not found: {mtx_file}")
@@ -392,7 +392,7 @@ def resolve_st_columns(
     Decide which ST columns hold the coordinates to register.
 
     Explicit names win. When omitted, columns are auto-detected in the priority
-    order in :mod:`smint.alignment.columns`, and the choice is logged.
+    order in `smint.alignment.columns`, and the choice is logged.
 
     Be deliberate here. ST tables often carry several plausible coordinate
     pairs from successive processing stages -- ``x_centroid`` alongside
@@ -409,7 +409,10 @@ def resolve_st_columns(
 
     Returns
     -------
-    (x_col, y_col)
+    x_col : str
+        Column holding x.
+    y_col : str
+        Column holding y.
     """
     from .columns import detect_coordinate_columns
 
@@ -456,7 +459,7 @@ def read_st_annotations(
         Path to the ST CSV.
     x_col, y_col : str, optional
         Coordinate column names. Auto-detected when omitted; see
-        :func:`resolve_st_columns` for why explicit names are safer.
+        [`resolve_st_columns`][smint.alignment.resolve_st_columns] for why explicit names are safer.
     verbose : bool, optional
         Log progress.
 
@@ -523,8 +526,10 @@ def rasterize_coordinates(x, y, dx: float = 30.0, draw: int = 0, **kwargs):
 
     Returns
     -------
-    X, Y : numpy.ndarray
-        Pixel locations along each axis.
+    X : numpy.ndarray
+        Pixel locations along x.
+    Y : numpy.ndarray
+        Pixel locations along y.
     I : numpy.ndarray
         Rasterized image, channels first.
     fig : matplotlib figure or None
@@ -563,7 +568,7 @@ def save_rasterized(output_path: str, X, Y, I) -> str:
     output_path : str
         Destination path; ``.npz`` is appended by numpy if absent.
     X, Y, I : numpy.ndarray
-        Outputs of :func:`rasterize_coordinates`.
+        Outputs of [`rasterize_coordinates`][smint.alignment.rasterize_coordinates].
 
     Returns
     -------
@@ -654,7 +659,7 @@ def affine_from_landmarks(points_source: np.ndarray, points_target: np.ndarray):
     Parameters
     ----------
     points_source, points_target : numpy.ndarray
-        ``(N, 2)`` arrays in row-col order, as returned by :func:`load_landmarks`.
+        ``(N, 2)`` arrays in row-col order, as returned by [`load_landmarks`][smint.alignment.load_landmarks].
 
     Returns
     -------
@@ -663,7 +668,7 @@ def affine_from_landmarks(points_source: np.ndarray, points_target: np.ndarray):
 
     Notes
     -----
-    :func:`run_lddmm_alignment` derives its own initialisation from
+    [`run_lddmm_alignment`][smint.alignment.run_lddmm_alignment] derives its own initialisation from
     ``points_source``/``points_target`` internally, so this is **not** needed
     for the standard workflow. It is kept for inspecting or seeding a
     landmark-only (affine) registration.
@@ -700,7 +705,7 @@ def run_lddmm_alignment(
     source_grid, target_grid : sequence
         Grids as ``[Y, X]`` (row-col), matching STalign's convention.
     source_image, target_image : numpy.ndarray
-        Rasterized images from :func:`rasterize_coordinates`.
+        Rasterized images from [`rasterize_coordinates`][smint.alignment.rasterize_coordinates].
     points_source, points_target : numpy.ndarray, optional
         Landmark correspondences in row-col order. When supplied, LDDMM uses
         them to initialise the affine, which is what makes registration
@@ -765,12 +770,12 @@ def transform_points(
     Parameters
     ----------
     lddmm_output : dict
-        Output of :func:`run_lddmm_alignment` (needs ``A``, ``v``, ``xv``).
+        Output of [`run_lddmm_alignment`][smint.alignment.run_lddmm_alignment] (needs ``A``, ``v``, ``xv``).
     x, y : array-like
         Source coordinates, as plain x and y vectors.
     orientation : {'dataset', 'stalign'}, optional
-        Which frame to return. See the module docstring. ``'dataset'``
-        reproduces the project's historical outputs and keeps the source
+        Which frame to return. STalign returns points in row-column order;
+        ``'dataset'`` reproduces the project's historical outputs and keeps the source
         dataset's orientation; ``'stalign'`` returns true xy in the ST frame.
         The two differ by a transpose.
 
@@ -834,7 +839,7 @@ def save_transformed_data(
     source_data : pandas.DataFrame
         The SM frame the coordinates were derived from.
     transformed_coords : numpy.ndarray
-        ``(N, 2)`` output of :func:`transform_points`.
+        ``(N, 2)`` output of [`transform_points`][smint.alignment.transform_points].
     output_path : str, optional
         CSV destination. Parent directories are created.
     x_col, y_col : str, optional
@@ -889,7 +894,7 @@ def prepare_landmark_inputs(
     After this returns, run ``point_annotator.py`` on each ``.npz`` and pick the
     same anatomical landmarks, in the same order, in both. The annotator writes
     ``<prefix>_st_points.npy`` / ``<prefix>_sm_points.npy`` next to them, which
-    :func:`register_sm_to_st` then consumes.
+    [`register_sm_to_st`][smint.alignment.register_sm_to_st] then consumes.
 
     Parameters
     ----------
@@ -901,13 +906,13 @@ def prepare_landmark_inputs(
         Path prefix. Writes ``<prefix>_st.npz`` / ``<prefix>_sm.npz``; the
         annotator then appends ``_points.npy`` to each stem, yielding the
         ``<prefix>_st_points.npy`` / ``<prefix>_sm_points.npy`` files that
-        :func:`register_sm_to_st` expects.
+        [`register_sm_to_st`][smint.alignment.register_sm_to_st] expects.
     dx : float, optional
         Rasterization pixel size, in microns. Must match between the pair.
     st_x_col, st_y_col : str, optional
         ST coordinate columns.
     sm_kwargs : dict, optional
-        Forwarded to :func:`read_sm_matrix` (e.g. ``rotate_left_90``).
+        Forwarded to [`read_sm_matrix`][smint.alignment.read_sm_matrix] (e.g. ``rotate_left_90``).
 
     Returns
     -------
@@ -989,13 +994,16 @@ def register_sm_to_st(
     device : str, optional
         Torch device; defaults to CUDA when available.
     orientation : {'dataset', 'stalign'}, optional
-        Output coordinate frame. See the module docstring.
+        Output coordinate frame. ``'stalign'`` gives true x/y in the ST
+        frame, so the result overlays the ST cells; ``'dataset'`` (default)
+        reproduces the project's historical outputs, which are transposed
+        relative to ST.
     st_x_col, st_y_col : str, optional
         Which ST columns to register. Auto-detected when omitted; pass them
         explicitly when the table carries several coordinate pairs, since the
         wrong choice misregisters silently rather than raising.
     sm_kwargs : dict, optional
-        Forwarded to :func:`read_sm_matrix`, including ``x_col``/``y_col``.
+        Forwarded to [`read_sm_matrix`][smint.alignment.read_sm_matrix], including ``x_col``/``y_col``.
     lddmm_params : dict, optional
         Extra parameters forwarded to ``STalign.LDDMM``.
 
