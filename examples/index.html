@@ -970,10 +970,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-same-section-registration-and-reading-tre" class="md-nav__link">
+  <a href="#3-same-section-registration-nuclei-onto-xenium-cells" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Same-section registration, and reading TRE
+        3. Same-section registration: nuclei onto Xenium cells
       
     </span>
   </a>
@@ -1210,10 +1210,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-same-section-registration-and-reading-tre" class="md-nav__link">
+  <a href="#3-same-section-registration-nuclei-onto-xenium-cells" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Same-section registration, and reading TRE
+        3. Same-section registration: nuclei onto Xenium cells
       
     </span>
   </a>
@@ -1369,53 +1369,64 @@ is no ground truth to score against; this distance and the overlay are the
 practical checks.</p>
 <hr />
 <h2 id="2-coarse-pre-registration-with-an-orientation-search">2. Coarse pre-registration with an orientation search<a class="headerlink" href="#2-coarse-pre-registration-with-an-orientation-search" title="Permanent link">&para;</a></h2>
-<p>Before landmarking or fitting, bring a dataset roughly into the target frame.
-Here 92,610 segmented nuclei are fitted to the same Xenium cells:</p>
+<p>Before landmarking, bring a dataset roughly into the target frame. MALDI
+pixels from Ven5B (converted to microns) arrive rotated relative to the Z2
+Xenium cells:</p>
 <div class="highlight"><pre><span></span><code>smint-alignment<span class="w"> </span>pretransform<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--source<span class="w"> </span>nuclei.csv<span class="w"> </span>--target<span class="w"> </span>Z2_final_aligned_annos.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--search<span class="w"> </span>--output<span class="w"> </span>nuclei_pre.csv
+<span class="w">    </span>--source<span class="w"> </span>ven5b_sm_xy.csv<span class="w"> </span>--target<span class="w"> </span>Z2_final_aligned_annos.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--search<span class="w"> </span>--output<span class="w"> </span>ven5b_pre.csv
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>scale        : 0.9554, 0.9554
-rotation     : -15.00 deg
+<div class="highlight"><pre><span></span><code>INFO smint.cli.align: Best: rotation=90 flip_x=False flip_y=False
+scale        : 1.2161, 1.2161
+rotation     : 90.00 deg
 reflects     : False
-overlap      : 0.832
-wrote        : nuclei_pre.csv
-transform    : nuclei_pre.csv.transform.json
+overlap      : 0.954
+wrote        : ven5b_pre.csv
+transform    : ven5b_pre.csv.transform.json
 </code></pre></div>
 <p><code>--search</code> tries every 15° rotation with and without each flip and keeps the
-best overlap score; it took 13 s. The matrix and its decomposition are saved
-next to the output, so the step can be reproduced exactly. The napari
-plugin's <strong>2. Pre-register</strong> widget does the same interactively.</p>
+best overlap score. Here it recovered the 90° rotation that the Ven5B
+pipeline otherwise applies by hand (<code>rotate_left_90=True</code>), in 52 s for
+459,969 pixels. The matrix and its decomposition are saved next to the
+output, so the step can be reproduced exactly. The napari plugin's
+<strong>2. Pre-register</strong> widget does the same interactively.</p>
 <hr />
-<h2 id="3-same-section-registration-and-reading-tre">3. Same-section registration, and reading TRE<a class="headerlink" href="#3-same-section-registration-and-reading-tre" title="Permanent link">&para;</a></h2>
-<p>When a second modality is acquired on the <em>same</em> section (for example
-post-staining), centroids correspond one-to-one and a global transform can be
-fitted:</p>
+<h2 id="3-same-section-registration-nuclei-onto-xenium-cells">3. Same-section registration: nuclei onto Xenium cells<a class="headerlink" href="#3-same-section-registration-nuclei-onto-xenium-cells" title="Permanent link">&para;</a></h2>
+<p>When a second modality is acquired on the <em>same</em> section — here, nuclei
+segmented from a post-Xenium stain of Venture 5 section z5 — centroids
+correspond one-to-one:</p>
 <div class="highlight"><pre><span></span><code>smint-alignment<span class="w"> </span>centroid<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--source<span class="w"> </span>nuclei_pre.csv<span class="w"> </span>--source-cols<span class="w"> </span>x<span class="w"> </span>y<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--target<span class="w"> </span>Z2_final_aligned_annos.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--method<span class="w"> </span>ransac+tps<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--output-dir<span class="w"> </span>/vast/scratch/<span class="nv">$USER</span>/nuc_to_xenium<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--submit<span class="w"> </span>--watch<span class="w"> </span>--partition<span class="w"> </span>regular
+<span class="w">    </span>--source<span class="w"> </span>transformed_nuc_points_in_global.csv<span class="w"> </span>--source-cols<span class="w"> </span>x_centroid<span class="w"> </span>y_centroid<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--target<span class="w"> </span>z5_pre_aligned_coordinates.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-dir<span class="w"> </span>/vast/scratch/<span class="nv">$USER</span>/z5_nuc_to_xenium
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>{
-  "method": "ransac+tps",
-  "n_matched": 21238,
-  "tre_initial": 10.17,
-  "tre_fit": 11.62,
-  "tre_validation": 12.31,
-  "inlier_fraction": 0.498
+  "method": "multiround",
+  "n_matched": 49206,
+  "tre_initial": 10.96,
+  "tre_fit": 4.45,
+  "tre_validation": 4.93,
+  "rounds": [
+    {"stage": "initial", "median_nn": 12.40},
+    {"stage": "affine", "block_size": 500.0, "blocks": 300, "consistent_blocks": 0.91,
+     "median_nn": 5.38, "accepted": true},
+    {"stage": "tps", "block_size": 250.0, "blocks": 1013, "consistent_blocks": 0.77,
+     "median_nn": 5.43, "accepted": false}
+  ]
 }
 </code></pre></div>
-<p><strong>How to read this.</strong> <code>tre_validation</code> is the error on pairs held out from
-fitting, and the only number to trust. Here it is <em>worse</em> than <code>tre_initial</code>:
-the transform did not improve on the starting alignment. With a residual of
-~10 µm — about one cell spacing — and only half the matches accepted as
-inliers, the remaining distance is ambiguity in which cell matches which, not
-misregistration. These nuclei were already as well aligned as a global
-transform can make them. On data that needs registering, <code>tre_validation</code>
-falls well below <code>tre_initial</code>. See
-<a href="../alignment/#measuring-quality-honestly">Measuring quality honestly</a>.</p>
+<p><img alt="Post-stain nuclei registered to Xenium cells, before and after" src="../assets/registration_same_section.png" /></p>
+<p><em>88,906 nuclei and 74,247 Xenium cells, about 17 µm apart; 3 s.</em></p>
+<p><strong>How to read this.</strong> <code>tre_validation</code> is measured on a quarter of the nuclei
+held out before any matching, and is the number to trust: 11.0 µm → 4.9 µm.
+The rounds show the affine voting round did the work; the finer TPS round
+didn't improve the fitting nuclei, so it was rejected and registration
+stopped. Held out, 45% of nuclei now sit within 5 µm of a mutually-nearest
+cell, against 10% before.</p>
+<p>The single-round methods can't do this: they match each nucleus to its
+nearest cell before fitting, and with a starting offset close to the cell
+spacing most of those matches are wrong. <code>--method ransac+tps</code> only reaches
+11.5 µm here. See <a href="../alignment/#why-multiple-rounds">Why multiple rounds</a>.</p>
 <hr />
 <h2 id="4-segmenting-a-whole-slide-image-on-one-gpu">4. Segmenting a whole-slide image on one GPU<a class="headerlink" href="#4-segmenting-a-whole-slide-image-on-one-gpu" title="Permanent link">&para;</a></h2>
 <p>A fine-tuned Cellpose-SAM model segments cells, and Cellpose's base model

@@ -777,6 +777,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#why-multiple-rounds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why multiple rounds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#measuring-quality-honestly" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1267,6 +1278,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#why-multiple-rounds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why multiple rounds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#measuring-quality-honestly" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1502,14 +1524,11 @@ the orientation explicitly; it is recorded on the output frame.</p>
 <p>For post-staining on the same section, where centroids correspond one-to-one.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_centroids</span>
 
-<span class="n">result</span> <span class="o">=</span> <span class="n">register_centroids</span><span class="p">(</span>
-    <span class="n">nucleus_xy</span><span class="p">,</span> <span class="n">xenium_xy</span><span class="p">,</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">"ransac+tps"</span><span class="p">,</span>
-    <span class="n">max_distance</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
-    <span class="n">validation_fraction</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"tre_validation"</span><span class="p">])</span>    <span class="c1"># the number that matters</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">register_centroids</span><span class="p">(</span><span class="n">nucleus_xy</span><span class="p">,</span> <span class="n">xenium_xy</span><span class="p">)</span>   <span class="c1"># method="multiround"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"tre_validation"</span><span class="p">])</span>                       <span class="c1"># the number that matters</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"validation"</span><span class="p">][</span><span class="s2">"after"</span><span class="p">])</span>                  <span class="c1"># median NN, matched fractions</span>
 </code></pre></div>
+<p><img alt="Post-stain nuclei registered to Xenium cells, before and after" src="../assets/registration_same_section.png" /></p>
 <table>
 <thead>
 <tr>
@@ -1519,8 +1538,12 @@ the orientation explicitly; it is recorded on the output frame.</p>
 </thead>
 <tbody>
 <tr>
+<td><code>multiround</code> (default)</td>
+<td>Coarse-to-fine displacement voting: an affine, then optional smooth TPS rounds</td>
+</tr>
+<tr>
 <td><code>affine</code></td>
-<td>Least-squares affine on all matched pairs</td>
+<td>Least-squares affine on all nearest-neighbour pairs</td>
 </tr>
 <tr>
 <td><code>ransac</code></td>
@@ -1536,6 +1559,57 @@ the orientation explicitly; it is recorded on the output frame.</p>
 </tr>
 </tbody>
 </table>
+<h3 id="why-multiple-rounds">Why multiple rounds<a class="headerlink" href="#why-multiple-rounds" title="Permanent link">&para;</a></h3>
+<p>The single-round methods match every nucleus to its nearest cell <em>once</em>,
+before fitting. When the starting offset is comparable to the cell spacing,
+most of those matches are wrong, and no transform fitted to them can recover:
+on Venture 5 z5 (cells ~17 µm apart, nuclei ~12 µm off) they barely move the
+alignment.</p>
+<p><code>multiround</code> never commits to nearest neighbours. Within each block of tissue,
+every nucleus votes for the displacements to several nearby cells; wrong
+candidates scatter, while the true offset — shared by the whole block — piles
+up as a peak (<code>vote_block_displacements</code>). Then:</p>
+<ol>
+<li><strong>Round 1</strong> fits an affine through the block peaks (500 µm blocks).</li>
+<li><strong>Round 2</strong> votes again in 250 µm blocks on the result and adds a smooth TPS
+   through those peaks, following local warps.</li>
+<li>A round is <strong>kept only if it improves</strong> the fitting nuclei's alignment;
+   otherwise registration stops there.</li>
+</ol>
+<p>Each round's outcome is in <code>result["rounds"]</code>. Tune with <code>schedule=</code> —
+<code>(max_distance, block_size, bin_size)</code> per round, in microns — and
+<code>min_improvement=</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Venture 5 z5, held-out nuclei</th>
+<th>median NN</th>
+<th>matched ≤ 5 µm</th>
+<th>matched ≤ 10 µm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>no transform</td>
+<td>12.4 µm</td>
+<td>10%</td>
+<td>34%</td>
+</tr>
+<tr>
+<td><code>ransac+tps</code> (one round)</td>
+<td>11.5 µm</td>
+<td>13%</td>
+<td>40%</td>
+</tr>
+<tr>
+<td><strong><code>multiround</code></strong></td>
+<td><strong>5.4 µm</strong></td>
+<td><strong>45%</strong></td>
+<td><strong>76%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><em>Matched = mutual nearest neighbours. 88,906 nuclei, 74,247 cells; 3 s.</em></p>
 <h3 id="measuring-quality-honestly">Measuring quality honestly<a class="headerlink" href="#measuring-quality-honestly" title="Permanent link">&para;</a></h3>
 <p>Target Registration Error is easy to compute in a way that is <strong>circular</strong>.
 Correspondences here are established by nearest neighbour, so a sufficiently
@@ -1543,14 +1617,21 @@ flexible transform can drive TRE to ~0 on the pairs it was fitted to,
 regardless of whether those correspondences are correct. An unregularised TPS
 with as many control points as pairs will <em>always</em> report TRE ≈ 0 on those
 pairs — that is interpolation, not accuracy.</p>
-<p><code>register_centroids</code> therefore always holds out a fraction of pairs and reports
-TRE on both:</p>
+<p><code>register_centroids</code> therefore always holds data out of fitting and reports
+TRE on it. The single-round methods hold out matched pairs; <code>multiround</code>
+re-estimates correspondences each round, so it holds out a quarter of the
+<em>nuclei</em> before anything is matched:</p>
 <div class="highlight"><pre><span></span><code>tre_initial      before any transform
-tre_fit          on the pairs used for fitting     &lt;- not evidence
-tre_validation   on held-out pairs                 &lt;- the real number
+tre_fit          on the data used for fitting      &lt;- not evidence
+tre_validation   on held-out data                  &lt;- the real number
 </code></pre></div>
-<p>A large gap between the two means the transform is memorising
-correspondences. The function warns when it detects this.</p>
+<p>For <code>multiround</code>, TRE is the distance from each held-out nucleus to its mutual
+nearest cell. <code>result["validation"]</code> adds a correspondence-free summary of the
+held-out nuclei <code>before</code> and <code>after</code>: median distance to the nearest cell, and
+the fractions matched within 5 and 10 µm.</p>
+<p>A large gap between fit and validation means the transform is memorising
+correspondences; a validation TRE no better than the initial one means it did
+not help. The function warns in both cases.</p>
 <div class="admonition warning">
 <p class="admonition-title">Matching is mutual by default</p>
 <p><code>mutual=True</code> keeps only pairs that are each other's nearest neighbour.
@@ -1559,14 +1640,17 @@ popular target, inflating the pair count. On a real Venture 5 section this
 was the difference between 75,146 apparent pairs and 40,135 real ones.</p>
 </div>
 <h3 id="interpreting-the-result">Interpreting the result<a class="headerlink" href="#interpreting-the-result" title="Permanent link">&para;</a></h3>
-<p>If no method beats the initial TRE, the datasets are already as aligned as a
-global transform can make them, and the remaining distance is correspondence
-ambiguity rather than misregistration. Two useful diagnostics:</p>
 <ul>
-<li>Compare against the target's own inter-cell spacing. If the residual is a
-  large fraction of that, many "matches" are neighbouring cells rather than the
-  same cell.</li>
-<li>Sweep <code>max_distance</code>. If TRE shrinks in proportion rather than reaching a
+<li><strong>A single-round method doesn't beat the initial TRE.</strong> Usually the starting
+  offset is close to the cell spacing and nearest-neighbour matching is
+  pairing nuclei with neighbouring cells. Use <code>multiround</code>.</li>
+<li><strong>Compare with the target's cell spacing.</strong> A residual that is a large
+  fraction of it means many "matches" are neighbouring cells, not the same
+  cell.</li>
+<li><strong>Expect a floor of a few microns.</strong> Xenium reports <em>cell</em> centroids; a
+  stained nucleus's centroid is legitimately a few microns away from its
+  cell's.</li>
+<li><strong>Sweep <code>max_distance</code>.</strong> If TRE shrinks in proportion rather than reaching a
   plateau, the threshold is setting the residual, not alignment error.</li>
 </ul>
 <hr />
