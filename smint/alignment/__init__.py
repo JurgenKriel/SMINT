@@ -70,6 +70,8 @@ from .centroid_registration import (
     fit_tps,
     apply_tps,
     register_centroids,
+    vote_block_displacements,
+    alignment_quality,
     register_centroid_files,
 )
 
@@ -131,6 +133,8 @@ __all__ = [
     'fit_tps',
     'apply_tps',
     'register_centroids',
+    'vote_block_displacements',
+    'alignment_quality',
     'register_centroid_files',
 ]
 

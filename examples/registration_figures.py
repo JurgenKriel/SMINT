@@ -216,7 +216,7 @@ def main():
     p.add_argument("--scale-xy", type=float, default=10.0)
     p.add_argument("--rotate-left-90", action="store_true", default=True)
     p.add_argument("--niter", type=int, default=1000)
-    p.add_argument("--method", default="ransac+tps")
+    p.add_argument("--method", default="multiround")
     p.add_argument("--max-distance", type=float, default=100.0)
     p.add_argument("--zoom", type=float, default=600.0, help="Zoom window size (µm)")
     p.add_argument("--outdir", default="docs/assets")

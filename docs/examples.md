@@ -121,66 +121,80 @@ practical checks.
 
 ## 2. Coarse pre-registration with an orientation search
 
-Before landmarking or fitting, bring a dataset roughly into the target frame.
-Here 92,610 segmented nuclei are fitted to the same Xenium cells:
+Before landmarking, bring a dataset roughly into the target frame. MALDI
+pixels from Ven5B (converted to microns) arrive rotated relative to the Z2
+Xenium cells:
 
 ```bash
 smint-alignment pretransform \
-    --source nuclei.csv --target Z2_final_aligned_annos.csv \
-    --search --output nuclei_pre.csv
+    --source ven5b_sm_xy.csv --target Z2_final_aligned_annos.csv \
+    --search --output ven5b_pre.csv
 ```
 
 ```text
-scale        : 0.9554, 0.9554
-rotation     : -15.00 deg
+INFO smint.cli.align: Best: rotation=90 flip_x=False flip_y=False
+scale        : 1.2161, 1.2161
+rotation     : 90.00 deg
 reflects     : False
-overlap      : 0.832
-wrote        : nuclei_pre.csv
-transform    : nuclei_pre.csv.transform.json
+overlap      : 0.954
+wrote        : ven5b_pre.csv
+transform    : ven5b_pre.csv.transform.json
 ```
 
 `--search` tries every 15° rotation with and without each flip and keeps the
-best overlap score; it took 13 s. The matrix and its decomposition are saved
-next to the output, so the step can be reproduced exactly. The napari
-plugin's **2. Pre-register** widget does the same interactively.
+best overlap score. Here it recovered the 90° rotation that the Ven5B
+pipeline otherwise applies by hand (`rotate_left_90=True`), in 52 s for
+459,969 pixels. The matrix and its decomposition are saved next to the
+output, so the step can be reproduced exactly. The napari plugin's
+**2. Pre-register** widget does the same interactively.
 
 ---
 
-## 3. Same-section registration, and reading TRE
+## 3. Same-section registration: nuclei onto Xenium cells
 
-When a second modality is acquired on the *same* section (for example
-post-staining), centroids correspond one-to-one and a global transform can be
-fitted:
+When a second modality is acquired on the *same* section — here, nuclei
+segmented from a post-Xenium stain of Venture 5 section z5 — centroids
+correspond one-to-one:
 
 ```bash
 smint-alignment centroid \
-    --source nuclei_pre.csv --source-cols x y \
-    --target Z2_final_aligned_annos.csv \
-    --method ransac+tps \
-    --output-dir /vast/scratch/$USER/nuc_to_xenium \
-    --submit --watch --partition regular
+    --source transformed_nuc_points_in_global.csv --source-cols x_centroid y_centroid \
+    --target z5_pre_aligned_coordinates.csv \
+    --output-dir /vast/scratch/$USER/z5_nuc_to_xenium
 ```
 
 ```text
 {
-  "method": "ransac+tps",
-  "n_matched": 21238,
-  "tre_initial": 10.17,
-  "tre_fit": 11.62,
-  "tre_validation": 12.31,
-  "inlier_fraction": 0.498
+  "method": "multiround",
+  "n_matched": 49206,
+  "tre_initial": 10.96,
+  "tre_fit": 4.45,
+  "tre_validation": 4.93,
+  "rounds": [
+    {"stage": "initial", "median_nn": 12.40},
+    {"stage": "affine", "block_size": 500.0, "blocks": 300, "consistent_blocks": 0.91,
+     "median_nn": 5.38, "accepted": true},
+    {"stage": "tps", "block_size": 250.0, "blocks": 1013, "consistent_blocks": 0.77,
+     "median_nn": 5.43, "accepted": false}
+  ]
 }
 ```
 
-**How to read this.** `tre_validation` is the error on pairs held out from
-fitting, and the only number to trust. Here it is *worse* than `tre_initial`:
-the transform did not improve on the starting alignment. With a residual of
-~10 µm — about one cell spacing — and only half the matches accepted as
-inliers, the remaining distance is ambiguity in which cell matches which, not
-misregistration. These nuclei were already as well aligned as a global
-transform can make them. On data that needs registering, `tre_validation`
-falls well below `tre_initial`. See
-[Measuring quality honestly](alignment.md#measuring-quality-honestly).
+![Post-stain nuclei registered to Xenium cells, before and after](assets/registration_same_section.png)
+
+*88,906 nuclei and 74,247 Xenium cells, about 17 µm apart; 3 s.*
+
+**How to read this.** `tre_validation` is measured on a quarter of the nuclei
+held out before any matching, and is the number to trust: 11.0 µm → 4.9 µm.
+The rounds show the affine voting round did the work; the finer TPS round
+didn't improve the fitting nuclei, so it was rejected and registration
+stopped. Held out, 45% of nuclei now sit within 5 µm of a mutually-nearest
+cell, against 10% before.
+
+The single-round methods can't do this: they match each nucleus to its
+nearest cell before fitting, and with a starting offset close to the cell
+spacing most of those matches are wrong. `--method ransac+tps` only reaches
+11.5 µm here. See [Why multiple rounds](alignment.md#why-multiple-rounds).
 
 ---
 

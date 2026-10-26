@@ -92,8 +92,8 @@ def build_parser() -> argparse.ArgumentParser:
     centroid.add_argument("--target", required=True, help="Target centroid CSV (fixed)")
     centroid.add_argument("--output-dir", required=True, help="Output directory")
     centroid.add_argument(
-        "--method", default="ransac+tps",
-        choices=["affine", "ransac", "tps", "ransac+tps"],
+        "--method", default="multiround",
+        choices=["multiround", "affine", "ransac", "tps", "ransac+tps"],
     )
     centroid.add_argument("--max-distance", type=float, default=100.0,
                           help="Correspondence cutoff, coordinate units")

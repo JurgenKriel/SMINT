@@ -486,7 +486,7 @@ class RegistrationWidget(Container):
 
         self._method = ComboBox(
             label="Method (centroid)",
-            choices=["affine", "ransac", "tps", "ransac+tps"], value="ransac+tps",
+            choices=["multiround", "affine", "ransac", "tps", "ransac+tps"], value="multiround",
         )
         self._max_distance = FloatSpinBox(label="Max match distance", value=100.0, min=0.1, max=10000.0)
         self._niter = SpinBox(label="LDDMM iterations", value=1000, min=1, max=20000)
