@@ -106,6 +106,9 @@ def build_parser() -> argparse.ArgumentParser:
                           help="Skip snapping matched nuclei onto their cells")
     centroid.add_argument("--snap-radius", type=float, default=10.0,
                           help="Refinement: maximum nucleus-cell distance for snapping")
+    centroid.add_argument("--no-assign-remaining", dest="assign_remaining", action="store_false",
+                          help="Refinement: leave nuclei that fail the neighbourhood check filled, "
+                               "instead of assigning them to the nearest free cell")
     centroid.add_argument("--source-cols", nargs=2, default=["centroid_x", "centroid_y"],
                           metavar=("X", "Y"))
     centroid.add_argument("--target-cols", nargs=2, default=["x_centroid", "y_centroid"],
@@ -307,7 +310,8 @@ def main(argv=None) -> int:
             "source_cols": tuple(args.source_cols),
             "target_cols": tuple(args.target_cols),
             "refine": args.refine,
-            "refine_kwargs": {"snap_radius": args.snap_radius},
+            "refine_kwargs": {"snap_radius": args.snap_radius,
+                              "assign_remaining": args.assign_remaining},
         },
     )
 

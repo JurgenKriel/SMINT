@@ -170,8 +170,10 @@ smint-alignment centroid \
   "tre_initial": 10.96,
   "tre_fit": 4.45,
   "tre_validation": 4.93,
-  "refinement": {"n_snapped": 57083, "fraction_targets_matched": 0.77,
-                 "snapped_per_pass": [55208, 56923, 57069, 57083], "n_filled": 17413},
+  "refinement": {"n_snapped": 57083, "n_assigned": 8266, "n_filled": 9147,
+                 "fraction_targets_matched": 0.88,
+                 "median_deviation": {"snapped": 4.14, "assigned": 8.54},
+                 "snapped_per_pass": [55208, 56923, 57069, 57083]},
   "rounds": [
     {"stage": "initial", "median_nn": 12.40},
     {"stage": "affine", "block_size": 500.0, "blocks": 300, "consistent_blocks": 0.91,
@@ -192,9 +194,12 @@ held out before any matching, and is the number to trust for the transform:
 finer TPS round didn't improve the fitting nuclei, so it was rejected.
 
 Registration is then refined: **57,083 nuclei snap exactly onto distinct
-Xenium cells — 77% of the cells** — over four pairing passes, and 17,413 more
-move with their snapped neighbours. The output CSV's `registration_status`
-says which. See [Snapping matched nuclei](alignment.md#snapping-matched-nuclei-onto-their-cells).
+Xenium cells** over four pairing passes, each checked against its
+neighbourhood, and 8,266 more are assigned to the free cells around them —
+**88% of Xenium cells** now carry a nucleus. The assigned pairs deviate twice
+as much from their neighbourhood (8.5 µm against 4.1 µm), so treat them as
+unverified; the output CSV's `registration_status` and `neighbour_deviation`
+say which is which. See [Snapping matched nuclei](alignment.md#snapping-matched-nuclei-onto-their-cells).
 
 ![Before registration, after the smooth transform, and after snapping](assets/registration_refinement.png)
 
