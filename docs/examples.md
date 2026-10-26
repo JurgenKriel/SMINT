@@ -193,12 +193,12 @@ segments nuclei, chunk by chunk:
 from smint.segmentation import process_large_image
 
 results = process_large_image(
-    image_path="r6_crop.ome.tif",            # (C, Y, X): ch0 nuclear, ch1 cell
+    image_path="r6_crop.ome.tif",            # (C, Y, X): ch0 nuclei, ch1 GFAP
     csv_base_path="seg/r6",
     chunk_size=(1024, 1024),
     cell_model_path="/path/to/models/cpsam_20260225_153049",
     cells_diameter=120, cells_flow_threshold=0.6, cells_cellprob_threshold=-2.5,
-    cells_channels=[2, 1],                  # main = channel 2 (cell), nuclear = channel 1
+    cells_channels=[2, 1],                  # main = channel 2 (GFAP), nuclear = channel 1
     nuclei_model_path="nuclei",             # Cellpose 4: falls back to cpsam, with a warning
     nuclei_diameter=25, nuclei_flow_threshold=0.3, nuclei_cellprob_threshold=0.2,
     nuclei_channels=[1, 0],
@@ -211,10 +211,11 @@ print(results["total_cells"], results["total_nuclei"])
 33 29
 ```
 
-![Cell (red) and nucleus (cyan) outlines on one 1024 px chunk](assets/segmentation_example.jpg)
+![Nuclei, GFAP and phalloidin with cell and nucleus outlines on one 1024 px chunk](assets/segmentation_example.jpg)
 
-*Venture 6, 2048 × 2048 px crop, Cellpose 4 on one A30: 23 s. Green: nuclear
-channel; blue: cell channel.*
+*Venture 6, one 1024 px chunk of a 2048 × 2048 px crop; Cellpose 4 on one A30
+took 23 s for the crop. Cyan: nuclei; green: GFAP; magenta: phalloidin. Right:
+cell outlines (white) and nucleus outlines (yellow).*
 
 `channels` follows Cellpose 3's convention (`[main, nuclear]`, 1-based, 0 =
 none) and selects the same input on Cellpose 3 and 4.
