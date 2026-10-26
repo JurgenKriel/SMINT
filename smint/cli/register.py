@@ -1,5 +1,5 @@
 """
-Registration worker: runs a job spec written by :mod:`smint.alignment.jobs`.
+Registration worker: runs a job spec written by `smint.alignment.jobs`.
 
 Invoked as ``python -m smint.cli.register <spec.json>``, normally by sbatch or
 a local subprocess rather than by hand. This is the only place STalign is

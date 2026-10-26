@@ -57,7 +57,7 @@ def load_model(model, gpu=None):
         gpu (bool, optional): Use the GPU. Defaults to whatever is available.
 
     Returns:
-        cellpose.models.CellposeModel
+        cellpose.models.CellposeModel: The loaded model.
     """
     from cellpose import models
 
@@ -123,11 +123,12 @@ def run_eval(model, image, channels=(0, 0), **kwargs):
     Run ``model.eval`` with channel handling that behaves the same on 3 and 4.
 
     Args:
-        model: A loaded Cellpose model.
+        model (cellpose.models.CellposeModel): A loaded Cellpose model, e.g.
+            from [`load_model`][smint.segmentation.cellpose_compat.load_model].
         image (numpy.ndarray): ``(Y, X)`` or ``(C, Y, X)`` array.
         channels (sequence of int): Cellpose 3 style channel pair, see
-            :func:`select_channels`.
-        **kwargs: Passed through to ``eval`` (``diameter``, ``flow_threshold``,
+            [`select_channels`][smint.segmentation.cellpose_compat.select_channels].
+        **kwargs (Any): Passed through to ``eval`` (``diameter``, ``flow_threshold``,
             ``cellprob_threshold`` ...).
 
     Returns:

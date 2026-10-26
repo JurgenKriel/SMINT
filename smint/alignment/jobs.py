@@ -56,7 +56,7 @@ LEAKY_ENV_VARS = ("PYTHONPATH", "PYTHONHOME", "PYTHONSTARTUP", "LD_PRELOAD")
 
 
 def worker_env(base: Optional[dict] = None) -> dict:
-    """Return a copy of ``base`` (default ``os.environ``) with :data:`LEAKY_ENV_VARS` dropped."""
+    """Return a copy of ``base`` (default ``os.environ``) with [`LEAKY_ENV_VARS`][smint.alignment.jobs.LEAKY_ENV_VARS] dropped."""
     env = dict(os.environ if base is None else base)
     for name in LEAKY_ENV_VARS:
         env.pop(name, None)
@@ -145,13 +145,31 @@ class SlurmResources:
     Set ``gpus`` to request GPUs, and remember to point ``partition`` at one
     that actually has them -- asking for a GPU on a CPU partition leaves the
     job pending indefinitely rather than failing, which is easy to mistake for
-    a slow queue. :meth:`check` warns about that combination.
+    a slow queue. [`check`][smint.alignment.jobs.SlurmResources.check] warns about that combination.
 
     ``gpu_type`` pins which card the job gets. A bare ``--gres=gpu:N`` is a
-    lottery across every model the partition holds -- on this cluster ``gpuq``
-    mixes A30, A100 and P100 -- so a run can land on a card generations older
-    than the one it was timed on. Registration is validated on the A30, which
-    is why that is the default. Set it to ``None`` to accept any card.
+    lottery across every model the partition holds -- a GPU partition often
+    mixes generations (A30, A100 and P100, say) -- so a run can land on a card
+    generations older than the one it was timed on. Registration is validated
+    on the A30, which is why that is the default. Set it to ``None`` to accept
+    any card.
+
+    Parameters
+    ----------
+    partition : str
+        SLURM partition. Must offer GPUs when ``gpus > 0``.
+    cpus_per_task : int
+        ``--cpus-per-task``; also sets ``OMP_NUM_THREADS`` for the worker.
+    memory : str
+        ``--mem``, e.g. ``"64G"``.
+    time_limit : str
+        ``--time``, as ``HH:MM:SS``.
+    job_name : str
+        ``--job-name``; also names the ``.out`` / ``.err`` logs.
+    gpus : int
+        GPUs to request; 0 for a CPU job.
+    gpu_type : str or None
+        GPU model for ``--gres=gpu:<type>:<gpus>``; None accepts any card.
     """
 
     partition: str = "regular"
@@ -213,6 +231,7 @@ class SlurmResources:
                 )
 
     def sbatch_directives(self, log_dir: Path) -> str:
+        """Render the ``#SBATCH`` lines; logs go to ``log_dir/<job_name>_<jobid>.out|.err``."""
         lines = [
             f"#SBATCH --job-name={self.job_name}",
             f"#SBATCH --partition={self.partition}",
@@ -251,7 +270,7 @@ class JobSpec:
     resources : SlurmResources
         Ignored when ``backend='local'``.
     worker_python : str, optional
-        Interpreter for the worker; defaults to :func:`default_worker_python`.
+        Interpreter for the worker; defaults to [`default_worker_python`][smint.alignment.jobs.default_worker_python].
     """
 
     round: str
@@ -329,6 +348,7 @@ class JobSpec:
                 )
 
     def to_dict(self) -> dict:
+        """The spec as a JSON-serialisable dict, as written to ``job_spec.json``."""
         data = asdict(self)
         data["resources"] = asdict(self.resources) if not isinstance(
             self.resources, dict
@@ -337,6 +357,7 @@ class JobSpec:
 
     @classmethod
     def from_dict(cls, data: dict) -> "JobSpec":
+        """Rebuild a spec from [`to_dict`][smint.alignment.jobs.JobSpec.to_dict] output; ``created`` is reset."""
         data = dict(data)
         data.pop("created", None)
         return cls(**data)
@@ -362,6 +383,7 @@ def read_spec(path: str) -> JobSpec:
 # --------------------------------------------------------------------------
 
 def status_path(output_dir: str) -> Path:
+    """Path of a job's ``status.json``."""
     return Path(output_dir) / "status.json"
 
 

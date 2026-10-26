@@ -6,10 +6,10 @@ job spec, then either run it here or submit it to SLURM.
 
     smint-alignment st-sm  --st st_z2.csv --sm sm_section_b.csv \\
         --st-points z2_st_points.npy --sm-points z2_sm_points.npy \\
-        --output-dir /vast/scratch/you/run1
+        --output-dir runs/st_sm
 
     smint-alignment centroid --source nuc.csv --target xen.csv \\
-        --output-dir /vast/scratch/you/run2 --method ransac
+        --output-dir runs/centroid --method ransac
 
     smint-alignment pretransform --source sm.csv --target xen.csv \\
         --rotation 30 --flip-x --output sm_pre.csv

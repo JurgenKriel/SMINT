@@ -13,7 +13,7 @@ Three capabilities, in the order they are normally used:
     **same section**, scored by held-out Target Registration Error.
 
 Registration can be run in-process or handed to a worker via
-:mod:`smint.alignment.jobs`.
+`smint.alignment.jobs`.
 """
 
 # ST <-> SM registration (STalign LDDMM, with a manual landmark stage).

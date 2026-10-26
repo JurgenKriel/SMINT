@@ -232,37 +232,66 @@ def process_large_image(
     tile_info_file_for_viewer=None
 ):
     """
-    Process a large image for cell and nuclear segmentation.
-    
+    Segment cells and nuclei in a large TIFF, chunk by chunk, in one process.
+
+    The image is read whole with ``tifffile`` and reduced to ``(C, Y, X)``; each
+    non-overlapping chunk is segmented with the cell model and the nuclei model.
+    There is no overlap and no stitching, so an object crossing a chunk edge is
+    reported once per chunk; use
+    [`run_distributed_segmentation`][smint.segmentation.run_distributed_segmentation]
+    when that matters.
+
+    Always pass ``cell_model_path`` (a model file, or a built-in name such as
+    ``"cyto3"`` on Cellpose 3 or ``"cpsam"`` on Cellpose 4). Its built-in
+    default points at a model file on the developers' system; when the model
+    cannot be found, cell segmentation is skipped with a warning. The same
+    applies to ``nuclei_model_path``, which defaults to ``"nuclei"``
+    (Cellpose 3 only; Cellpose 4 substitutes ``cpsam``).
+
+    Writes ``<csv_base_path>_cells.csv`` and ``<csv_base_path>_nuclei.csv``
+    (``global_cell_id, chunk_id, x, y``, one row per outline vertex),
+    ``<csv_base_path>.log`` and, when ``visualize`` is on,
+    ``chunk_<row>_<col>.png`` overlays. The directory of ``csv_base_path``
+    must already exist, because the log file is opened first.
+
     Args:
-        image_path (str): Path to the input image file
-        csv_base_path (str): Base path for output CSV files
-        chunk_size (tuple): Size of chunks for processing
-        cell_model_path (str): Path to the cell segmentation model
+        image_path (str): Path to the input TIFF / OME-TIFF.
+        csv_base_path (str): Path prefix for the output files.
+        chunk_size (tuple): Chunk ``(height, width)`` in pixels.
         cells_diameter (float): Diameter of cells for segmentation
         cells_flow_threshold (float): Flow threshold for cell segmentation
         cells_cellprob_threshold (float): Cell probability threshold
-        cells_channels (list): Channels to use for cell segmentation
-        nuclei_model_path (str): Path to the nuclei segmentation model
+        cells_channels (list): Cellpose-style ``[main, nuclear]`` channel pair
+            for the cell model (1-based, 0 = none)
+        nuclei_model_path (str): Nuclei model file or built-in name
         nuclei_diameter (float): Diameter of nuclei for segmentation
         nuclei_flow_threshold (float): Flow threshold for nuclei segmentation
         nuclei_cellprob_threshold (float): Nuclei probability threshold
-        nuclei_channels (list): Channels to use for nuclei segmentation
-        enable_adaptive_nuclei (bool): Enable adaptive nuclei segmentation
-        nuclei_adaptive_cellprob_lower_limit (float): Lower limit for adaptive cellprob
-        nuclei_adaptive_cellprob_step_decrement (float): Decrement step for adaptive cellprob
-        nuclei_max_adaptive_attempts (int): Maximum attempts for adaptive segmentation
-        adaptive_nuclei_trigger_ratio (float): Trigger ratio for adaptive segmentation
-        visualize (bool): Enable visualization
-        visualize_output_dir (str): Directory for visualization output
-        num_visualize_chunks (int): Number of chunks to visualize
-        visualize_roi_size (tuple): Size of ROI for visualization
-        vis_bg_channel_indices (list): Channel indices for visualization
-        live_update_image_path (str): Path for live update image
-        tile_info_file_for_viewer (str): Path for tile info file
+        nuclei_channels (list): Channel pair for the nuclei model
+        enable_adaptive_nuclei (bool): Re-run the nuclei model on a chunk with a
+            lower ``cellprob_threshold`` while the nuclei-to-cells ratio is
+            below ``adaptive_nuclei_trigger_ratio``
+        nuclei_adaptive_cellprob_lower_limit (float): Lowest threshold to try
+        nuclei_adaptive_cellprob_step_decrement (float): Threshold decrease per attempt
+        nuclei_max_adaptive_attempts (int): Maximum re-runs per chunk
+        adaptive_nuclei_trigger_ratio (float): Nuclei / cells ratio below which
+            a chunk is re-run
+        visualize (bool): Save outline overlays for some chunks
+        visualize_output_dir (str): Directory for the overlays; default
+            ``visualizations/`` beside ``csv_base_path``
+        num_visualize_chunks (int): Number of randomly chosen chunks to overlay
+        visualize_roi_size (tuple): Logged only; each overlay covers one chunk
+        vis_bg_channel_indices (list): 0-based channels shown under the outlines
+        live_update_image_path (str): PNG rewritten after every chunk, for
+            the live viewer
+        tile_info_file_for_viewer (str): Tile-info file rewritten after every
+            chunk, for the live viewer
     
     Returns:
-        dict: Results containing paths to output files and segmentation statistics
+        dict: ``cells_csv_path``, ``nuclei_csv_path`` (None when nothing was
+            found), ``total_cells``, ``total_nuclei``, ``processing_time``
+            (seconds), ``start_time`` and ``end_time``. On failure to load the
+            image or the models, ``{"error": message}`` instead of raising.
     """
     # Setup logging
     logger = setup_logger(csv_base_path)
