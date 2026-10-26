@@ -156,8 +156,7 @@ COMMANDS = [
                     "Register segmented nuclei onto Xenium cells from the same section "
                     "(multiround + snapping refinement, the defaults), on this machine:",
                     "smint-alignment centroid --source nuclei_centroids.csv "
-                    "--target xenium_cells.csv --output-dir runs/centroid "
-                    "--source-cols x_centroid y_centroid --watch",
+                    "--target xenium_cells.csv --output-dir runs/centroid --watch",
                 ),
             ],
             "pretransform": [
@@ -213,12 +212,13 @@ COMMANDS = [
                 "the ST cells; `dataset` (the default) reproduces older outputs, which are "
                 "transposed relative to ST.",
                 "`--submit` with `--gpus 1` needs a GPU partition (`--partition`); a GPU "
-                "request on a CPU partition stays pending rather than failing.",
+                "request on a CPU partition stays pending rather than failing. `--gpu-type` "
+                "(default A30) must be a card that partition offers; `any` drops the type.",
             ],
             "centroid": [
-                "`--source-cols` and `--target-cols` are **not** auto-detected: their defaults "
-                "(`centroid_x centroid_y` and `x_centroid y_centroid`) must exist in the files, "
-                "otherwise the worker stops and `status.json` reports `failed`.",
+                "Without `--source-cols` / `--target-cols`, each file's columns are the first "
+                "pair present of `x_centroid y_centroid`, `centroid_x centroid_y` and `x y`; "
+                "if none is, the worker stops and `status.json` reports `failed`.",
                 "Only the validation TRE (`tre_validation` in `status.json`) is meaningful; "
                 "keep `--validation-fraction` above 0.",
                 "The `centroid` round has no STalign dependency and runs in any SMINT "
@@ -301,15 +301,14 @@ COMMANDS = [
                 "then `~/.smint/config.yaml`, then the repository's own "
                 "`configs/segmentation_config.yaml`. The run stops if no `model_paths` is set "
                 "by the file or the flags.",
-                "With `--distributed`, the Dask pipeline re-reads the file given by `--config` "
-                "itself, so `--cell-model`, `--nuclei-model`, `--cell-diameter` and "
-                "`--nuclei-diameter` are **ignored**: set them in the file. Without `--config` "
-                "it falls back to the built-in `cyto` / `nuclei` models with Cellpose defaults.",
+                "The model, diameter and GPU flags apply with and without `--distributed`. "
+                "Without `--config` or model flags, the distributed run falls back to the "
+                "built-in `cyto` / `nuclei` models with Cellpose defaults.",
                 "`--cell-model` and `--nuclei-model` each replace only their own entry of "
                 "the config's `model_paths` (`[cell, nuclei]`), so you can override one and keep "
                 "the other from the file.",
-                "`--use-gpu` can only switch the GPU on for `--distributed` runs (set "
-                "`use_gpu: false` in the file to turn it off). Single-process runs use the GPU "
+                "`--use-gpu` / `--no-gpu` override `use_gpu` from the file. With neither, "
+                "distributed runs default to GPU workers and single-process runs use the GPU "
                 "whenever Cellpose finds one.",
                 "`--save-config` writes the merged configuration to "
                 "`<output-dir>/segmentation_config.yaml`.",
@@ -318,9 +317,9 @@ COMMANDS = [
     },
     {
         "key": "distributed_seg",
-        "prog": "python -m smint.segmentation.distributed_seg",
+        "prog": "smint-segment-distributed",
         "build": _distributed_parser,
-        "installed": "module entry point",
+        "installed": "console script",
         "summary": "Distributed whole-slide segmentation with Dask: tiles, workers, "
                    "stitching and cell / nucleus reconciliation.",
         "intro": (
@@ -334,14 +333,14 @@ COMMANDS = [
             None: [
                 (
                     "Four SLURM GPU workers, each on an A30:",
-                    "python -m smint.segmentation.distributed_seg "
+                    "smint-segment-distributed "
                     "--image_path slide.ome.tif --output_dir results/dist "
                     "--config_path my_config.yaml --backend slurm --n_workers 4 "
                     "--slurm_gpu_type A30",
                 ),
                 (
                     "CPU-only on this machine, a quick test on a crop:",
-                    "python -m smint.segmentation.distributed_seg "
+                    "smint-segment-distributed "
                     "--image_path crop.ome.tif --output_dir results/test "
                     "--config_path my_config.yaml --no_gpu --tile_size 1024",
                 ),
@@ -353,9 +352,8 @@ COMMANDS = [
                 "`use_gpu` from the configuration applies (default on).",
                 "`--tile_overlap` must exceed the radius of the largest cell, so every boundary "
                 "cell is seen whole by at least one tile.",
-                "`--slurm_gpu_type` replaces the configuration's whole `distributed.slurm` "
-                "section with `{gpu_type: ...}`; to combine a GPU type with other SLURM "
-                "options, set them all in the file instead.",
+                "`--slurm_gpu_type` sets `gpu_type` and keeps the other options of the "
+                "configuration's `distributed.slurm` section.",
                 "Outputs: `cells_outlines.csv`, `nuclei_outlines.csv`, `cells_summary.csv`, "
                 "`nuclei_summary.csv`, `cells.zarr`, `nuclei.zarr` and a timestamped log "
                 "(see [Data formats](data_formats.md#distributed-segmentation-outputs)).",
@@ -436,11 +434,6 @@ FALLBACK_HELP = {
     ("smint-alignment", "--scale-mode"): "How the scale is fitted to the target: bounding-box "
                                          "span (`extent`), maximum coordinate (`max`) or not at "
                                          "all (`none`)",
-    ("smint-alignment", "--source-cols"): "x and y column names in `--source`",
-    ("smint-alignment", "--target-cols"): "x and y column names in `--target`",
-    ("distributed_seg", "--use_gpu"): "Force GPU workers (default: `use_gpu` from the "
-                                      "configuration, else on)",
-    ("distributed_seg", "--no_gpu"): "Force CPU workers",
 }
 _FALLBACK_USED = set()
 

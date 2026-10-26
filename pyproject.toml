@@ -41,6 +41,7 @@ Documentation = "https://jurgenkriel.github.io/SMINT/"
 [project.scripts]
 smint-alignment = "smint.cli.align:main"
 smint-register = "smint.cli.register:main"
+smint-segment-distributed = "smint.segmentation.distributed_seg:main"
 smint-viewer = "smint.visualization.live_scan_viewer:main"
 
 # Registration worker, invoked by smint.alignment.jobs in a separate process.

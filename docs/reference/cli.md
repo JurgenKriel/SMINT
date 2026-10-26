@@ -18,7 +18,7 @@ value named in the description.
 | [`smint-alignment`](#smint-alignment) | console script | Register spatial omics modalities: coarse pre-registration, same-section centroid registration and sequential-section STalign LDDMM. |
 | [`smint-register`](#smint-register) | console script | Registration worker: runs one job spec and reports through status.json. |
 | [`python scripts/run_segmentation.py`](#run_segmentation) | script in the repository | Segment cells and nuclei from a YAML configuration, in one process or distributed with Dask. |
-| [`python -m smint.segmentation.distributed_seg`](#distributed_seg) | module entry point | Distributed whole-slide segmentation with Dask: tiles, workers, stitching and cell / nucleus reconciliation. |
+| [`smint-segment-distributed`](#distributed_seg) | console script | Distributed whole-slide segmentation with Dask: tiles, workers, stitching and cell / nucleus reconciliation. |
 | [`smint-viewer`](#smint-viewer) | console script | Tkinter window that follows a running segmentation tile by tile. |
 
 ## How the registration commands fit together
@@ -67,7 +67,7 @@ smint-alignment st-sm [-h] --st ST --sm SM --st-points ST_POINTS --sm-points SM_
                       [--scale-xy SCALE_XY] [--rotate-left-90] [--no-keep-positive]
                       [--submit] [--watch] [--partition PARTITION] [--cpus CPUS]
                       [--memory MEMORY] [--time-limit TIME_LIMIT] [--gpus GPUS]
-                      [--worker-python WORKER_PYTHON]
+                      [--gpu-type GPU_TYPE] [--worker-python WORKER_PYTHON]
 ```
 
 **Options**
@@ -102,6 +102,7 @@ smint-alignment st-sm [-h] --st ST --sm SM --st-points ST_POINTS --sm-points SM_
 | `--memory MEMORY` | `64G` | Memory request |
 | `--time-limit TIME_LIMIT` | `04:00:00` | Walltime |
 | `--gpus GPUS` | `0` | GPUs to request *(int)* |
+| `--gpu-type GPU_TYPE` | `A30` | GPU type to request with --gpus (e.g. A30, A100); 'any' for any card |
 | `--worker-python WORKER_PYTHON` | &mdash; | Interpreter for the worker; defaults to $SMINT_WORKER_PYTHON or an STalign_env beside the package |
 
 Register a metabolomics section onto a Xenium section on a GPU node and wait for it to finish:
@@ -117,7 +118,7 @@ smint-alignment st-sm --st st_cells.csv --sm sm_matrix.csv --st-points landmarks
     - `--st-points` / `--sm-points` are landmark files in the point-annotator format (see [Data formats](data_formats.md#landmarks-npy)); both must hold the same number of landmarks, at least 3, in the same order.
     - The worker needs an interpreter where STalign imports (numpy < 2). Point `--worker-python` or `$SMINT_WORKER_PYTHON` at it.
     - `--orientation stalign` gives true x/y in the ST frame, so the result overlays the ST cells; `dataset` (the default) reproduces older outputs, which are transposed relative to ST.
-    - `--submit` with `--gpus 1` needs a GPU partition (`--partition`); a GPU request on a CPU partition stays pending rather than failing.
+    - `--submit` with `--gpus 1` needs a GPU partition (`--partition`); a GPU request on a CPU partition stays pending rather than failing. `--gpu-type` (default A30) must be a card that partition offers; `any` drops the type.
 
 ### `smint-alignment centroid` { #smint-alignment-centroid }
 
@@ -132,7 +133,7 @@ smint-alignment centroid [-h] --source SOURCE --target TARGET --output-dir OUTPU
                          [--no-refine] [--snap-radius SNAP_RADIUS] [--no-assign-remaining]
                          [--source-cols X Y] [--target-cols X Y] [--submit] [--watch]
                          [--partition PARTITION] [--cpus CPUS] [--memory MEMORY]
-                         [--time-limit TIME_LIMIT] [--gpus GPUS]
+                         [--time-limit TIME_LIMIT] [--gpus GPUS] [--gpu-type GPU_TYPE]
                          [--worker-python WORKER_PYTHON]
 ```
 
@@ -151,8 +152,8 @@ smint-alignment centroid [-h] --source SOURCE --target TARGET --output-dir OUTPU
 | `--no-refine` | off | Skip snapping matched nuclei onto their cells |
 | `--snap-radius SNAP_RADIUS` | `10.0` | Refinement: maximum nucleus-cell distance for snapping *(float)* |
 | `--no-assign-remaining` | off | Refinement: leave nuclei that fail the neighbourhood check filled, instead of assigning them to the nearest free cell |
-| `--source-cols X Y` | `centroid_x centroid_y` | x and y column names in `--source` |
-| `--target-cols X Y` | `x_centroid y_centroid` | x and y column names in `--target` |
+| `--source-cols X Y` | &mdash; | x and y columns in --source (default: the first of x_centroid/y_centroid, centroid_x/centroid_y, x/y present) |
+| `--target-cols X Y` | &mdash; | x and y columns in --target (default: as --source-cols) |
 | `--submit` | off | Submit to SLURM |
 | `--watch` | off | Block until finished |
 
@@ -165,18 +166,19 @@ smint-alignment centroid [-h] --source SOURCE --target TARGET --output-dir OUTPU
 | `--memory MEMORY` | `64G` | Memory request |
 | `--time-limit TIME_LIMIT` | `04:00:00` | Walltime |
 | `--gpus GPUS` | `0` | GPUs to request *(int)* |
+| `--gpu-type GPU_TYPE` | `A30` | GPU type to request with --gpus (e.g. A30, A100); 'any' for any card |
 | `--worker-python WORKER_PYTHON` | &mdash; | Interpreter for the worker; defaults to $SMINT_WORKER_PYTHON or an STalign_env beside the package |
 
 Register segmented nuclei onto Xenium cells from the same section (multiround + snapping refinement, the defaults), on this machine:
 
 ```bash
 smint-alignment centroid --source nuclei_centroids.csv --target xenium_cells.csv \
-    --output-dir runs/centroid --source-cols x_centroid y_centroid --watch
+    --output-dir runs/centroid --watch
 ```
 
 !!! note "Good to know"
 
-    - `--source-cols` and `--target-cols` are **not** auto-detected: their defaults (`centroid_x centroid_y` and `x_centroid y_centroid`) must exist in the files, otherwise the worker stops and `status.json` reports `failed`.
+    - Without `--source-cols` / `--target-cols`, each file's columns are the first pair present of `x_centroid y_centroid`, `centroid_x centroid_y` and `x y`; if none is, the worker stops and `status.json` reports `failed`.
     - Only the validation TRE (`tre_validation` in `status.json`) is meaningful; keep `--validation-fraction` above 0.
     - The `centroid` round has no STalign dependency and runs in any SMINT environment.
 
@@ -305,7 +307,7 @@ smint-register runs/centroid/job_spec.json -v
 
 ```text
 python scripts/run_segmentation.py [-h] --image IMAGE --output-dir OUTPUT_DIR
-                                   [--config CONFIG] [--distributed] [--use-gpu]
+                                   [--config CONFIG] [--distributed] [--use-gpu | --no-gpu]
                                    [--cell-model CELL_MODEL] [--nuclei-model NUCLEI_MODEL]
                                    [--cell-diameter CELL_DIAMETER]
                                    [--nuclei-diameter NUCLEI_DIAMETER]
@@ -321,7 +323,8 @@ python scripts/run_segmentation.py [-h] --image IMAGE --output-dir OUTPUT_DIR
 | `--output-dir OUTPUT_DIR` | required | Directory to save segmentation results |
 | `--config CONFIG` | &mdash; | Path to configuration file |
 | `--distributed` | off | Run segmentation in distributed mode using Dask |
-| `--use-gpu` | off | Use GPU for computation |
+| `--use-gpu` | off | Use the GPU (default: the config file, else use one if available) |
+| `--no-gpu` | off | Run on the CPU even if a GPU is available |
 | `--cell-model CELL_MODEL` | &mdash; | Path to cell segmentation model |
 | `--nuclei-model NUCLEI_MODEL` | &mdash; | Path to nuclei segmentation model |
 | `--cell-diameter CELL_DIAMETER` | &mdash; | Diameter of cells for segmentation *(float)* |
@@ -350,28 +353,24 @@ python scripts/run_segmentation.py --image slide.ome.tif --output-dir results/se
 !!! note "Good to know"
 
     - Without `--config` the script looks for `./configs/segmentation_config.yaml`, then `~/.smint/config.yaml`, then the repository's own `configs/segmentation_config.yaml`. The run stops if no `model_paths` is set by the file or the flags.
-    - With `--distributed`, the Dask pipeline re-reads the file given by `--config` itself, so `--cell-model`, `--nuclei-model`, `--cell-diameter` and `--nuclei-diameter` are **ignored**: set them in the file. Without `--config` it falls back to the built-in `cyto` / `nuclei` models with Cellpose defaults.
+    - The model, diameter and GPU flags apply with and without `--distributed`. Without `--config` or model flags, the distributed run falls back to the built-in `cyto` / `nuclei` models with Cellpose defaults.
     - `--cell-model` and `--nuclei-model` each replace only their own entry of the config's `model_paths` (`[cell, nuclei]`), so you can override one and keep the other from the file.
-    - `--use-gpu` can only switch the GPU on for `--distributed` runs (set `use_gpu: false` in the file to turn it off). Single-process runs use the GPU whenever Cellpose finds one.
+    - `--use-gpu` / `--no-gpu` override `use_gpu` from the file. With neither, distributed runs default to GPU workers and single-process runs use the GPU whenever Cellpose finds one.
     - `--save-config` writes the merged configuration to `<output-dir>/segmentation_config.yaml`.
 
-## `python -m smint.segmentation.distributed_seg` { #distributed_seg }
+## `smint-segment-distributed` { #distributed_seg }
 
 The direct entry point to the distributed pipeline. Flags override the YAML file given by `--config_path`, which overrides the built-in defaults (see [Configuration](configuration.md#the-distributed-section)). Workers read the image themselves, so it must be on storage every worker can see. Needs `pip install 'smint[distributed]'` and Cellpose.
 
 ```text
-python -m smint.segmentation.distributed_seg [-h] --image_path IMAGE_PATH --output_dir
-                                             OUTPUT_DIR [--config_path CONFIG_PATH]
-                                             [--backend {local,slurm}]
-                                             [--scheduler_address SCHEDULER_ADDRESS]
-                                             [--n_workers N_WORKERS] [--use_gpu | --no_gpu]
-                                             [--tile_size TILE_SIZE]
-                                             [--tile_overlap TILE_OVERLAP]
-                                             [--cell_model CELL_MODEL]
-                                             [--nuclei_model NUCLEI_MODEL]
-                                             [--slurm_gpu_type SLURM_GPU_TYPE]
-                                             [--tile_info_path TILE_INFO_PATH]
-                                             [--live_update_image_path LIVE_UPDATE_IMAGE_PATH]
+smint-segment-distributed [-h] --image_path IMAGE_PATH --output_dir OUTPUT_DIR
+                          [--config_path CONFIG_PATH] [--backend {local,slurm}]
+                          [--scheduler_address SCHEDULER_ADDRESS] [--n_workers N_WORKERS]
+                          [--use_gpu | --no_gpu] [--tile_size TILE_SIZE]
+                          [--tile_overlap TILE_OVERLAP] [--cell_model CELL_MODEL]
+                          [--nuclei_model NUCLEI_MODEL] [--slurm_gpu_type SLURM_GPU_TYPE]
+                          [--tile_info_path TILE_INFO_PATH]
+                          [--live_update_image_path LIVE_UPDATE_IMAGE_PATH]
 ```
 
 **Options**
@@ -384,36 +383,35 @@ python -m smint.segmentation.distributed_seg [-h] --image_path IMAGE_PATH --outp
 | `--backend {local,slurm}` | &mdash; | Where workers run (default: local) |
 | `--scheduler_address SCHEDULER_ADDRESS` | &mdash; | Connect to an existing Dask scheduler |
 | `--n_workers N_WORKERS` | &mdash; | Number of workers *(int)* |
-| `--use_gpu` | off | Force GPU workers (default: `use_gpu` from the configuration, else on) |
-| `--no_gpu` | off | Force CPU workers |
+| `--use_gpu` | off | Use GPU workers (default: the config file, else yes) |
+| `--no_gpu` | off | Use CPU workers |
 | `--tile_size TILE_SIZE` | &mdash; | Core tile size in pixels (default 2048) *(int)* |
 | `--tile_overlap TILE_OVERLAP` | &mdash; | Tile overlap in pixels (default 256) *(int)* |
 | `--cell_model CELL_MODEL` | &mdash; | Cell model name or path |
 | `--nuclei_model NUCLEI_MODEL` | &mdash; | Nuclei model name or path |
-| `--slurm_gpu_type SLURM_GPU_TYPE` | &mdash; | SLURM GPU type, e.g. A30 |
+| `--slurm_gpu_type SLURM_GPU_TYPE` | &mdash; | SLURM GPU type, e.g. A30; other SLURM options come from the config |
 | `--tile_info_path TILE_INFO_PATH` | &mdash; | Tile-info file for the live viewer |
 | `--live_update_image_path LIVE_UPDATE_IMAGE_PATH` | &mdash; | PNG updated as tiles finish |
 
 Four SLURM GPU workers, each on an A30:
 
 ```bash
-python -m smint.segmentation.distributed_seg --image_path slide.ome.tif \
-    --output_dir results/dist --config_path my_config.yaml --backend slurm \
-    --n_workers 4 --slurm_gpu_type A30
+smint-segment-distributed --image_path slide.ome.tif --output_dir results/dist \
+    --config_path my_config.yaml --backend slurm --n_workers 4 --slurm_gpu_type A30
 ```
 
 CPU-only on this machine, a quick test on a crop:
 
 ```bash
-python -m smint.segmentation.distributed_seg --image_path crop.ome.tif \
-    --output_dir results/test --config_path my_config.yaml --no_gpu --tile_size 1024
+smint-segment-distributed --image_path crop.ome.tif --output_dir results/test \
+    --config_path my_config.yaml --no_gpu --tile_size 1024
 ```
 
 !!! note "Good to know"
 
     - `--use_gpu` / `--no_gpu` force GPU workers on or off; with neither, `use_gpu` from the configuration applies (default on).
     - `--tile_overlap` must exceed the radius of the largest cell, so every boundary cell is seen whole by at least one tile.
-    - `--slurm_gpu_type` replaces the configuration's whole `distributed.slurm` section with `{gpu_type: ...}`; to combine a GPU type with other SLURM options, set them all in the file instead.
+    - `--slurm_gpu_type` sets `gpu_type` and keeps the other options of the configuration's `distributed.slurm` section.
     - Outputs: `cells_outlines.csv`, `nuclei_outlines.csv`, `cells_summary.csv`, `nuclei_summary.csv`, `cells.zarr`, `nuclei.zarr` and a timestamped log (see [Data formats](data_formats.md#distributed-segmentation-outputs)).
 
 ## `smint-viewer` { #smint-viewer }

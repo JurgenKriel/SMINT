@@ -887,6 +887,12 @@ def _assign_one_to_one(points, targets, point_idx, target_idx, radius):
     return np.asarray(point_idx)[np.asarray(rows, dtype=int)], np.asarray(target_idx)[np.asarray(cols, dtype=int)]
 
 
+def _finite_median(values: np.ndarray) -> float:
+    """Median of the finite values, NaN (without a warning) when there are none."""
+    values = values[np.isfinite(values)]
+    return float(np.median(values)) if values.size else float("nan")
+
+
 def refine_by_assignment(
     source_xy: np.ndarray,
     target_xy: np.ndarray,
@@ -1106,8 +1112,7 @@ def refine_by_assignment(
         "neighbour_deviation": deviation,
         "n_assigned": int(np.sum(status == "assigned")),
         "median_deviation": {
-            k: float(np.nanmedian(deviation[status == k])) if np.any(status == k) else float("nan")
-            for k in ("snapped", "assigned")
+            k: _finite_median(deviation[status == k]) for k in ("snapped", "assigned")
         },
         "n_snapped": int(np.sum(status == "snapped")),
         "fraction_snapped": float(np.sum(status == "snapped") / max(n, 1)),
@@ -1135,11 +1140,34 @@ def refine_by_assignment(
     return result
 
 
+#: Centroid column pairs tried, in order, when no columns are given: Xenium and
+#: SMINT segmentation summaries, the older segmentation convention, plain x/y.
+CENTROID_COLUMN_CANDIDATES = (
+    ("x_centroid", "y_centroid"),
+    ("centroid_x", "centroid_y"),
+    ("x", "y"),
+)
+
+
+def _centroid_columns(path: str, cols: Optional[Sequence[str]]) -> list:
+    """Return the ``(x, y)`` columns to read from ``path``, checking they exist."""
+    header = list(pd.read_csv(path, nrows=0).columns)
+    candidates = [tuple(cols)] if cols else CENTROID_COLUMN_CANDIDATES
+    for pair in candidates:
+        if all(c in header for c in pair):
+            return list(pair)
+    wanted = list(cols) if cols else " or ".join("/".join(p) for p in CENTROID_COLUMN_CANDIDATES)
+    raise ValueError(
+        f"Columns {wanted} not found in {path}. "
+        f"Available: {', '.join(map(str, header[:20]))}"
+    )
+
+
 def register_centroid_files(
     source_file: str,
     target_file: str,
-    source_cols: Sequence[str] = ("centroid_x", "centroid_y"),
-    target_cols: Sequence[str] = ("x_centroid", "y_centroid"),
+    source_cols: Optional[Sequence[str]] = None,
+    target_cols: Optional[Sequence[str]] = None,
     output_path: Optional[str] = None,
     x_col: str = "x_transformed",
     y_col: str = "y_transformed",
@@ -1159,9 +1187,9 @@ def register_centroid_files(
     source_file, target_file : str
         CSVs holding the two centroid sets.
     source_cols, target_cols : sequence of str, optional
-        ``(x, y)`` column names in each file. Defaults follow the project's
-        convention: segmented centroids use ``centroid_x``/``centroid_y``,
-        Xenium uses ``x_centroid``/``y_centroid``.
+        ``(x, y)`` column names in each file. By default the first pair present
+        of ``x_centroid``/``y_centroid`` (Xenium, SMINT segmentation
+        summaries), ``centroid_x``/``centroid_y`` and ``x``/``y``.
     output_path : str, optional
         Where to write the transformed source table.
     x_col, y_col : str, optional
@@ -1183,19 +1211,10 @@ def register_centroid_files(
     result : dict
         The [`register_centroids`][smint.alignment.register_centroids] result.
     """
+    source_cols = _centroid_columns(source_file, source_cols)
+    target_cols = _centroid_columns(target_file, target_cols)
     source_df = pd.read_csv(source_file)
-    target_df = pd.read_csv(target_file, usecols=list(target_cols))
-
-    for cols, df, name in (
-        (source_cols, source_df, source_file),
-        (target_cols, target_df, target_file),
-    ):
-        missing = [c for c in cols if c not in df.columns]
-        if missing:
-            raise ValueError(
-                f"Columns {missing} not found in {name}. "
-                f"Available: {', '.join(map(str, df.columns[:20]))}"
-            )
+    target_df = pd.read_csv(target_file, usecols=target_cols)
 
     source_xy = source_df[list(source_cols)].to_numpy(dtype=float)
     target_xy = target_df[list(target_cols)].to_numpy(dtype=float)

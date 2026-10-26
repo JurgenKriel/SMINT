@@ -167,7 +167,7 @@ local CPU workers, and stitched, so cells on tile boundaries come out whole.
     and run:
 
     ```bash
-    python -m smint.segmentation.distributed_seg \
+    smint-segment-distributed \
         --image_path docs/tutorials/data/synthetic_wsi.ome.tif \
         --output_dir qs_segmentation --config_path segmentation.yaml
     ```

@@ -38,6 +38,8 @@ def _add_slurm_args(parser):
     group.add_argument("--memory", default="64G", help="Memory request")
     group.add_argument("--time-limit", default="04:00:00", help="Walltime")
     group.add_argument("--gpus", type=int, default=0, help="GPUs to request")
+    group.add_argument("--gpu-type", default="A30",
+                       help="GPU type to request with --gpus (e.g. A30, A100); 'any' for any card")
     group.add_argument(
         "--worker-python", default=None,
         help="Interpreter for the worker; defaults to $SMINT_WORKER_PYTHON "
@@ -114,10 +116,11 @@ def build_parser() -> argparse.ArgumentParser:
     centroid.add_argument("--no-assign-remaining", dest="assign_remaining", action="store_false",
                           help="Refinement: leave nuclei that fail the neighbourhood check filled, "
                                "instead of assigning them to the nearest free cell")
-    centroid.add_argument("--source-cols", nargs=2, default=["centroid_x", "centroid_y"],
-                          metavar=("X", "Y"))
-    centroid.add_argument("--target-cols", nargs=2, default=["x_centroid", "y_centroid"],
-                          metavar=("X", "Y"))
+    centroid.add_argument("--source-cols", nargs=2, default=None, metavar=("X", "Y"),
+                          help="x and y columns in --source (default: the first of "
+                               "x_centroid/y_centroid, centroid_x/centroid_y, x/y present)")
+    centroid.add_argument("--target-cols", nargs=2, default=None, metavar=("X", "Y"),
+                          help="x and y columns in --target (default: as --source-cols)")
     centroid.add_argument("--submit", action="store_true", help="Submit to SLURM")
     centroid.add_argument("--watch", action="store_true", help="Block until finished")
     _add_slurm_args(centroid)
@@ -225,6 +228,7 @@ def _run_registration(args, round_name: str, inputs: dict, params: dict) -> int:
             partition=args.partition, cpus_per_task=args.cpus,
             memory=args.memory, time_limit=args.time_limit,
             gpus=args.gpus, job_name=f"smint_{round_name}",
+            gpu_type=None if args.gpu_type.lower() == "any" else args.gpu_type,
         ),
         worker_python=args.worker_python,
     )
@@ -313,8 +317,8 @@ def main(argv=None) -> int:
             "validation_fraction": args.validation_fraction,
             "n_control": args.n_control,
             "tps_regularization": args.tps_regularization,
-            "source_cols": tuple(args.source_cols),
-            "target_cols": tuple(args.target_cols),
+            "source_cols": tuple(args.source_cols) if args.source_cols else None,
+            "target_cols": tuple(args.target_cols) if args.target_cols else None,
             "refine": args.refine,
             "refine_kwargs": {"snap_radius": args.snap_radius,
                               "assign_remaining": args.assign_remaining},

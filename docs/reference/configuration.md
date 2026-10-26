@@ -11,7 +11,7 @@ Two programs read the file:
 - **`scripts/run_segmentation.py`** reads every key below. Without `--distributed`
   it runs the single-process tiler (`process_large_image`); with `--distributed`
   it hands over to the Dask pipeline.
-- **`run_distributed_segmentation`** (also `python -m smint.segmentation.distributed_seg
+- **`run_distributed_segmentation`** (also `smint-segment-distributed
   --config_path …`) reads the model keys, `use_gpu`, `n_workers`, `chunk_size` and
   the [`distributed`](#the-distributed-section) section.
 
@@ -100,7 +100,7 @@ Run it with either:
 python scripts/run_segmentation.py --image slide.ome.tif --output-dir results/seg \
     --config my_config.yaml --distributed
 
-python -m smint.segmentation.distributed_seg --image_path slide.ome.tif \
+smint-segment-distributed --image_path slide.ome.tif \
     --output_dir results/seg --config_path my_config.yaml
 ```
 

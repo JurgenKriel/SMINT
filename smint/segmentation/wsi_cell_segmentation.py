@@ -240,7 +240,8 @@ def process_large_image(
     vis_bg_channel_indices=[0, 1],
     # Live update parameters
     live_update_image_path=None,
-    tile_info_file_for_viewer=None
+    tile_info_file_for_viewer=None,
+    use_gpu=None
 ):
     """
     Segment cells and nuclei in a large TIFF, chunk by chunk, in one process.
@@ -297,6 +298,8 @@ def process_large_image(
             the live viewer
         tile_info_file_for_viewer (str): Tile-info file rewritten after every
             chunk, for the live viewer
+        use_gpu (bool): Run Cellpose on the GPU. Default None: use it when
+            one is available.
     
     Returns:
         dict: ``cells_csv_path``, ``nuclei_csv_path`` (None when nothing was
@@ -452,8 +455,11 @@ def process_large_image(
         # Import locally to avoid circular imports
         from .cellpose_compat import cellpose_major_version, is_known_model, load_model, use_gpu as cellpose_use_gpu
         
-        use_gpu = cellpose_use_gpu()
-        logger.info(f"Cellpose {cellpose_major_version()}; GPU available and will be used: {use_gpu}")
+        gpu_available = cellpose_use_gpu()
+        if use_gpu and not gpu_available:
+            logger.warning("GPU requested but not available; running on the CPU")
+        use_gpu = gpu_available if use_gpu is None else bool(use_gpu and gpu_available)
+        logger.info(f"Cellpose {cellpose_major_version()}; GPU will be used: {use_gpu}")
     
         # Load cell model
         if is_known_model(cell_model_path):

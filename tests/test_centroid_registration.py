@@ -175,3 +175,31 @@ def test_assign_remaining_can_be_disabled():
     ref = cr.refine_by_assignment(source, target, transform=cr.register_centroids(source, target)["transform"],
                                   assign_remaining=False)
     assert not np.any(ref["status"] == "assigned")
+
+
+@pytest.mark.parametrize("cols", [("x_centroid", "y_centroid"), ("centroid_x", "centroid_y"), ("x", "y")])
+def test_register_centroid_files_detects_columns(tmp_path, cols):
+    source, target, _ = synthetic_section(seed=11)
+    import pandas as pd
+    pd.DataFrame(source, columns=cols).assign(area=1.0).to_csv(tmp_path / "s.csv", index=False)
+    pd.DataFrame(target, columns=["x_centroid", "y_centroid"]).to_csv(tmp_path / "t.csv", index=False)
+    df, _ = cr.register_centroid_files(str(tmp_path / "s.csv"), str(tmp_path / "t.csv"), refine=False)
+    assert np.isfinite(df["x_transformed"]).all()
+
+
+def test_register_centroid_files_names_missing_columns(tmp_path):
+    import pandas as pd
+    pd.DataFrame({"a": [1.0], "b": [2.0]}).to_csv(tmp_path / "s.csv", index=False)
+    pd.DataFrame({"x_centroid": [1.0], "y_centroid": [2.0]}).to_csv(tmp_path / "t.csv", index=False)
+    with pytest.raises(ValueError, match="Available: a, b"):
+        cr.register_centroid_files(str(tmp_path / "s.csv"), str(tmp_path / "t.csv"))
+    with pytest.raises(ValueError, match=r"\['px', 'py'\] not found"):
+        cr.register_centroid_files(str(tmp_path / "t.csv"), str(tmp_path / "t.csv"), source_cols=("px", "py"))
+
+
+def test_median_deviation_of_empty_group_is_nan_without_warning():
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        assert np.isnan(cr._finite_median(np.array([np.nan, np.nan])))
+        assert cr._finite_median(np.array([1.0, np.nan, 3.0])) == 2.0
