@@ -410,26 +410,24 @@ def process_large_image(
         
     try:
         # Import locally to avoid circular imports
-        from cellpose import core, models
+        from .cellpose_compat import cellpose_major_version, is_known_model, load_model, use_gpu as cellpose_use_gpu
         
-        # Check for GPU. use_gpu lives in cellpose.core; cellpose.models never
-        # re-exported it in Cellpose 3.
-        use_gpu = core.use_gpu()
-        logger.info(f"GPU available and will be used: {use_gpu}")
+        use_gpu = cellpose_use_gpu()
+        logger.info(f"Cellpose {cellpose_major_version()}; GPU available and will be used: {use_gpu}")
     
         # Load cell model
-        if os.path.exists(cell_model_path) or cell_model_path.lower() in ["cyto", "nuclei", "cyto2"]:
+        if is_known_model(cell_model_path):
             logger.info(f"Loading cell model from: {cell_model_path}")
-            cell_model = models.CellposeModel(gpu=use_gpu, model_type=cell_model_path)
+            cell_model = load_model(cell_model_path, gpu=use_gpu)
             logger.info("Cell model loaded successfully")
         else:
             cell_model = None
             logger.warning(f"Cell model path not found, skipping cell segmentation: {cell_model_path}")
         
         # Load nuclei model
-        if os.path.exists(nuclei_model_path) or nuclei_model_path.lower() in ["cyto", "nuclei", "cyto2"]:
+        if is_known_model(nuclei_model_path):
             logger.info(f"Loading nuclei model from: {nuclei_model_path}")
-            nuclei_model = models.CellposeModel(gpu=use_gpu, model_type=nuclei_model_path)
+            nuclei_model = load_model(nuclei_model_path, gpu=use_gpu)
             logger.info("Nuclei model loaded successfully")
         else:
             nuclei_model = None

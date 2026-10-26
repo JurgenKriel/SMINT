@@ -16,7 +16,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "cellpose>=3,<4",  # 4.x drops the cyto/nuclei models this pipeline uses
+    "cellpose>=3",
     "dask>=2024.11.2",
     "email-validator>=2.2.0",
     "flask>=3.1.0",
@@ -47,12 +47,13 @@ smint = "smint.napari:napari.yaml"
 
 [project.optional-dependencies]
 r_integration = ["rpy2>=3.4.0"]
-segmentation = ["cellpose>=3,<4"]
+segmentation = ["cellpose>=3"]
+distributed = ["distributed>=2024.8.0", "dask-jobqueue>=0.8", "zarr>=2.18", "shapely>=2.0"]
 visualization = ["matplotlib>=3.10.3"]
 gui = []
 docs = ["mkdocs", "mkdocs-material"]
 dev = ["pytest", "flake8", "black"]
-all = ["rpy2>=3.4.0", "mkdocs", "mkdocs-material", "pytest", "flake8", "black"]
+all = ["distributed>=2024.8.0", "dask-jobqueue>=0.8", "zarr>=2.18", "shapely>=2.0", "rpy2>=3.4.0", "mkdocs", "mkdocs-material", "pytest", "flake8", "black"]
 
 # Discover subpackages (smint.alignment, smint.segmentation, ...) rather than
 # declaring only the top-level `smint`, which left them out of the install.
