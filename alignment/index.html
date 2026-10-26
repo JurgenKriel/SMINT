@@ -1433,8 +1433,10 @@ silently produces a wrong registration. Either use the
     <span class="n">sm_points_file</span><span class="o">=</span><span class="n">out</span><span class="p">[</span><span class="s2">"sm_points"</span><span class="p">],</span>
     <span class="n">output_path</span><span class="o">=</span><span class="s2">"sm_transformed.csv"</span><span class="p">,</span>
     <span class="n">niter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">epV</span><span class="o">=</span><span class="mf">200.0</span><span class="p">,</span>
+    <span class="n">orientation</span><span class="o">=</span><span class="s2">"stalign"</span><span class="p">,</span>   <span class="c1"># x/y in the ST frame; see below</span>
 <span class="p">)</span>
 </code></pre></div>
+<p><img alt="Sequential-section registration: before, landmarks and after LDDMM" src="../assets/registration_sequential.png" /></p>
 <h3 id="coordinate-orientation">Coordinate orientation<a class="headerlink" href="#coordinate-orientation" title="Permanent link">&para;</a></h3>
 <p>STalign works in <strong>row-column</strong> order throughout. <code>LDDMM</code> takes grids as
 <code>[Y, X]</code>, and <code>transform_points_source_to_target</code> both accepts and returns
@@ -1443,12 +1445,16 @@ transpose.</p>
 <p>Registering through STalign therefore returns coordinates whose axes are
 transposed relative to the source dataset. <code>transform_points</code> exposes this:</p>
 <ul>
-<li><strong><code>orientation="dataset"</code></strong> (default) — restores the original dataset's
-  orientation. This is what you want, and it reproduces historical outputs.</li>
-<li><strong><code>orientation="stalign"</code></strong> — true xy in the ST target frame.</li>
+<li><strong><code>orientation="stalign"</code></strong> — true x/y in the ST target frame. Use this
+  whenever the result is overlaid on, compared with or joined to the ST data.</li>
+<li><strong><code>orientation="dataset"</code></strong> (default) — the transposed layout earlier
+  pipeline runs wrote. It reproduces historical outputs, so existing
+  downstream code keeps working, but these coordinates do <strong>not</strong> line up with
+  the ST cells.</li>
 </ul>
-<p>The two differ by a transpose. Mixing them silently produces a flipped overlay,
-so the choice is always explicit and is recorded on the output frame.</p>
+<p>The two differ by a transpose. Plotting <code>dataset</code> output over ST gives a
+mirrored, misaligned overlay that looks like a failed registration, so pass
+the orientation explicitly; it is recorded on the output frame.</p>
 <hr />
 <h2 id="centroid-registration">Centroid registration<a class="headerlink" href="#centroid-registration" title="Permanent link">&para;</a></h2>
 <p>For post-staining on the same section, where centroids correspond one-to-one.</p>
