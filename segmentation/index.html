@@ -815,17 +815,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#live-segmentation-viewer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Live Segmentation Viewer
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#common-issues-and-troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1427,17 +1416,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#live-segmentation-viewer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Live Segmentation Viewer
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#common-issues-and-troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1831,21 +1809,6 @@ fraction of the smaller object.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="live-segmentation-viewer">Live Segmentation Viewer<a class="headerlink" href="#live-segmentation-viewer" title="Permanent link">&para;</a></h2>
-<p>SMINT includes a Tkinter viewer for monitoring segmentation in real time. From
-the command line:</p>
-<div class="highlight"><pre><span></span><code>smint-viewer<span class="w"> </span>path/to/image.ome.tiff<span class="w"> </span>results/segmentation<span class="w"> </span>results/segmentation/current_tile_info.txt<span class="w"> </span>--interval<span class="w"> </span><span class="m">1000</span>
-</code></pre></div>
-<p>Or from Python:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_viewer</span>
-
-<span class="n">run_viewer</span><span class="p">(</span>
-    <span class="n">full_scan_path</span><span class="o">=</span><span class="s2">"path/to/image.ome.tiff"</span><span class="p">,</span>
-    <span class="n">segmentation_history_dir</span><span class="o">=</span><span class="s2">"results/segmentation"</span><span class="p">,</span>
-    <span class="n">tile_info_path</span><span class="o">=</span><span class="s2">"results/segmentation/current_tile_info.txt"</span><span class="p">,</span>
-    <span class="n">update_interval_ms</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>  <span class="c1"># Update every 1 second</span>
-<span class="p">)</span>
-</code></pre></div>
 <h2 id="common-issues-and-troubleshooting">Common Issues and Troubleshooting<a class="headerlink" href="#common-issues-and-troubleshooting" title="Permanent link">&para;</a></h2>
 <h3 id="poor-segmentation-quality">Poor Segmentation Quality<a class="headerlink" href="#poor-segmentation-quality" title="Permanent link">&para;</a></h3>
 <ul>
