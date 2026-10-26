@@ -650,17 +650,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#graceful-dependency-handling" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Graceful Dependency Handling
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -1333,17 +1322,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#graceful-dependency-handling" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Graceful Dependency Handling
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -1450,26 +1428,6 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <p>Registration with STalign also needs STalign itself, which is installed
 separately and requires numpy &lt; 2 (see <a href="../alignment/#environments">Alignment</a>):</p>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span><span class="s2">"git+https://github.com/JEFworks-Lab/STalign.git"</span>
-</code></pre></div>
-<h2 id="graceful-dependency-handling">Graceful Dependency Handling<a class="headerlink" href="#graceful-dependency-handling" title="Permanent link">&para;</a></h2>
-<p>SMINT is designed to degrade gracefully when optional dependencies are missing:</p>
-<ol>
-<li><strong>Missing a dependency?</strong> SMINT will log a warning but continue to operate with limited functionality.</li>
-<li><strong>Function that requires a missing dependency?</strong> You'll get a clear error message explaining which package you need to install.</li>
-<li><strong>Want to check available functionality?</strong> Run the following code:</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">smint</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SMINT package version: </span><span class="si">{</span><span class="n">smint</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Available modules:"</span><span class="p">)</span>
-<span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"- </span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">smint</span><span class="o">.</span><span class="n">__all__</span><span class="p">]</span>
-</code></pre></div>
-<p>You can also check specific dependency availability:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Check cellpose availability</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">cellpose</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Cellpose is available"</span><span class="p">)</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Cellpose is not available"</span><span class="p">)</span>
 </code></pre></div>
 
 
