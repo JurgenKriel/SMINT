@@ -41,20 +41,6 @@ cd SMINT
 pip install -e .
 ```
 
-## Optional Dependencies
-
-SMINT is designed with graceful dependency handling to ensure robust operation across different environments.
-
-```bash
-# Full installation with all optional dependencies
-pip install "smint[all] @ git+https://github.com/JurgenKriel/SMINT.git"
-
-# Or specific feature sets, from a source checkout
-pip install -e ".[r_integration]"  # For R integration (rpy2)
-pip install -e ".[docs]"           # To build the documentation
-pip install -e ".[dev]"            # pytest, flake8, black
-```
-
 Registration with STalign needs STalign itself, installed separately in an
 environment with numpy < 2 (see the
 [Alignment documentation](https://jurgenkriel.github.io/SMINT/alignment/#environments)):
