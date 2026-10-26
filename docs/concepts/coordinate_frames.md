@@ -25,9 +25,9 @@ flowchart LR
     RC -- "orientation = stalign" --> OUT
     RC -. "orientation = dataset<br/>(x and y swapped)" .-> BAD["Transposed:<br/>does not overlay ST"]
 
-    classDef ref fill:#ebf4ff,stroke:#2b6cb0,color:#1a365d
-    classDef mov fill:#fff5f7,stroke:#d53f8c,color:#521b41
-    classDef bad fill:#fffaf0,stroke:#dd8a2e,color:#7b341e
+    classDef ref fill:#2b6cb02e,stroke:#2b6cb0
+    classDef mov fill:#d53f8c2e,stroke:#d53f8c
+    classDef bad fill:#dd8a2e2e,stroke:#dd8a2e
     class XEN,OUT ref
     class SEG,UM,SMX,PRE,RC mov
     class BAD bad

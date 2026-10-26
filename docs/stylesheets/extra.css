@@ -1,0 +1,15 @@
+/* Mermaid diagrams: mint nodes with dark text, matching the teal theme.
+   Material's defaults (white nodes, light grey labels) read poorly. */
+[data-md-color-scheme="default"] {
+  --md-mermaid-node-bg-color: #c6f6e9;
+  --md-mermaid-node-fg-color: #0d9488;
+  --md-mermaid-label-fg-color: #12302c;
+  --md-mermaid-edge-color: #0f766e;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-mermaid-node-bg-color: #134e4a;
+  --md-mermaid-node-fg-color: #5eead4;
+  --md-mermaid-label-fg-color: #e6fffa;
+  --md-mermaid-edge-color: #5eead4;
+}
