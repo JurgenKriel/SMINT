@@ -1,6 +1,6 @@
 # Examples
 
-Worked examples on real data from the BCRL Venture cohort, run on the WEHI
+Worked examples on real data from the two brain tumour samples, run on the WEHI
 Milton cluster. Timings and results are from those runs; your numbers will
 depend on the data and hardware.
 
@@ -21,16 +21,16 @@ this uses STalign LDDMM guided by manual landmarks.
 
 ![Sequential-section registration: SM onto ST, before, landmarks and after LDDMM](assets/registration_sequential.png)
 
-*Venture 5, Xenium section Z2 and MALDI section Ven5B. 459,969 SM pixels,
+*Sample 2, Xenium section Z2 and MALDI section B. 459,969 SM pixels,
 53,622 ST cells, 11 landmark pairs.*
 
 **Inputs**
 
 | File | Contents |
 |---|---|
-| `Z2_final_aligned_annos.csv` | Xenium cells; registration uses `x_final` / `y_final` (auto-detected) |
-| `Ven5B_information_matrix_tissue_only_full_with_xy.csv` | MALDI pixels: `x`, `y` and one column per m/z (442 MB) |
-| `ven5_z2_st_points_B_points.npy`, `ven5_z2_sm_points_B_points.npy` | 11 paired landmarks |
+| `sample2_xenium_z2.csv` | Xenium cells; registration uses `x_final` / `y_final` (auto-detected) |
+| `sample2_maldi_section_B.csv` | MALDI pixels: `x`, `y` and one column per m/z (442 MB) |
+| `sample2_z2_st_points.npy`, `sample2_z2_sm_points.npy` | 11 paired landmarks |
 
 ### Step 1 — rasterise both modalities for landmarking
 
@@ -38,9 +38,9 @@ this uses STalign LDDMM guided by manual landmarks.
 from smint.alignment import prepare_landmark_inputs
 
 out = prepare_landmark_inputs(
-    st_file="Z2_final_aligned_annos.csv",
-    sm_file="Ven5B_information_matrix_tissue_only_full_with_xy.csv",
-    output_prefix="ven5_z2",
+    st_file="sample2_xenium_z2.csv",
+    sm_file="sample2_maldi_section_B.csv",
+    output_prefix="sample2_z2",
     sm_kwargs=dict(scale_xy=10.0, rotate_left_90=True),   # MALDI pixels -> microns
 )
 ```
@@ -56,12 +56,12 @@ correspondence is positional.
 
 ```bash
 smint-alignment st-sm \
-    --st Z2_final_aligned_annos.csv \
-    --sm Ven5B_information_matrix_tissue_only_full_with_xy.csv \
-    --st-points ven5_z2_st_points_B_points.npy \
-    --sm-points ven5_z2_sm_points_B_points.npy \
+    --st sample2_xenium_z2.csv \
+    --sm sample2_maldi_section_B.csv \
+    --st-points sample2_z2_st_points.npy \
+    --sm-points sample2_z2_sm_points.npy \
     --rotate-left-90 --orientation stalign \
-    --output-dir /vast/scratch/$USER/ven5_z2 \
+    --output-dir /vast/scratch/$USER/sample2_z2 \
     --submit --watch --partition gpuq --gpus 1 --memory 64G \
     --worker-python /path/to/STalign_env/bin/python
 ```
@@ -69,7 +69,7 @@ smint-alignment st-sm \
 ```text
 submitted st_sm via sbatch (30527655)
 state: completed -- st_sm round finished
-{"transformed_csv": "/vast/scratch/.../ven5_z2/sm_transformed.csv"}
+{"transformed_csv": "/vast/scratch/.../sample2_z2/sm_transformed.csv"}
 ```
 
 The worker ran LDDMM (1,000 iterations) on one A30; from submission to
@@ -82,10 +82,10 @@ The same run from Python:
 from smint.alignment import register_sm_to_st
 
 sm = register_sm_to_st(
-    st_file="Z2_final_aligned_annos.csv",
-    sm_file="Ven5B_information_matrix_tissue_only_full_with_xy.csv",
-    st_points_file="ven5_z2_st_points_B_points.npy",
-    sm_points_file="ven5_z2_sm_points_B_points.npy",
+    st_file="sample2_xenium_z2.csv",
+    sm_file="sample2_maldi_section_B.csv",
+    st_points_file="sample2_z2_st_points.npy",
+    sm_points_file="sample2_z2_sm_points.npy",
     sm_kwargs=dict(scale_xy=10.0, rotate_left_90=True),
     orientation="stalign",
     output_path="sm_transformed.csv",
@@ -103,7 +103,7 @@ sm = register_sm_to_st(
 import numpy as np, pandas as pd
 from scipy.spatial import cKDTree
 
-st = pd.read_csv("Z2_final_aligned_annos.csv", usecols=["x_final", "y_final"]).to_numpy()
+st = pd.read_csv("sample2_xenium_z2.csv", usecols=["x_final", "y_final"]).to_numpy()
 sm = pd.read_csv("sm_transformed.csv", usecols=["x_transformed", "y_transformed"]).to_numpy()
 d, _ = cKDTree(st).query(sm)
 print(f"median distance to nearest ST cell: {np.median(d):.1f} um")
@@ -122,13 +122,13 @@ practical checks.
 ## 2. Coarse pre-registration with an orientation search
 
 Before landmarking, bring a dataset roughly into the target frame. MALDI
-pixels from Ven5B (converted to microns) arrive rotated relative to the Z2
+pixels from MALDI section B (converted to microns) arrive rotated relative to the Z2
 Xenium cells:
 
 ```bash
 smint-alignment pretransform \
-    --source ven5b_sm_xy.csv --target Z2_final_aligned_annos.csv \
-    --search --output ven5b_pre.csv
+    --source sample2_sm_xy.csv --target sample2_xenium_z2.csv \
+    --search --output sample2_sm_pre.csv
 ```
 
 ```text
@@ -137,12 +137,12 @@ scale        : 1.2161, 1.2161
 rotation     : 90.00 deg
 reflects     : False
 overlap      : 0.954
-wrote        : ven5b_pre.csv
-transform    : ven5b_pre.csv.transform.json
+wrote        : sample2_sm_pre.csv
+transform    : sample2_sm_pre.csv.transform.json
 ```
 
 `--search` tries every 15° rotation with and without each flip and keeps the
-best overlap score. Here it recovered the 90° rotation that the Ven5B
+best overlap score. Here it recovered the 90° rotation that the MALDI section B
 pipeline otherwise applies by hand (`rotate_left_90=True`), in 52 s for
 459,969 pixels. The matrix and its decomposition are saved next to the
 output, so the step can be reproduced exactly. The napari plugin's
@@ -153,7 +153,7 @@ output, so the step can be reproduced exactly. The napari plugin's
 ## 3. Same-section registration: nuclei onto Xenium cells
 
 When a second modality is acquired on the *same* section — here, nuclei
-segmented from a post-Xenium stain of Venture 5 section z5 — centroids
+segmented from a post-Xenium stain of Sample 2 section z5 — centroids
 correspond one-to-one:
 
 ```bash
@@ -184,7 +184,7 @@ smint-alignment centroid \
 }
 ```
 
-![Post-stain nuclei registered to Xenium cells, before and after](assets/registration_same_section.png)
+![Post-stain nuclei registered to Xenium cells, before and after](assets/registration_same_section_sample2.png)
 
 *88,906 nuclei and 74,247 Xenium cells, about 17 µm apart; 3 s.*
 
@@ -201,7 +201,7 @@ as much from their neighbourhood (8.5 µm against 4.1 µm), so treat them as
 unverified; the output CSV's `registration_status` and `neighbour_deviation`
 say which is which. See [Snapping matched nuclei](alignment.md#snapping-matched-nuclei-onto-their-cells).
 
-![Before registration, after the smooth transform, and after snapping](assets/registration_refinement.png)
+![Before registration, after the smooth transform, and after snapping](assets/registration_refinement_sample2.png)
 
 The single-round methods can't do this: they match each nucleus to its
 nearest cell before fitting, and with a starting offset close to the cell
@@ -239,7 +239,7 @@ print(results["total_cells"], results["total_nuclei"])
 
 ![Nuclei, GFAP and phalloidin with cell and nucleus outlines on one 1024 px chunk](assets/segmentation_gfap_phalloidin.jpg)
 
-*Venture 6, one 1024 px chunk of a 2048 × 2048 px crop; Cellpose 4 on one A30
+*Sample 3, one 1024 px chunk of a 2048 × 2048 px crop; Cellpose 4 on one A30
 took 23 s for the crop. Cyan: nuclei; green: GFAP; magenta: phalloidin. Right:
 cell outlines (white) and nucleus outlines (yellow).*
 
@@ -257,7 +257,7 @@ through SLURM, then stitched and reconciled:
 from smint.segmentation import run_distributed_segmentation
 
 results = run_distributed_segmentation(
-    image_path="Venture6_tile_scan_R6.ome.tif",       # OME-TIFF or OME-Zarr, on shared storage
+    image_path="sample3_tile_scan.ome.tif",       # OME-TIFF or OME-Zarr, on shared storage
     output_dir="/vast/scratch/me/r6_seg",
     cell_model="/path/to/models/cpsam_20260225_153049",
     nuclei_model="nuclei",

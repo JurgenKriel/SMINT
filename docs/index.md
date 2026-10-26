@@ -31,7 +31,7 @@ Two registration regimes, chosen by how the modalities were acquired:
 
 ![Sequential-section registration: SM onto ST, before, landmarks and after LDDMM](assets/registration_sequential.png)
 
-*Spatial metabolomics (MALDI, pink) registered onto Xenium spatial transcriptomics (blue) from a neighbouring section: 11 paired landmarks guide STalign LDDMM. Venture 5, Z2 / Ven5B; rendered with `examples/registration_figures.py`.*
+*Spatial metabolomics (MALDI, pink) registered onto Xenium spatial transcriptomics (blue) from a neighbouring section: 11 paired landmarks guide STalign LDDMM. Sample 2, Z2 / MALDI section B; rendered with `examples/registration_figures.py`.*
 
 - **napari plugin** — load datasets, pre-register by eye (scale, rotate, flip),
   place paired landmarks, and launch registration without leaving the viewer.
@@ -76,7 +76,7 @@ See [Segmentation](segmentation.md).
 - **Visualization** — segmentation overlays, outline plots and RGB composites
 - **HPC** — SLURM submission scripts for preprocessing and segmentation
   ([HPC Deployment](hpc_deployment.md))
-- **Interactive 3D plots** — multi-omics data from the BCRL patient cohort
+- **Interactive 3D plots** — multi-omics data from the three brain tumour samples
   ([Visualizations](visualizations.md))
 
 ## Documentation

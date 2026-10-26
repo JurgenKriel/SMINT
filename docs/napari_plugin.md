@@ -121,7 +121,7 @@ is reported; on failure the error is surfaced as a notification.
 
 Request a GPU with a GPU partition and `gpus=1`. LDDMM uses CUDA automatically
 when available, and GPU results are bit-identical to CPU. The speedup is modest
-at typical raster sizes — 82 s versus 112 s on 8 CPU cores for a Venture 5
+at typical raster sizes — 82 s versus 112 s on 8 CPU cores for a Sample 2
 section — so CPU is a perfectly reasonable default.
 
 **GPU type** picks the card. `gpuq` holds a mix of A30, A100 and P100, and

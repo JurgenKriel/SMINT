@@ -75,9 +75,9 @@ where the biological judgement lives.
 from smint.alignment import prepare_landmark_inputs
 
 out = prepare_landmark_inputs(
-    st_file="Z2_final_aligned_annos.csv",
-    sm_file="Ven5B_information_matrix_tissue_only_full_with_xy.csv",
-    output_prefix="/path/to/ven5_z2",
+    st_file="sample2_xenium_z2.csv",
+    sm_file="sample2_maldi_section_B.csv",
+    output_prefix="/path/to/sample2_z2",
     dx=30.0,
     sm_kwargs=dict(scale_xy=10.0, rotate_left_90=True),
 )
@@ -94,7 +94,7 @@ silently produces a wrong registration. Either use the
 (`STalign/point_annotator.py` in the STalign repository — it is not part of SMINT):
 
 ```bash
-python point_annotator.py ven5_z2_st.npz ven5_z2_sm.npz
+python point_annotator.py sample2_z2_st.npz sample2_z2_sm.npz
 ```
 
 That writes `<prefix>_st_points.npy` and `<prefix>_sm_points.npy`. Then:
@@ -124,7 +124,7 @@ rather than raising**.
 Inspect first:
 
 ```bash
-smint-alignment columns Ven5_z2_pre_aligned_1.csv
+smint-alignment columns sample2_z2_pre_aligned.csv
 ```
 
 Then be explicit:
@@ -180,7 +180,7 @@ print(result["tre_validation"])                       # the number that matters
 print(result["validation"]["after"])                  # median NN, matched fractions
 ```
 
-![Post-stain nuclei registered to Xenium cells, before and after](assets/registration_same_section.png)
+![Post-stain nuclei registered to Xenium cells, before and after](assets/registration_same_section_sample2.png)
 
 | Method | What it does |
 |---|---|
@@ -195,7 +195,7 @@ print(result["validation"]["after"])                  # median NN, matched fract
 The single-round methods match every nucleus to its nearest cell *once*,
 before fitting. When the starting offset is comparable to the cell spacing,
 most of those matches are wrong, and no transform fitted to them can recover:
-on Venture 5 z5 (cells ~17 µm apart, nuclei ~12 µm off) they barely move the
+on Sample 2 z5 (cells ~17 µm apart, nuclei ~12 µm off) they barely move the
 alignment.
 
 `multiround` never commits to nearest neighbours. Within each block of tissue,
@@ -209,7 +209,7 @@ up as a peak (`vote_block_displacements`). Then:
 3. A round is **kept only if it improves** the fitting nuclei's alignment;
    otherwise registration stops there.
 
-![How multi-round registration works on Venture 5 z5](assets/registration_multiround.png)
+![How multi-round registration works on Sample 2 z5](assets/registration_multiround_sample2.png)
 
 *(a) In one block the nearest-cell offsets (white) cluster around zero, but the
 votes peak at the true offset of (23, 5) µm — more than a cell spacing. (b) The
@@ -224,7 +224,7 @@ Each round's outcome is in `result["rounds"]`. Tune with `schedule=` —
 `(max_distance, block_size, bin_size)` per round, in microns — and
 `min_improvement=`.
 
-| Venture 5 z5, held-out nuclei | median NN | matched ≤ 5 µm | matched ≤ 10 µm |
+| Sample 2 z5, held-out nuclei | median NN | matched ≤ 5 µm | matched ≤ 10 µm |
 |---|---|---|---|
 | no transform | 12.4 µm | 10% | 34% |
 | `ransac+tps` (one round) | 11.5 µm | 13% | 40% |
@@ -255,9 +255,9 @@ matched nuclei overlap their cells exactly, `register_centroid_files` (and so
    spacing), and move them onto those cells. These skipped the neighbourhood
    check, so they are marked `assigned` rather than `snapped`.
 
-![Before registration, after the smooth transform, and after snapping](assets/registration_refinement.png)
+![Before registration, after the smooth transform, and after snapping](assets/registration_refinement_sample2.png)
 
-On Venture 5 z5, **65,349 nuclei — 88% of Xenium cells — end up exactly on a
+On Sample 2 z5, **65,349 nuclei — 88% of Xenium cells — end up exactly on a
 distinct cell**: 57,083 snapped and 8,266 assigned. 9,147 follow their
 neighbours, and 14,410 lie outside the Xenium area (median 250 µm from any
 cell). On synthetic sections with known correspondence, the passes snap 98% of
@@ -320,7 +320,7 @@ not help. The function warns in both cases.
 !!! warning "Matching is mutual by default"
     `mutual=True` keeps only pairs that are each other's nearest neighbour.
     One-directional matching lets many source points collapse onto a single
-    popular target, inflating the pair count. On a real Venture 5 section this
+    popular target, inflating the pair count. On a real Sample 2 section this
     was the difference between 75,146 apparent pairs and 40,135 real ones.
 
 ### Interpreting the result
@@ -369,7 +369,7 @@ print(poll(spec.output_dir)["state"])
 
 LDDMM runs on GPU automatically when one is available. Request it with
 `SlurmResources(partition="gpuq", gpus=1)`. GPU and CPU results are
-bit-identical; on a Venture 5 Z2 section the GPU run took 82 s against 112 s on
+bit-identical; on a Sample 2 Z2 section the GPU run took 82 s against 112 s on
 8 CPU cores, so the benefit is modest at typical raster sizes.
 
 `gpuq` mixes A30, A100 and P100 cards, and a bare `--gres=gpu:1` takes whatever

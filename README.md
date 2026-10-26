@@ -62,7 +62,7 @@ For more information, see the [Dependency Handling Documentation](https://jurgen
 
 ![Sequential-section registration: SM onto ST, before, landmarks and after LDDMM](docs/assets/registration_sequential.png)
 
-*Spatial metabolomics (MALDI, pink) registered onto Xenium spatial transcriptomics (blue) from a neighbouring section: 11 paired landmarks guide STalign LDDMM. Venture 5, Z2 / Ven5B; rendered with `examples/registration_figures.py`.*
+*Spatial metabolomics (MALDI, pink) registered onto Xenium spatial transcriptomics (blue) from a neighbouring section: 11 paired landmarks guide STalign LDDMM. Sample 2, Z2 / MALDI section B; rendered with `examples/registration_figures.py`.*
 
 ### Registration in napari
 

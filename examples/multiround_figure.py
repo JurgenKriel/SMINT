@@ -1,6 +1,6 @@
 """
-Render docs/assets/registration_multiround.png: how multi-round (displacement
-voting) centroid registration works, on Venture 5 z5 post-stain nuclei and
+Render docs/assets/registration_multiround_sample2.png: how multi-round (displacement
+voting) centroid registration works, on Sample 2 (section z5) post-stain nuclei and
 Xenium cells. Edit XEN / NUC below for other data.
 
     python examples/multiround_figure.py
@@ -105,6 +105,6 @@ ax.spines[["top", "right"]].set_visible(False); ax.legend(frameon=False, loc="up
 handles = [plt.Line2D([], [], ls="", marker="o", color=c, label=l) for c, l in
            ((CELL, "Xenium cells"), (SINGLE, "nuclei, one-shot"), (NUCL, "nuclei, multiround"))]
 fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 0.955), ncol=3, frameon=False)
-fig.suptitle("Multi-round registration: post-stain nuclei → Xenium cells (Venture 5 z5)", fontsize=14, y=0.995)
-fig.savefig("docs/assets/registration_multiround.png", dpi=110, bbox_inches="tight")
+fig.suptitle("Multi-round registration: post-stain nuclei → Xenium cells (Sample 2, section z5)", fontsize=14, y=0.995)
+fig.savefig("docs/assets/registration_multiround_sample2.png", dpi=110, bbox_inches="tight")
 print("ok")
