@@ -2008,7 +2008,7 @@ so that a cell on a tile boundary is kept once, and whole.</p>
 </div>
 <div class="tabbed-block">
 <p>The module has its own command line:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python<span class="w"> </span>-m<span class="w"> </span>smint.segmentation.distributed_seg<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>smint-segment-distributed<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--image_path<span class="w"> </span>slide.ome.zarr<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>--output_dir<span class="w"> </span>results/seg_run<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>--config_path<span class="w"> </span>configs/segmentation_config.yaml<span class="w"> </span><span class="se">\</span>
@@ -2165,10 +2165,10 @@ you call SMINT:</p>
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">nuc</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">"results/nuclei_um.csv"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>smint-alignment<span class="w"> </span>centroid<span class="w"> </span>--source<span class="w"> </span>results/nuclei_um.csv<span class="w"> </span>--target<span class="w"> </span>cells.csv<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span>--source-cols<span class="w"> </span>x_centroid<span class="w"> </span>y_centroid<span class="w"> </span>--output-dir<span class="w"> </span>results/reg
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span>--output-dir<span class="w"> </span>results/reg
 </code></pre></div>
-<p><code>smint-alignment centroid</code> expects <code>centroid_x</code>/<code>centroid_y</code> in the source by
-default, hence <code>--source-cols</code>. If the image and the Xenium section are not in
+<p><code>smint-alignment centroid</code> finds <code>x_centroid</code>/<code>y_centroid</code> in both files; name
+other columns with <code>--source-cols</code> / <code>--target-cols</code>. If the image and the Xenium section are not in
 the same orientation, see <a href="../concepts/coordinate_frames/">Coordinate frames</a>.</p>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <details class="question">

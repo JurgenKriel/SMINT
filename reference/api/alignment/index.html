@@ -3641,7 +3641,7 @@ from two CSV files and is what <code>smint-alignment centroid</code> runs.</p>
 
 
 <a href="#smint.alignment.register_centroid_files" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">register_centroid_files</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span> <span class="n">target_file</span><span class="p">,</span> <span class="n">source_cols</span><span class="o">=</span><span class="p">(</span><span class="s1">'centroid_x'</span><span class="p">,</span> <span class="s1">'centroid_y'</span><span class="p">),</span> <span class="n">target_cols</span><span class="o">=</span><span class="p">(</span><span class="s1">'x_centroid'</span><span class="p">,</span> <span class="s1">'y_centroid'</span><span class="p">),</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_col</span><span class="o">=</span><span class="s1">'x_transformed'</span><span class="p">,</span> <span class="n">y_col</span><span class="o">=</span><span class="s1">'y_transformed'</span><span class="p">,</span> <span class="n">refine</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">refine_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">register_centroid_files</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span> <span class="n">target_file</span><span class="p">,</span> <span class="n">source_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_col</span><span class="o">=</span><span class="s1">'x_transformed'</span><span class="p">,</span> <span class="n">y_col</span><span class="o">=</span><span class="s1">'y_transformed'</span><span class="p">,</span> <span class="n">refine</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">refine_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents first">
@@ -3704,13 +3704,13 @@ everywhere.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p><code>(x, y)</code> column names in each file. Defaults follow the project's
-convention: segmented centroids use <code>centroid_x</code>/<code>centroid_y</code>,
-Xenium uses <code>x_centroid</code>/<code>y_centroid</code>.</p>
+                <p><code>(x, y)</code> column names in each file. By default the first pair present
+of <code>x_centroid</code>/<code>y_centroid</code> (Xenium, SMINT segmentation
+summaries), <code>centroid_x</code>/<code>centroid_y</code> and <code>x</code>/<code>y</code>.</p>
               </div>
             </td>
             <td>
-                  <code>(&#39;centroid_x&#39;, &#39;centroid_y&#39;)</code>
+                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -3722,13 +3722,13 @@ Xenium uses <code>x_centroid</code>/<code>y_centroid</code>.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p><code>(x, y)</code> column names in each file. Defaults follow the project's
-convention: segmented centroids use <code>centroid_x</code>/<code>centroid_y</code>,
-Xenium uses <code>x_centroid</code>/<code>y_centroid</code>.</p>
+                <p><code>(x, y)</code> column names in each file. By default the first pair present
+of <code>x_centroid</code>/<code>y_centroid</code> (Xenium, SMINT segmentation
+summaries), <code>centroid_x</code>/<code>centroid_y</code> and <code>x</code>/<code>y</code>.</p>
               </div>
             </td>
             <td>
-                  <code>(&#39;centroid_x&#39;, &#39;centroid_y&#39;)</code>
+                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -7089,7 +7089,7 @@ landmark-only (affine) registration.</p>
 
 
 <a href="#smint.alignment.run_lddmm_alignment" class="headerlink" title="Permanent link">&para;</a></h4>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">run_lddmm_alignment</span><span class="p">(</span><span class="n">source_grid</span><span class="p">,</span> <span class="n">source_image</span><span class="p">,</span> <span class="n">target_grid</span><span class="p">,</span> <span class="n">target_image</span><span class="p">,</span> <span class="n">points_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">points_target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">epV</span><span class="o">=</span><span class="mf">200.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">run_lddmm_alignment</span><span class="p">(</span><span class="n">source_grid</span><span class="p">,</span> <span class="n">source_image</span><span class="p">,</span> <span class="n">target_grid</span><span class="p">,</span> <span class="n">target_image</span><span class="p">,</span> <span class="n">points_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">points_target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">epV</span><span class="o">=</span><span class="mf">200.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_from_landmarks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents first">
@@ -7181,10 +7181,11 @@ landmark-only (affine) registration.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Landmark correspondences in row-col order. When supplied, LDDMM uses
-them to initialise the affine, which is what makes registration
-converge on ST/SM pairs; without them it starts from identity and
-typically fails to find the tissue.</p>
+                <p>Landmark correspondences in row-col order. STalign's LDDMM uses them
+only as a matching term and otherwise starts from the identity (it
+also skips its own pre-alignment when landmarks are given), so on its
+own a large offset barely moves. With <code>init_from_landmarks</code> the
+affine is first initialised from the landmarks.</p>
               </div>
             </td>
             <td>
@@ -7200,10 +7201,11 @@ typically fails to find the tissue.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Landmark correspondences in row-col order. When supplied, LDDMM uses
-them to initialise the affine, which is what makes registration
-converge on ST/SM pairs; without them it starts from identity and
-typically fails to find the tissue.</p>
+                <p>Landmark correspondences in row-col order. STalign's LDDMM uses them
+only as a matching term and otherwise starts from the identity (it
+also skips its own pre-alignment when landmarks are given), so on its
+own a large offset barely moves. With <code>init_from_landmarks</code> the
+affine is first initialised from the landmarks.</p>
               </div>
             </td>
             <td>
@@ -7256,6 +7258,24 @@ typically fails to find the tissue.</p>
             </td>
             <td>
                   <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>init_from_landmarks</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Initialise the affine (<code>L</code>, <code>T</code>) from the landmarks with
+<code>STalign.L_T_from_points</code> (default). Ignored when no landmarks are
+given or when <code>L</code>, <code>T</code> or <code>A</code> is passed explicitly.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -7547,8 +7567,9 @@ The two differ by a transpose.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Recorded in <code>df.attrs['orientation']</code> so the convention travels with
-the frame in-process.</p>
+                <p>Recorded in <code>df.attrs['orientation']</code> in-process and, when the table
+is saved, in <code>&lt;output_path&gt;.registration.json</code> next to it, so the
+frame of <code>x_col</code>/<code>y_col</code> is known later.</p>
               </div>
             </td>
             <td>

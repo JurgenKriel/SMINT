@@ -1876,12 +1876,9 @@ do not need this notebook for SMINT segmentations.</p>
 </table>
 <div class="admonition warning">
 <p class="admonition-title">Edit before running</p>
-<p>Besides the input paths, check three things in the script: the number of
-metabolites (<code>num_metabs</code>, set to 451 in the template), the SM coordinate
-column names it builds points from (<code>x_new</code>, <code>y_new</code>; SMINT writes
-<code>x_transformed</code>, <code>y_transformed</code>), and the data frame it builds them from
-(the template refers to <code>sm_section_c_out</code>; use the table you read in,
-<code>SM</code>).</p>
+<p>Set the input paths. The script counts metabolites as the SM columns whose
+names contain <code>X</code> and builds points from <code>x_transformed</code> / <code>y_transformed</code>,
+the columns SMINT writes; adjust both if your table differs.</p>
 </div>
 <h2 id="from-smint-outputs-to-r">From SMINT outputs to R<a class="headerlink" href="#from-smint-outputs-to-r" title="Permanent link">&para;</a></h2>
 <p><code>transcript_assignment.R</code> needs polygons in the Xenium frame. SMINT registers

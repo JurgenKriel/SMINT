@@ -1253,7 +1253,7 @@
         <li class="md-nav__item">
   <a href="#distributed_seg" class="md-nav__link">
     <span class="md-ellipsis">
-      python -m smint.segmentation.distributed_seg
+      smint-segment-distributed
     </span>
   </a>
   
@@ -1742,7 +1742,7 @@
         <li class="md-nav__item">
   <a href="#distributed_seg" class="md-nav__link">
     <span class="md-ellipsis">
-      python -m smint.segmentation.distributed_seg
+      smint-segment-distributed
     </span>
   </a>
   
@@ -1819,8 +1819,8 @@ value named in the description.</p>
 <td>Segment cells and nuclei from a YAML configuration, in one process or distributed with Dask.</td>
 </tr>
 <tr>
-<td><a href="#distributed_seg"><code>python -m smint.segmentation.distributed_seg</code></a></td>
-<td>module entry point</td>
+<td><a href="#distributed_seg"><code>smint-segment-distributed</code></a></td>
+<td>console script</td>
 <td>Distributed whole-slide segmentation with Dask: tiles, workers, stitching and cell / nucleus reconciliation.</td>
 </tr>
 <tr>
@@ -1875,7 +1875,7 @@ plugin, the command line and Python all share one code path, and STalign
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>                      [--scale-xy SCALE_XY] [--rotate-left-90] [--no-keep-positive]
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>                      [--submit] [--watch] [--partition PARTITION] [--cpus CPUS]
 <a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>                      [--memory MEMORY] [--time-limit TIME_LIMIT] [--gpus GPUS]
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>                      [--worker-python WORKER_PYTHON]
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>                      [--gpu-type GPU_TYPE] [--worker-python WORKER_PYTHON]
 </code></pre></div>
 <p><strong>Options</strong></p>
 <table>
@@ -2015,6 +2015,11 @@ plugin, the command line and Python all share one code path, and STalign
 <td>GPUs to request <em>(int)</em></td>
 </tr>
 <tr>
+<td><code>--gpu-type GPU_TYPE</code></td>
+<td><code>A30</code></td>
+<td>GPU type to request with --gpus (e.g. A30, A100); 'any' for any card</td>
+</tr>
+<tr>
 <td><code>--worker-python WORKER_PYTHON</code></td>
 <td>&mdash;</td>
 <td>Interpreter for the worker; defaults to $SMINT_WORKER_PYTHON or an STalign_env beside the package</td>
@@ -2032,7 +2037,7 @@ plugin, the command line and Python all share one code path, and STalign
 <li><code>--st-points</code> / <code>--sm-points</code> are landmark files in the point-annotator format (see <a href="../data_formats/#landmarks-npy">Data formats</a>); both must hold the same number of landmarks, at least 3, in the same order.</li>
 <li>The worker needs an interpreter where STalign imports (numpy &lt; 2). Point <code>--worker-python</code> or <code>$SMINT_WORKER_PYTHON</code> at it.</li>
 <li><code>--orientation stalign</code> gives true x/y in the ST frame, so the result overlays the ST cells; <code>dataset</code> (the default) reproduces older outputs, which are transposed relative to ST.</li>
-<li><code>--submit</code> with <code>--gpus 1</code> needs a GPU partition (<code>--partition</code>); a GPU request on a CPU partition stays pending rather than failing.</li>
+<li><code>--submit</code> with <code>--gpus 1</code> needs a GPU partition (<code>--partition</code>); a GPU request on a CPU partition stays pending rather than failing. <code>--gpu-type</code> (default A30) must be a card that partition offers; <code>any</code> drops the type.</li>
 </ul>
 </div>
 <h3 id="smint-alignment-centroid"><code>smint-alignment centroid</code><a class="headerlink" href="#smint-alignment-centroid" title="Permanent link">&para;</a></h3>
@@ -2045,7 +2050,7 @@ plugin, the command line and Python all share one code path, and STalign
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>                         [--no-refine] [--snap-radius SNAP_RADIUS] [--no-assign-remaining]
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>                         [--source-cols X Y] [--target-cols X Y] [--submit] [--watch]
 <a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>                         [--partition PARTITION] [--cpus CPUS] [--memory MEMORY]
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>                         [--time-limit TIME_LIMIT] [--gpus GPUS]
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>                         [--time-limit TIME_LIMIT] [--gpus GPUS] [--gpu-type GPU_TYPE]
 <a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>                         [--worker-python WORKER_PYTHON]
 </code></pre></div>
 <p><strong>Options</strong></p>
@@ -2115,13 +2120,13 @@ plugin, the command line and Python all share one code path, and STalign
 </tr>
 <tr>
 <td><code>--source-cols X Y</code></td>
-<td><code>centroid_x centroid_y</code></td>
-<td>x and y column names in <code>--source</code></td>
+<td>&mdash;</td>
+<td>x and y columns in --source (default: the first of x_centroid/y_centroid, centroid_x/centroid_y, x/y present)</td>
 </tr>
 <tr>
 <td><code>--target-cols X Y</code></td>
-<td><code>x_centroid y_centroid</code></td>
-<td>x and y column names in <code>--target</code></td>
+<td>&mdash;</td>
+<td>x and y columns in --target (default: as --source-cols)</td>
 </tr>
 <tr>
 <td><code>--submit</code></td>
@@ -2171,6 +2176,11 @@ plugin, the command line and Python all share one code path, and STalign
 <td>GPUs to request <em>(int)</em></td>
 </tr>
 <tr>
+<td><code>--gpu-type GPU_TYPE</code></td>
+<td><code>A30</code></td>
+<td>GPU type to request with --gpus (e.g. A30, A100); 'any' for any card</td>
+</tr>
+<tr>
 <td><code>--worker-python WORKER_PYTHON</code></td>
 <td>&mdash;</td>
 <td>Interpreter for the worker; defaults to $SMINT_WORKER_PYTHON or an STalign_env beside the package</td>
@@ -2179,12 +2189,12 @@ plugin, the command line and Python all share one code path, and STalign
 </table>
 <p>Register segmented nuclei onto Xenium cells from the same section (multiround + snapping refinement, the defaults), on this machine:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>smint-alignment<span class="w"> </span>centroid<span class="w"> </span>--source<span class="w"> </span>nuclei_centroids.csv<span class="w"> </span>--target<span class="w"> </span>xenium_cells.csv<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--output-dir<span class="w"> </span>runs/centroid<span class="w"> </span>--source-cols<span class="w"> </span>x_centroid<span class="w"> </span>y_centroid<span class="w"> </span>--watch
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--output-dir<span class="w"> </span>runs/centroid<span class="w"> </span>--watch
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Good to know</p>
 <ul>
-<li><code>--source-cols</code> and <code>--target-cols</code> are <strong>not</strong> auto-detected: their defaults (<code>centroid_x centroid_y</code> and <code>x_centroid y_centroid</code>) must exist in the files, otherwise the worker stops and <code>status.json</code> reports <code>failed</code>.</li>
+<li>Without <code>--source-cols</code> / <code>--target-cols</code>, each file's columns are the first pair present of <code>x_centroid y_centroid</code>, <code>centroid_x centroid_y</code> and <code>x y</code>; if none is, the worker stops and <code>status.json</code> reports <code>failed</code>.</li>
 <li>Only the validation TRE (<code>tre_validation</code> in <code>status.json</code>) is meaningful; keep <code>--validation-fraction</code> above 0.</li>
 <li>The <code>centroid</code> round has no STalign dependency and runs in any SMINT environment.</li>
 </ul>
@@ -2363,7 +2373,7 @@ plugin, the command line and Python all share one code path, and STalign
 <h2 id="run_segmentation"><code>python scripts/run_segmentation.py</code><a class="headerlink" href="#run_segmentation" title="Permanent link">&para;</a></h2>
 <p><code>scripts/run_segmentation.py</code> merges a YAML configuration with the flags below and runs either the single-process tiler (<code>process_large_image</code>) or, with <code>--distributed</code>, the Dask pipeline (<code>run_distributed_segmentation</code>). It ships in the repository rather than as a console script, so run it from a checkout. Every configuration key is described in <a href="../configuration/">Configuration</a>.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>python scripts/run_segmentation.py [-h] --image IMAGE --output-dir OUTPUT_DIR
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>                                   [--config CONFIG] [--distributed] [--use-gpu]
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>                                   [--config CONFIG] [--distributed] [--use-gpu | --no-gpu]
 <a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>                                   [--cell-model CELL_MODEL] [--nuclei-model NUCLEI_MODEL]
 <a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>                                   [--cell-diameter CELL_DIAMETER]
 <a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>                                   [--nuclei-diameter NUCLEI_DIAMETER]
@@ -2403,7 +2413,12 @@ plugin, the command line and Python all share one code path, and STalign
 <tr>
 <td><code>--use-gpu</code></td>
 <td>off</td>
-<td>Use GPU for computation</td>
+<td>Use the GPU (default: the config file, else use one if available)</td>
+</tr>
+<tr>
+<td><code>--no-gpu</code></td>
+<td>off</td>
+<td>Run on the CPU even if a GPU is available</td>
 </tr>
 <tr>
 <td><code>--cell-model CELL_MODEL</code></td>
@@ -2465,26 +2480,22 @@ plugin, the command line and Python all share one code path, and STalign
 <p class="admonition-title">Good to know</p>
 <ul>
 <li>Without <code>--config</code> the script looks for <code>./configs/segmentation_config.yaml</code>, then <code>~/.smint/config.yaml</code>, then the repository's own <code>configs/segmentation_config.yaml</code>. The run stops if no <code>model_paths</code> is set by the file or the flags.</li>
-<li>With <code>--distributed</code>, the Dask pipeline re-reads the file given by <code>--config</code> itself, so <code>--cell-model</code>, <code>--nuclei-model</code>, <code>--cell-diameter</code> and <code>--nuclei-diameter</code> are <strong>ignored</strong>: set them in the file. Without <code>--config</code> it falls back to the built-in <code>cyto</code> / <code>nuclei</code> models with Cellpose defaults.</li>
+<li>The model, diameter and GPU flags apply with and without <code>--distributed</code>. Without <code>--config</code> or model flags, the distributed run falls back to the built-in <code>cyto</code> / <code>nuclei</code> models with Cellpose defaults.</li>
 <li><code>--cell-model</code> and <code>--nuclei-model</code> each replace only their own entry of the config's <code>model_paths</code> (<code>[cell, nuclei]</code>), so you can override one and keep the other from the file.</li>
-<li><code>--use-gpu</code> can only switch the GPU on for <code>--distributed</code> runs (set <code>use_gpu: false</code> in the file to turn it off). Single-process runs use the GPU whenever Cellpose finds one.</li>
+<li><code>--use-gpu</code> / <code>--no-gpu</code> override <code>use_gpu</code> from the file. With neither, distributed runs default to GPU workers and single-process runs use the GPU whenever Cellpose finds one.</li>
 <li><code>--save-config</code> writes the merged configuration to <code>&lt;output-dir&gt;/segmentation_config.yaml</code>.</li>
 </ul>
 </div>
-<h2 id="distributed_seg"><code>python -m smint.segmentation.distributed_seg</code><a class="headerlink" href="#distributed_seg" title="Permanent link">&para;</a></h2>
+<h2 id="distributed_seg"><code>smint-segment-distributed</code><a class="headerlink" href="#distributed_seg" title="Permanent link">&para;</a></h2>
 <p>The direct entry point to the distributed pipeline. Flags override the YAML file given by <code>--config_path</code>, which overrides the built-in defaults (see <a href="../configuration/#the-distributed-section">Configuration</a>). Workers read the image themselves, so it must be on storage every worker can see. Needs <code>pip install 'smint[distributed]'</code> and Cellpose.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>python -m smint.segmentation.distributed_seg [-h] --image_path IMAGE_PATH --output_dir
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>                                             OUTPUT_DIR [--config_path CONFIG_PATH]
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>                                             [--backend {local,slurm}]
-<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>                                             [--scheduler_address SCHEDULER_ADDRESS]
-<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>                                             [--n_workers N_WORKERS] [--use_gpu | --no_gpu]
-<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>                                             [--tile_size TILE_SIZE]
-<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>                                             [--tile_overlap TILE_OVERLAP]
-<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>                                             [--cell_model CELL_MODEL]
-<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>                                             [--nuclei_model NUCLEI_MODEL]
-<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>                                             [--slurm_gpu_type SLURM_GPU_TYPE]
-<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>                                             [--tile_info_path TILE_INFO_PATH]
-<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>                                             [--live_update_image_path LIVE_UPDATE_IMAGE_PATH]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>smint-segment-distributed [-h] --image_path IMAGE_PATH --output_dir OUTPUT_DIR
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>                          [--config_path CONFIG_PATH] [--backend {local,slurm}]
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>                          [--scheduler_address SCHEDULER_ADDRESS] [--n_workers N_WORKERS]
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>                          [--use_gpu | --no_gpu] [--tile_size TILE_SIZE]
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>                          [--tile_overlap TILE_OVERLAP] [--cell_model CELL_MODEL]
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>                          [--nuclei_model NUCLEI_MODEL] [--slurm_gpu_type SLURM_GPU_TYPE]
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>                          [--tile_info_path TILE_INFO_PATH]
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>                          [--live_update_image_path LIVE_UPDATE_IMAGE_PATH]
 </code></pre></div>
 <p><strong>Options</strong></p>
 <table>
@@ -2529,12 +2540,12 @@ plugin, the command line and Python all share one code path, and STalign
 <tr>
 <td><code>--use_gpu</code></td>
 <td>off</td>
-<td>Force GPU workers (default: <code>use_gpu</code> from the configuration, else on)</td>
+<td>Use GPU workers (default: the config file, else yes)</td>
 </tr>
 <tr>
 <td><code>--no_gpu</code></td>
 <td>off</td>
-<td>Force CPU workers</td>
+<td>Use CPU workers</td>
 </tr>
 <tr>
 <td><code>--tile_size TILE_SIZE</code></td>
@@ -2559,7 +2570,7 @@ plugin, the command line and Python all share one code path, and STalign
 <tr>
 <td><code>--slurm_gpu_type SLURM_GPU_TYPE</code></td>
 <td>&mdash;</td>
-<td>SLURM GPU type, e.g. A30</td>
+<td>SLURM GPU type, e.g. A30; other SLURM options come from the config</td>
 </tr>
 <tr>
 <td><code>--tile_info_path TILE_INFO_PATH</code></td>
@@ -2574,20 +2585,19 @@ plugin, the command line and Python all share one code path, and STalign
 </tbody>
 </table>
 <p>Four SLURM GPU workers, each on an A30:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>python<span class="w"> </span>-m<span class="w"> </span>smint.segmentation.distributed_seg<span class="w"> </span>--image_path<span class="w"> </span>slide.ome.tif<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">    </span>--output_dir<span class="w"> </span>results/dist<span class="w"> </span>--config_path<span class="w"> </span>my_config.yaml<span class="w"> </span>--backend<span class="w"> </span>slurm<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">    </span>--n_workers<span class="w"> </span><span class="m">4</span><span class="w"> </span>--slurm_gpu_type<span class="w"> </span>A30
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>smint-segment-distributed<span class="w"> </span>--image_path<span class="w"> </span>slide.ome.tif<span class="w"> </span>--output_dir<span class="w"> </span>results/dist<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">    </span>--config_path<span class="w"> </span>my_config.yaml<span class="w"> </span>--backend<span class="w"> </span>slurm<span class="w"> </span>--n_workers<span class="w"> </span><span class="m">4</span><span class="w"> </span>--slurm_gpu_type<span class="w"> </span>A30
 </code></pre></div>
 <p>CPU-only on this machine, a quick test on a crop:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>python<span class="w"> </span>-m<span class="w"> </span>smint.segmentation.distributed_seg<span class="w"> </span>--image_path<span class="w"> </span>crop.ome.tif<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">    </span>--output_dir<span class="w"> </span>results/test<span class="w"> </span>--config_path<span class="w"> </span>my_config.yaml<span class="w"> </span>--no_gpu<span class="w"> </span>--tile_size<span class="w"> </span><span class="m">1024</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>smint-segment-distributed<span class="w"> </span>--image_path<span class="w"> </span>crop.ome.tif<span class="w"> </span>--output_dir<span class="w"> </span>results/test<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">    </span>--config_path<span class="w"> </span>my_config.yaml<span class="w"> </span>--no_gpu<span class="w"> </span>--tile_size<span class="w"> </span><span class="m">1024</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Good to know</p>
 <ul>
 <li><code>--use_gpu</code> / <code>--no_gpu</code> force GPU workers on or off; with neither, <code>use_gpu</code> from the configuration applies (default on).</li>
 <li><code>--tile_overlap</code> must exceed the radius of the largest cell, so every boundary cell is seen whole by at least one tile.</li>
-<li><code>--slurm_gpu_type</code> replaces the configuration's whole <code>distributed.slurm</code> section with <code>{gpu_type: ...}</code>; to combine a GPU type with other SLURM options, set them all in the file instead.</li>
+<li><code>--slurm_gpu_type</code> sets <code>gpu_type</code> and keeps the other options of the configuration's <code>distributed.slurm</code> section.</li>
 <li>Outputs: <code>cells_outlines.csv</code>, <code>nuclei_outlines.csv</code>, <code>cells_summary.csv</code>, <code>nuclei_summary.csv</code>, <code>cells.zarr</code>, <code>nuclei.zarr</code> and a timestamped log (see <a href="../data_formats/#distributed-segmentation-outputs">Data formats</a>).</li>
 </ul>
 </div>
