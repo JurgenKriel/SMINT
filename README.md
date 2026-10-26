@@ -2,7 +2,7 @@
 # SMINT - Spatial Multi-Omics Integration Toolkit
 ![Workflow Image](https://github.com/JurgenKriel/SMINT/raw/main/SpatialSegPaper_v2.png)
 
-SMINT is a Python package for Spatial Multi-Omics Integration with enhanced segmentation capabilities and streamlined workflow. It provides a comprehensive toolkit for processing, analyzing, and visualizing spatial multi-omics data.
+SMINT brings spatial omics modalities into one coordinate system. It segments cells and nuclei across whole-slide images, then registers spatial transcriptomics, spatial metabolomics and post-stain imaging onto each other — interactively in napari, from the command line, or as SLURM jobs.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
@@ -10,18 +10,18 @@ SMINT is a Python package for Spatial Multi-Omics Integration with enhanced segm
 
 ## Features
 
-- Multi-GPU cell segmentation for whole-slide images
-- Distributed segmentation using Dask for improved performance
-- Live segmentation monitoring with intuitive visualization tools
-- Streamlined alignment workflow using ST Align
-- Integration with R analysis scripts via rpy2
-- Graceful dependency handling for all optional components
-- Comprehensive documentation with step-by-step guides
-- HPC deployment scripts for SLURM-based clusters
+- **Registration** of sequential sections with STalign LDDMM, and of post-stained same-section data by affine / RANSAC / thin-plate-spline correspondence fitting
+- **napari plugin** for loading datasets, coarse pre-registration (scale, rotate, flip), landmark placement and launching registration jobs
+- **`smint-alignment` CLI** for the same workflow from the shell, run locally or submitted to SLURM (CPU or GPU)
+- **Honest metrics**: Target Registration Error reported on held-out pairs
+- **Whole-slide segmentation** of cells and nuclei with Cellpose, with adaptive nuclei thresholds and distributed processing across GPUs with Dask
+- **Live segmentation viewer** (`smint-viewer`)
+- **R integration** for running existing R analysis scripts from Python
+- **HPC deployment scripts** for SLURM-based clusters
 
 ## Documentation
 
-Comprehensive documentation is available at [https://jurgenkriel.github.io/SMINT/](https://jurgenkriel.github.io/SMINT/)
+Full documentation: [https://jurgenkriel.github.io/SMINT/](https://jurgenkriel.github.io/SMINT/)
 
 ## Installation
 
@@ -49,56 +49,56 @@ environment with numpy < 2 (see the
 pip install --upgrade "git+https://github.com/JEFworks-Lab/STalign.git"
 ```
 
-For more information, see the [Dependency Handling Documentation](https://jurgenkriel.github.io/SMINT/dependency_handling/).
-
-## Linking to GitHub Repository
-
-This project is linked to the GitHub repository at [https://github.com/JurgenKriel/SMINT](https://github.com/JurgenKriel/SMINT).
-
-### Pushing to GitHub
-
-To contribute changes to the GitHub repository:
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/JurgenKriel/SMINT.git
-   cd SMINT
-   ```
-
-2. Make your changes and test them locally.
-
-3. Push changes to GitHub:
-   ```bash
-   git add .
-   git commit -m "Description of changes"
-   git push origin main
-   ```
-
-### Documentation Deployment
-
-Documentation is automatically deployed to GitHub Pages using GitHub Actions. The workflow file is located at `.github/workflows/deploy-docs.yml`.
-
-When you push changes to the `main` branch, the documentation will be automatically built and deployed to [https://jurgenkriel.github.io/SMINT/](https://jurgenkriel.github.io/SMINT/).
-
-To build documentation locally for testing:
+The napari plugin needs napari in the environment you launch it from:
 
 ```bash
-pip install mkdocs mkdocs-material pymdown-extensions mkdocstrings
-mkdocs serve
+pip install "napari[all]"
 ```
 
-## Usage Examples
+For more information, see the [Dependency Handling Documentation](https://jurgenkriel.github.io/SMINT/dependency_handling/).
+
+## Quick Start
+
+### Registration in napari
+
+Launch `napari` and open **Plugins → SMINT Registration**. The four widgets —
+*Load datasets*, *Pre-register*, *Landmarks* and *Register* — take you from raw
+CSVs to a submitted registration job. See the
+[napari plugin guide](https://jurgenkriel.github.io/SMINT/napari_plugin/).
+
+### Registration from the command line
+
+```bash
+# Sequential sections: STalign LDDMM from saved landmarks
+smint-alignment st-sm --st st.csv --sm sm.csv \
+    --st-points st_points.npy --sm-points sm_points.npy --output-dir run1
+
+# Same section: fit nuclei centroids onto Xenium cells
+smint-alignment centroid --source nuclei.csv --target xenium.csv --output-dir run2
+
+# Add --submit to run on SLURM instead, and --watch to wait for it
+```
+
+Or from Python:
+
+```python
+from smint.alignment import register_centroids
+
+result = register_centroids(nucleus_xy, xenium_xy, method="ransac+tps")
+print(result["tre_validation"])  # TRE on held-out pairs
+```
+
+See the [Alignment guide](https://jurgenkriel.github.io/SMINT/alignment/).
 
 ### Cell Segmentation
 
 ```python
-import smint
 from smint.segmentation import process_large_image
 
 # Run cell segmentation on a whole-slide image
 process_large_image(
     image_path="path/to/whole_slide_image.ome.tiff",
-    csv_base_path="path/to/output_directory",
+    csv_base_path="path/to/output/segmentation",  # writes <base>_cells.csv, <base>_nuclei.csv
     cell_model_path="cyto",  # Use pre-trained Cellpose model
     cells_diameter=120.0,
     cells_channels=[1, 2],  # Green and Blue channels for cells
@@ -109,63 +109,44 @@ process_large_image(
 )
 ```
 
-### Visualization
+See the [Segmentation guide](https://jurgenkriel.github.io/SMINT/segmentation/).
 
-```python
-from smint.visualization import visualize_segmentation_results
+## Analysis Scripts
 
-# Create interactive visualization of segmentation results
-visualize_segmentation_results(
-    image_path="path/to/whole_slide_image.ome.tiff",
-    segmentation_csv="path/to/segmentation_results.csv",
-    output_html="path/to/output/visualization.html",
-    thumbnail_size=(800, 800)
-)
-```
+The repository also holds the analysis scripts used alongside the package.
 
-### R Integration
+### Transcriptomics workflow
 
-```python
-from smint.r_integration import run_spatialomics_analysis
+1. **Stitch polygons** — `stitching/stitching.Rmd`
+2. **Assign transcripts to polygons** — `assignment/transcript_assignment.R`
 
-# Run spatial statistics analysis using R
-run_spatialomics_analysis(
-    segmentation_data="path/to/segmentation_results.csv",
-    expression_data="path/to/gene_expression.csv",
-    output_directory="path/to/output",
-    spatial_methods=["Ripley", "Morans"]
-)
-```
-## Transcriptomics workflow  
+### Alignment workflow
 
-### 1. Stitch Polygons
-See stitching script under stitching/stitching.Rmd
+1. **Set up STalign** — `pip install --upgrade "git+https://github.com/JEFworks-Lab/STalign.git"`
+2. **Align ST to SM** — `alignment/ST_align_xenium.py`
 
-### 2. Align and Assign Transcripts to polygons
-See alignment of polygons and transcripts under
-See transcript assignment script under assignment/transcript_assignment.R
+### Integration
 
-## Alignment Workflow
+1. **Metabolomics cluster analysis** — `integration/metabolomics_integration.R`
 
-### 1. Setup STalign
-
-```
-pip install --upgrade "git+https://github.com/JEFworks-Lab/STalign.git"
-```
-
-### 2. Align ST to SM
-See alignment script under alignment/ST_align_xenium.py
-
-
-## Integration 
-
-### 1. Metabolomics Cluster Analysis 
-See metabolite assignment script under integration/metabolomics_integration.R
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please open an issue or submit a pull request.
+
+The documentation is built with MkDocs and deployed to GitHub Pages by
+`.github/workflows/deploy-docs.yml` on every push to `main`. To preview it
+locally:
+
+```bash
+pip install mkdocs mkdocs-material pymdown-extensions
+mkdocs serve
+```
+
+## Citation
+
+If you use SMINT in your research, please cite it using GitHub's **Cite this
+repository** button (from `CITATION.cff`).
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
