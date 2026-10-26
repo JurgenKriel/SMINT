@@ -46,6 +46,9 @@ def setup_logger(csv_base_path):
         logging.Logger: Configured logger
     """
     log_file = f"{csv_base_path}.log"
+    log_dir = os.path.dirname(log_file)
+    if log_dir:
+        os.makedirs(log_dir, exist_ok=True)
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
@@ -204,7 +207,7 @@ def process_large_image(
     csv_base_path,
     chunk_size=(2048, 2048),
     # Cell Model parameters
-    cell_model_path="/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700",
+    cell_model_path="cyto3",
     cells_diameter=120.0,
     cells_flow_threshold=0.4,
     cells_cellprob_threshold=-1.5,
@@ -242,9 +245,9 @@ def process_large_image(
     when that matters.
 
     Always pass ``cell_model_path`` (a model file, or a built-in name such as
-    ``"cyto3"`` on Cellpose 3 or ``"cpsam"`` on Cellpose 4). Its built-in
-    default points at a model file on the developers' system; when the model
-    cannot be found, cell segmentation is skipped with a warning. The same
+    ``"cyto3"`` on Cellpose 3 or ``"cpsam"`` on Cellpose 4). It defaults to
+    ``"cyto3"`` (Cellpose 4 substitutes ``cpsam``); when a model file cannot
+    be found, cell segmentation is skipped with a warning. The same
     applies to ``nuclei_model_path``, which defaults to ``"nuclei"``
     (Cellpose 3 only; Cellpose 4 substitutes ``cpsam``).
 
@@ -252,7 +255,7 @@ def process_large_image(
     (``global_cell_id, chunk_id, x, y``, one row per outline vertex),
     ``<csv_base_path>.log`` and, when ``visualize`` is on,
     ``chunk_<row>_<col>.png`` overlays. The directory of ``csv_base_path``
-    must already exist, because the log file is opened first.
+    is created if it does not exist.
 
     Args:
         image_path (str): Path to the input TIFF / OME-TIFF.
@@ -816,7 +819,7 @@ if __name__ == "__main__":
     parser.add_argument("--image_path", required=True, help="Path to the input image file")
     parser.add_argument("--csv_base_path", required=True, help="Base path for output CSV files")
     parser.add_argument("--chunk_size", type=int, nargs=2, default=[2048, 2048], help="Size of chunks for processing (height width)")
-    parser.add_argument("--cell_model_path", default="/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700", help="Path to the cell segmentation model")
+    parser.add_argument("--cell_model_path", default="cyto3", help="Cell model: a built-in Cellpose name or a path to a trained model")
     parser.add_argument("--cells_diameter", type=float, default=120.0, help="Diameter of cells for segmentation")
     parser.add_argument("--nuclei_model_path", default="nuclei", help="Path to the nuclei segmentation model")
     parser.add_argument("--nuclei_diameter", type=float, default=40.0, help="Diameter of nuclei for segmentation")

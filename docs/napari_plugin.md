@@ -357,7 +357,7 @@ log: GPUs on a partition that does not look like a GPU partition (the job sits i
 and a GPU partition with **GPUs** at 0 (no GPU is allocated, so the job runs on the CPU).
 
 !!! warning "Known limitations of the `st_sm` round from the widget"
-    Three behaviours of the current code affect `st_sm` jobs submitted from this widget. Until
+    Two behaviours of the current code affect `st_sm` jobs submitted from this widget. Until
     they are fixed, submit sequential registrations with the Python snippet below.
 
     1. **SM coordinates are rescaled in the worker.** The worker reads the SM table with the
@@ -374,10 +374,6 @@ and a GPU partition with **GPUs** at 0 (no GPU is allocated, so the job runs on 
        with `orientation="dataset"`. Those coordinates are transposed relative to the ST cells
        (see [Coordinate frames](concepts/coordinate_frames.md)), so the `st_sm registered` layer
        does not overlay the target.
-    3. **The `centroid registered` layer shows the original coordinates.** Column detection
-       prefers `x_centroid` / `centroid_x` over `x_transformed`, so the layer shows the source
-       before registration. The CSV itself is correct: read `x_transformed` / `y_transformed`
-       from it.
 
 #### Rerun or adjust a job outside the widget
 

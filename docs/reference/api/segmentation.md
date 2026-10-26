@@ -209,7 +209,6 @@ available.
       docstring_style: google
       docstring_options:
         returns_named_value: false
-      show_signature: false
 
 ::: smint.segmentation.segment_chunk
     options:

@@ -88,7 +88,9 @@ it. The difference matters for which models you can use:
 `channels` (`[main, nuclear]`, 1-based, 0 = none) means the same on both:
 SMINT selects the channels before calling Cellpose. For a GPU, install the
 CUDA build of torch that matches your driver (see
-[pytorch.org](https://pytorch.org/get-started/locally/)) before Cellpose.
+[pytorch.org](https://pytorch.org/get-started/locally/)) before Cellpose. On a
+machine without an NVIDIA GPU, install the much smaller CPU build first:
+`pip install torch --index-url https://download.pytorch.org/whl/cpu`.
 
 ### Registration with STalign
 

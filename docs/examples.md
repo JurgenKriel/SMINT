@@ -99,7 +99,7 @@ column and adds `x_transformed` / `y_transformed`.
 !!! warning "Pass `orientation=\"stalign\"` to overlay on ST"
     The default, `"dataset"`, reproduces historical outputs but is transposed
     relative to the ST cells. Plotted over ST it looks like a failed
-    registration. See [Coordinate orientation](alignment.md#coordinate-orientation).
+    registration. See [STalign works in row-column order](concepts/coordinate_frames.md#stalign-works-in-row-column).
 
 **Step 4 — check the result.**
 
@@ -206,14 +206,14 @@ neighbourhood, and 8,266 more are assigned to the free cells around them —
 **88% of Xenium cells** now carry a nucleus. The assigned pairs deviate twice
 as much from their neighbourhood (8.5 µm against 4.1 µm), so treat them as
 unverified; the output CSV's `registration_status` and `neighbour_deviation`
-say which is which. See [Snapping matched nuclei](alignment.md#snapping-matched-nuclei-onto-their-cells).
+say which is which. See [Snapping nuclei onto their cells](alignment.md#snapping-nuclei-onto-their-cells).
 
 ![Before registration, after the smooth transform, and after snapping](assets/registration_refinement_sample2.png)
 
 The single-round methods can't do this: they match each nucleus to its
 nearest cell before fitting, and with a starting offset close to the cell
 spacing most of those matches are wrong. `--method ransac+tps` only reaches
-11.5 µm here. See [Why multiple rounds](alignment.md#why-multiple-rounds).
+11.5 µm here. See [What multiround does](alignment.md#what-multiround-does).
 
 [Tutorial 2](tutorials/02_same_section_registration.ipynb) runs the same two
 steps on a 1.5 mm × 1.5 mm crop of this section — where the pattern repeats:

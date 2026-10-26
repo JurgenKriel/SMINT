@@ -152,13 +152,13 @@ or job that runs Python.
 `r_to_pandas(obj)`, and in `smint.r_integration.r_bridge`, `exec_r_code`,
 `r_function_to_python` and `load_r_analysis_script`.
 
-!!! bug "The rpy2 helpers fail in the current version"
-    These functions check a flag that is never defined and raise
-    `NameError: name 'HAS_RPY2' is not defined`, whether or not rpy2 is
-    installed. Use `run_r_script` until this is fixed. Importing
-    `smint.r_integration` without rpy2 also logs a warning
-    ("rpy2 package not available"), which you can ignore if you only use
-    `run_r_script`.
+!!! warning "The rpy2 helpers are not tested"
+    Without rpy2 these functions log "rpy2 is not installed" and return
+    `None` (or `False` for `initialize_r`). They have not been tested
+    against a current rpy2 release, so prefer `run_r_script` for anything
+    you depend on. Importing `smint.r_integration` without rpy2 also logs a
+    warning ("rpy2 package not available"), which you can ignore if you only
+    use `run_r_script`.
 
 ## Next steps
 

@@ -124,6 +124,7 @@ plugins:
   - search
   - mkdocs-jupyter:
       execute: false
+      include: ["*.ipynb"]
       include_source: true
       ignore_h1_titles: true
   - mkdocstrings:

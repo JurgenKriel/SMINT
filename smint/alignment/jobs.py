@@ -343,7 +343,7 @@ class JobSpec:
                 raise ValueError(
                     "sbatch jobs run on a different machine, so node-local "
                     f"paths are unreachable: {offending}. Use a shared "
-                    "filesystem (e.g. /vast/scratch or /vast/projects), or "
+                    "filesystem (one every compute node mounts), or "
                     "backend='local' to run here."
                 )
 

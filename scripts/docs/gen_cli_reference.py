@@ -305,8 +305,9 @@ COMMANDS = [
                 "itself, so `--cell-model`, `--nuclei-model`, `--cell-diameter` and "
                 "`--nuclei-diameter` are **ignored**: set them in the file. Without `--config` "
                 "it falls back to the built-in `cyto` / `nuclei` models with Cellpose defaults.",
-                "In single-process mode pass `--cell-model` and `--nuclei-model` together: "
-                "either one alone replaces the whole `model_paths` list.",
+                "`--cell-model` and `--nuclei-model` each replace only their own entry of "
+                "the config's `model_paths` (`[cell, nuclei]`), so you can override one and keep "
+                "the other from the file.",
                 "`--use-gpu` can only switch the GPU on for `--distributed` runs (set "
                 "`use_gpu: false` in the file to turn it off). Single-process runs use the GPU "
                 "whenever Cellpose finds one.",

@@ -27,6 +27,7 @@ dependencies = [
     "opencv-python",
     "pandas>=2.2.3",
     "psycopg2-binary>=2.9.10",
+    "pyyaml>=6.0",  # smint.utils.config
     "scikit-image>=0.25.2",
     "setuptools>=80.4.0",
     "tifffile>=2025.5.10",
