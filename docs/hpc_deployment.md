@@ -56,7 +56,7 @@ conflict:
 |---|---|---|---|
 | **Core / segmentation** | Segmentation, centroid registration, pre-registration, submitting jobs | Cellpose 3 *or* 4 with a CUDA build of torch | `pip install "smint[distributed] @ git+https://github.com/JurgenKriel/SMINT.git"` |
 | **STalign worker** | LDDMM registration (`st_sm` jobs) | **numpy < 2** | see [Installation](installation.md#registration-with-stalign) |
-| **napari** | The interactive plugin | napari needs numpy ≥ 2 | `pip install "napari[all]"` plus SMINT |
+| **napari** | The interactive plugin | Kept apart from the numpy < 2 STalign env (napari works with numpy 1 or 2) | `pip install "napari[all]"` plus SMINT |
 
 Install them on **shared storage** so compute nodes can run them, and tell
 SMINT which interpreter runs registration workers:
@@ -219,7 +219,7 @@ output dir: /shared/project/reg_b
 | `--cpus` | 8 | CPUs per task |
 | `--memory` | `64G` | Memory request |
 | `--time-limit` | `04:00:00` | Walltime |
-| `--gpus` | 0 | GPUs to request; with `--gpus 1` the job asks for an A30 (`--gres=gpu:A30:1`) |
+| `--gpus` | 0 | GPUs to request; with `--gpus 1` the job asks for an A30 (`--gres=gpu:A30:1`). The GPU type is fixed to A30 on the command line: for another card, or any card, submit with `JobSpec` / `SlurmResources(gpu_type=...)` or the napari widget |
 | `--worker-python` | `$SMINT_WORKER_PYTHON` | Interpreter that runs the worker |
 
 Without `--submit`, the same job runs as a background process on the current

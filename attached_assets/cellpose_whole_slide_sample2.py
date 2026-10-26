@@ -48,7 +48,7 @@ def segment_chunk(chunk, model=None, chunk_position=None):
     if model is None:
         #model = models.CellposeModel(model_type='nuclei', gpu=True)
         #model = models.CellposeModel(model_type='CP', gpu=True) #use for DAPI-only images
-        model = models.CellposeModel(pretrained_model="/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700", gpu=True)
+        model = models.CellposeModel(pretrained_model="/path/to/models/your_cellpose_model", gpu=True)
 
     # Ensure chunk is 2D and properly formatted
     if chunk.ndim > 2:

@@ -241,7 +241,7 @@ import pandas as pd
 import tifffile
 
 cells = pd.read_csv("docs/tutorials/data/synthetic_cells.csv")
-nuclei = pd.read_csv("nuclei_registered.csv")
+nuclei = pd.read_csv("nuclei_registered.csv")  # Command line tab: "qs_registration/centroids_transformed.csv"
 image = tifffile.imread("docs/tutorials/data/synthetic_wsi.ome.tif")
 outlines = pd.read_csv("qs_segmentation/cells_outlines.csv")
 

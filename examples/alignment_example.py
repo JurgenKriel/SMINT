@@ -162,7 +162,7 @@ def example_slurm():
         inputs={"st_file": ..., "sm_file": ...,
                 "st_points": ..., "sm_points": ...},
         params={"niter": 1000},
-        output_dir="/vast/scratch/you/run1",   # must be shared storage
+        output_dir="/shared/scratch/you/run1",   # must be shared storage
         backend="sbatch",
         resources=SlurmResources(partition="gpuq", gpus=1, memory="64G"),
     )

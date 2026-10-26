@@ -13,7 +13,7 @@ reproduce the steps before pointing them at your own files.
 | 1 | [SM → ST, sequential sections](#1-spatial-metabolomics-spatial-transcriptomics) | 459,969 MALDI pixels, 53,622 Xenium cells | 16.4 µm median to nearest ST cell | 72 s, one A30 | [Tutorial 3](tutorials/03_sequential_registration.ipynb) |
 | 2 | [Orientation search](#2-coarse-pre-registration-with-an-orientation-search) | the same MALDI section | recovers the 90° rotation | 52 s | [Tutorial 3](tutorials/03_sequential_registration.ipynb) |
 | 3 | [Nuclei → Xenium, same section](#3-same-section-registration-nuclei-onto-xenium-cells) | 88,906 nuclei, 74,247 cells | held-out TRE 11.0 → 4.9 µm; 88% of cells get a nucleus | 3 s | [Tutorial 2](tutorials/02_same_section_registration.ipynb) |
-| 4 | [Segmentation on one GPU](#4-segmenting-a-whole-slide-image-on-one-gpu) | 2048 px crop, 3 channels | 33 cells, 29 nuclei | 23 s, one A30 | [Tutorial 1](tutorials/01_segmentation.ipynb) |
+| 4 | [Segmentation on one GPU](#4-segmenting-an-image-on-one-gpu-2048-px-crop) | 2048 px crop, 3 channels | 33 cells, 29 nuclei | 23 s, one A30 | [Tutorial 1](tutorials/01_segmentation.ipynb) |
 | 5 | [Distributed segmentation](#5-distributed-segmentation-on-slurm-gpus) | 4096 px tile scan, 16 tiles | 44 cells, 44 nuclei | 0.6 min, four A30s | [Tutorial 4](tutorials/04_distributed_segmentation.ipynb) |
 
 ---
@@ -222,7 +222,11 @@ where every placement can be checked against the truth.
 
 ---
 
-## 4. Segmenting a whole-slide image on one GPU
+## 4. Segmenting an image on one GPU (2048 px crop)
+
+The same call works on a whole slide: it segments the image chunk by chunk, so
+only run time grows. The image itself is read into memory, so for slides that
+do not fit, use distributed segmentation ([example 5](#5-distributed-segmentation-on-slurm-gpus)).
 
 A fine-tuned Cellpose-SAM model segments cells, and Cellpose's base model
 segments nuclei, chunk by chunk:
@@ -304,3 +308,11 @@ each nucleus belongs to) and full-resolution label masks. See
 [Tiling and stitching](concepts/tiling_and_stitching.md) for how tiles are
 stitched, and [Tutorial 4](tutorials/04_distributed_segmentation.ipynb) to run
 the same pipeline on local CPU workers and read its log line by line.
+
+## Next steps
+
+- Apply this to your own data: [The SMINT workflow](concepts/workflow.md).
+- Run it on the cluster: [Running on HPC](hpc_deployment.md).
+- Transcripts and metabolites per cell: [Tutorial 5](tutorials/05_integration.ipynb)
+  and [R integration](r_integration.md).
+- Every command-line option: [Command line](reference/cli.md).

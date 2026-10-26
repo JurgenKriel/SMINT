@@ -64,9 +64,9 @@ smint-alignment st-sm [-h] --st ST --sm SM --st-points ST_POINTS --sm-points SM_
                       --output-dir OUTPUT_DIR [--dx DX] [--niter NITER] [--epv EPV]
                       [--orientation {dataset,stalign}] [--st-x-col ST_X_COL]
                       [--st-y-col ST_Y_COL] [--sm-x-col SM_X_COL] [--sm-y-col SM_Y_COL]
-                      [--scale-xy SCALE_XY] [--rotate-left-90] [--submit] [--watch]
-                      [--partition PARTITION] [--cpus CPUS] [--memory MEMORY]
-                      [--time-limit TIME_LIMIT] [--gpus GPUS]
+                      [--scale-xy SCALE_XY] [--rotate-left-90] [--no-keep-positive]
+                      [--submit] [--watch] [--partition PARTITION] [--cpus CPUS]
+                      [--memory MEMORY] [--time-limit TIME_LIMIT] [--gpus GPUS]
                       [--worker-python WORKER_PYTHON]
 ```
 
@@ -89,6 +89,7 @@ smint-alignment st-sm [-h] --st ST --sm SM --st-points ST_POINTS --sm-points SM_
 | `--sm-y-col SM_Y_COL` | &mdash; | SM y column to register (default: the column named 'y') |
 | `--scale-xy SCALE_XY` | `10.0` | SM coordinate scaling *(float)* |
 | `--rotate-left-90` | off | Rotate SM 90 deg CCW |
+| `--no-keep-positive` | off | Do not shift SM coordinates to be non-negative (use with --scale-xy 1 for a table already pre-registered into the ST frame) |
 | `--submit` | off | Submit to SLURM |
 | `--watch` | off | Block until finished |
 
@@ -257,7 +258,7 @@ smint-alignment columns sm_matrix.csv
 Output on a small synthetic matrix with columns `x, y, 72.0796, 88.0399`:
 
 ```text
-4 columns in sm.csv:
+4 columns in sm_matrix.csv:
   x  <- auto-detected
   y  <- auto-detected
   72.0796

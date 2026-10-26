@@ -227,10 +227,26 @@ orientation mismatch, so bring the datasets roughly together first.
     print(describe_pretransform(matrix))        # scale, rotation, shear, reflects
     ```
 
+    To save the result for the next steps, write `moved` back into the SM
+    table's `x` / `y` columns and save it as `sm_pre.csv`.
+
 Operations are applied flip → rotate → scale → translate, about the source
 centroid. Scale is fitted *after* orientation is corrected, because
 bounding-box extents change under rotation. Scaling is isotropic unless you
 ask otherwise (`--anisotropic`, `preserve_aspect=False`).
+
+!!! warning "Hand `sm_pre.csv` on unscaled"
+    `sm_pre.csv` is already scaled and oriented into the ST frame (µm). Steps 2
+    and 3 read SM tables through `read_sm_matrix`, which by default multiplies
+    x/y by 10 and shifts negative coordinates to ≥ 0. For the pre-registered
+    table, turn both off: `scale_xy=1.0, keep_positive=False` in Python
+    (`--scale-xy 1 --no-keep-positive` on the command line), and use the
+    **same** settings in steps 2 and 3 so the landmarks line up.
+
+    If a 90° turn and a fixed pixel pitch are all your data needs, you can
+    skip `sm_pre.csv` and register the raw SM CSV with
+    `sm_kwargs={"scale_xy": <pixel pitch>, "rotate_left_90": True}` instead,
+    as [Tutorial 3](tutorials/03_sequential_registration.ipynb) does.
 
 ### 2. Place landmarks
 
@@ -242,11 +258,11 @@ silently gives a wrong registration.
 from smint.alignment import prepare_landmark_inputs
 
 out = prepare_landmark_inputs(
-    st_file="st.csv", sm_file="sm.csv",
+    st_file="st.csv", sm_file="sm_pre.csv",    # the step-1 output
     output_prefix="landmarks/section_b",
     dx=30.0,                                   # raster pixel, µm; reuse it in step 3
     st_x_col="x_centroid", st_y_col="y_centroid",
-    sm_kwargs=dict(scale_xy=10.0, rotate_left_90=True),
+    sm_kwargs=dict(scale_xy=1.0, keep_positive=False),   # already in the ST frame
 )
 print(out["st_points"], out["sm_points"])      # where the landmark files will go
 ```
@@ -273,11 +289,11 @@ Either way you end up with `…_st_points.npy` and `…_sm_points.npy`.
 
     ```bash
     smint-alignment st-sm \
-        --st st.csv --sm sm.csv \
+        --st st.csv --sm sm_pre.csv \
         --st-points landmarks/section_b_st_points.npy \
         --sm-points landmarks/section_b_sm_points.npy \
         --st-x-col x_centroid --st-y-col y_centroid \
-        --scale-xy 10 --rotate-left-90 --dx 30 \
+        --scale-xy 1 --no-keep-positive --dx 30 \
         --orientation stalign \
         --output-dir results/section_b --watch
     ```
@@ -293,12 +309,12 @@ Either way you end up with `…_st_points.npy` and `…_sm_points.npy`.
     assert stalign_available(), "STalign needs an environment with numpy<2"
 
     sm_moved = register_sm_to_st(
-        st_file="st.csv", sm_file="sm.csv",
+        st_file="st.csv", sm_file="sm_pre.csv",
         st_points_file=out["st_points"], sm_points_file=out["sm_points"],
         output_path="results/sm_transformed.csv",
         dx=30.0, niter=1000, epV=200.0,
         st_x_col="x_centroid", st_y_col="y_centroid",
-        sm_kwargs=dict(scale_xy=10.0, rotate_left_90=True),
+        sm_kwargs=dict(scale_xy=1.0, keep_positive=False),   # same as step 2
         orientation="stalign",                  # x/y in the ST frame
     )
     ```

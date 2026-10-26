@@ -178,7 +178,7 @@ STalign's LDDMM find a smooth, invertible warp.
 
 | | |
 |---|---|
-| **Inputs** | The pre-registered SM table and the ST table |
+| **Inputs** | The pre-registered SM table (`sm_pre.csv`) and the ST table; pass `sm_kwargs={"scale_xy": 1.0, "keep_positive": False}` because it is already in the ST frame |
 | **Python** | `prepare_landmark_inputs(st_file, sm_file, output_prefix)` rasterises both and writes `.npz` files for STalign's `point_annotator.py` |
 | **napari** | *3. Landmarks*: place points on both layers, then save |
 | **Outputs** | `<prefix>_st_points.npy`, `<prefix>_sm_points.npy`: the same features, in the same order, in both |
@@ -188,7 +188,7 @@ STalign's LDDMM find a smooth, invertible warp.
 
 | | |
 |---|---|
-| **Inputs** | ST CSV, SM CSV, the two landmark files |
+| **Inputs** | ST CSV, the pre-registered SM CSV, the two landmark files, and the same `sm_kwargs` as for the landmarks |
 | **Python** | `smint.alignment.register_sm_to_st(st_file, sm_file, st_points_file, sm_points_file, orientation="stalign", ...)` |
 | **Command line** | `smint-alignment st-sm --st ... --sm ... --st-points ... --sm-points ... --output-dir ... --orientation stalign` (add `--submit` for SLURM) |
 | **napari** | *4. Register* widget, round `st_sm` |
@@ -201,9 +201,10 @@ STalign's LDDMM find a smooth, invertible warp.
     from smint.alignment import register_sm_to_st
 
     df = register_sm_to_st(
-        st_file="st_cells.csv", sm_file="sm_matrix.csv",
+        st_file="st_cells.csv", sm_file="sm_pre.csv",
         st_points_file="z2_st_points.npy", sm_points_file="z2_sm_points.npy",
         output_path="sm_registered.csv",
+        sm_kwargs={"scale_xy": 1.0, "keep_positive": False},  # already pre-registered
         orientation="stalign",       # x, y in the ST frame
     )
     ```
@@ -212,9 +213,9 @@ STalign's LDDMM find a smooth, invertible warp.
 
     ```bash
     smint-alignment st-sm \
-        --st st_cells.csv --sm sm_matrix.csv \
+        --st st_cells.csv --sm sm_pre.csv \
         --st-points z2_st_points.npy --sm-points z2_sm_points.npy \
-        --orientation stalign \
+        --scale-xy 1 --no-keep-positive --orientation stalign \
         --output-dir reg_sequential/ --submit --gpus 1 --partition gpuq
     ```
 
@@ -240,7 +241,9 @@ joins; edit the input paths at the top of each.
 | `stitching/stitching.Rmd` | The original R implementation of the stitching that SMINT ports to Python |
 
 From Python you can launch them with `smint.r_integration.run_r_script`.
-How-to: [R integration](../r_integration.md).
+How-to: [R integration](../r_integration.md) · tutorial
+[One table per cell](../tutorials/05_integration.ipynb) (the metabolite join in
+Python, on Sample 2).
 
 ## Next steps
 

@@ -22,7 +22,7 @@ only what your task needs:
 
 | I want to… | Install | Notes |
 |---|---|---|
-| Segment on one machine | `smint` | Pulls in Cellpose; add a CUDA build of torch for GPU |
+| Segment on one machine | `smint[distributed]` | Pulls in Cellpose; the extra adds `shapely`, which `smint.segmentation` imports. Add a CUDA build of torch for GPU |
 | Segment with Dask, locally or on SLURM | `smint[distributed]` | Adds `distributed`, `dask-jobqueue`, `zarr`, `shapely`; `dask-cuda` for one local worker per GPU |
 | Register same-section centroids, pre-register | `smint` | No STalign or GPU needed |
 | Register sequential sections (LDDMM) | A **separate** environment with numpy < 2, torch, STalign and SMINT | [See below](#registration-with-stalign); point `SMINT_WORKER_PYTHON` at it |
@@ -102,7 +102,8 @@ sequential sections. It needs **numpy < 2**: its `nptyping` dependency uses
 python -m venv smint-stalign && source smint-stalign/bin/activate
 pip install "numpy<2" torch          # choose the CUDA build of torch for GPU nodes
 pip install "git+https://github.com/JEFworks-Lab/STalign.git"
-pip install "numpy<2" "git+https://github.com/JurgenKriel/SMINT.git"
+pip install "numpy<2" pandas scikit-image pyyaml tifffile opencv-python-headless matplotlib dask
+pip install --no-deps "git+https://github.com/JurgenKriel/SMINT.git"   # no Cellpose here
 python -c "from smint.alignment import stalign_available; print(stalign_available())"   # True
 ```
 

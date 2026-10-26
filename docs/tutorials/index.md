@@ -1,6 +1,6 @@
 # Tutorials
 
-Four executed notebooks, one per stage of the SMINT workflow. Each runs on
+Five executed notebooks, one per stage of the SMINT workflow. Each runs on
 small data that ships with the repository — a synthetic dataset whose true
 answer is known, then a de-identified crop of real data — and every output on
 these pages is the stored result of running the notebook top to bottom.
@@ -13,6 +13,7 @@ flowchart LR
     X[Xenium cells] --> T2
     M[MALDI pixels] --> T3[3. Sequential-section registration]
     X --> T3
+    T3 --> T5[5. One table per cell]
 ```
 
 <div class="grid cards" markdown>
@@ -61,6 +62,17 @@ flowchart LR
 
     :material-clock-outline: ~1 min, 8 CPU cores · :material-package-variant: Cellpose 3, `smint[distributed]`
 
+-   [![ST cells coloured by the number of SM pixels joined to each](../assets/tutorials/thumb_05_integration.jpg)](05_integration.ipynb)
+
+    **[5. From registered tables to one per-cell table](05_integration.ipynb)**
+
+    ---
+
+    Join registered SM pixels to every ST cell within 20 µm, as the R template
+    does, and build one table with a row per cell; Sample 2.
+
+    :material-clock-outline: seconds, CPU · :material-package-variant: SMINT only (needs Tutorial 3's output)
+
 </div>
 
 Then see the [worked examples on real data](../examples.md): the same steps on
@@ -93,7 +105,7 @@ STalign, which requires `numpy<2` and PyTorch — see
 | `synthetic_st.csv`, `synthetic_sm.csv`, `synthetic_*_points.npy`, `synthetic_sm_truth.csv` | ST cells and an SM pixel grid of one tissue shape, with 8 landmark pairs and the true position of every SM pixel | 3 |
 | `sample3_crop.ome.tif` | Sample 3: a 2048 px region downsampled to 1024 × 1024 px; nuclei, GFAP, phalloidin | 1 |
 | `sample2_xenium_z5_crop.csv`, `sample2_nuclei_z5_crop.csv` | Sample 2, section z5: Xenium cells and post-stain nuclei in a 1.5 mm × 1.5 mm window, re-origined | 2 |
-| `sample2_st_z2.csv`, `sample2_sm_sectionB.csv`, `sample2_*_landmarks.npy` | Sample 2: Xenium section Z2 cells, a random quarter of MALDI section B pixels (coordinates only), 11 landmark pairs | 3 |
+| `sample2_st_z2.csv`, `sample2_sm_sectionB.csv`, `sample2_*_landmarks.npy` | Sample 2: Xenium section Z2 cells, a random quarter of MALDI section B pixels (coordinates only), 11 landmark pairs | 3, 5 |
 
 The synthetic files come from
 [`examples/make_tutorial_data.py`](https://github.com/JurgenKriel/SMINT/blob/main/examples/make_tutorial_data.py),

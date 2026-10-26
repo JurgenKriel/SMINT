@@ -79,6 +79,11 @@ def build_parser() -> argparse.ArgumentParser:
     st_sm.add_argument("--sm-y-col", default=None)
     st_sm.add_argument("--scale-xy", type=float, default=10.0, help="SM coordinate scaling")
     st_sm.add_argument("--rotate-left-90", action="store_true", help="Rotate SM 90 deg CCW")
+    st_sm.add_argument(
+        "--no-keep-positive", dest="keep_positive", action="store_false",
+        help="Do not shift SM coordinates to be non-negative (use with --scale-xy 1 "
+             "for a table already pre-registered into the ST frame)",
+    )
     st_sm.add_argument("--submit", action="store_true", help="Submit to SLURM")
     st_sm.add_argument("--watch", action="store_true", help="Block until finished")
     _add_slurm_args(st_sm)
@@ -292,6 +297,7 @@ def main(argv=None) -> int:
                 "sm_kwargs": {
                     "scale_xy": args.scale_xy,
                     "rotate_left_90": args.rotate_left_90,
+                    "keep_positive": args.keep_positive,
                     "x_col": args.sm_x_col,
                     "y_col": args.sm_y_col,
                 },

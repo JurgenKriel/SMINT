@@ -40,7 +40,7 @@ flowchart TD
 | Tile boundaries | Chunks without overlap | Overlapping tiles, stitched afterwards |
 | Nuclei and cells | Segmented independently | Reconciled: every nucleus assigned to one cell |
 | Extras | Adaptive nuclei threshold, per-chunk QC images | Per-object centroids and areas, full-resolution label masks |
-| Install | `smint` | `smint[distributed]` (plus `dask-cuda` for local multi-GPU) |
+| Install | `smint[distributed]` (for `shapely`, which `smint.segmentation` imports) | `smint[distributed]` (plus `dask-cuda` for local multi-GPU) |
 
 !!! tip "Default to the distributed function"
     `run_distributed_segmentation` with `backend="local"` runs on a laptop
@@ -283,7 +283,7 @@ with pictures.
 | `cells.zarr`, `nuclei.zarr` | Full-resolution label masks (per-tile IDs, **not** the stitched IDs) |
 
 `process_large_image` writes `<csv_base_path>_cells.csv` and
-`<csv_base_path>_nuclei.csv` (outline vertices: `global_cell_id`, `x`, `y`),
+`<csv_base_path>_nuclei.csv` (outline vertices: `global_cell_id`, `chunk_id`, `x`, `y`),
 plus per-chunk PNGs in `visualize_output_dir` when `visualize=True`.
 
 All coordinates and areas are in **image pixels**. The full column reference

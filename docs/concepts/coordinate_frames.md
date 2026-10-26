@@ -87,12 +87,15 @@ the centroid onto the reference).
 
 !!! warning "Scale once"
     If you already pre-registered the SM table (its coordinates are in µm in the
-    ST frame), register it with `sm_kwargs={"scale_xy": 1.0}` or
-    `--scale-xy 1`. Otherwise it is scaled a second time. The same applies to
+    ST frame), register it with `sm_kwargs={"scale_xy": 1.0, "keep_positive": False}`
+    (`--scale-xy 1 --no-keep-positive` on the command line). Otherwise it is
+    scaled a second time, and pre-registered coordinates that fall below 0 are
+    shifted, which moves the table away from its landmarks. The same applies to
     landmarks: they must be in the frame of the SM coordinates *after*
     `read_sm_matrix`. Landmarks from `prepare_landmark_inputs` are, because it
     rasterises with the same settings; landmarks picked on the CSV as stored
-    (for example in napari) are not, unless `scale_xy` is 1.
+    (for example in napari) are not, unless `scale_xy` is 1 and `keep_positive`
+    is False.
 
 ## Pre-registration order
 

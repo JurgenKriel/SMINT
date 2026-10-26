@@ -73,7 +73,7 @@ sample so the page stays responsive.
   <a href="../samples_3d_comparison.html" target="_blank" rel="noopener">Open full screen ↗</a>
 </div>
 
-<div style="position: relative; width: 100%; padding-top: 62%; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px; overflow: hidden;">
+<div style="position: relative; width: 100%; padding-top: 62%; min-height: 440px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px; overflow: hidden;">
   <iframe
     src="../samples_3d_comparison.html"
     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"

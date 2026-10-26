@@ -9,7 +9,7 @@
 #SBATCH --error=/path/to/project/slurm_logs/cellpose_dual_wsi_live_%j.err
 #SBATCH --time=24:00:00
 #SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --mail-user=kriel.j@wehi.edu.au
+#SBATCH --mail-user=you@example.org
 
 #############################################################################
 # Cellpose Multi-GPU Segmentation SLURM Script w/ CSV Export
@@ -34,7 +34,7 @@ OUTPUT_DIR=${OUTPUT_DIR:-"output_segmentation_combined"}
 OUTPUT_CSV_BASE=${OUTPUT_CSV_BASE:-"${OUTPUT_DIR}/outlines"} # Default relative to output_dir
 
 # --- Model Types and Parameters ---
-MODEL_TYPES=${MODEL_TYPES:-"/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700 nuclei"}
+MODEL_TYPES=${MODEL_TYPES:-"/path/to/models/your_cellpose_model nuclei"}
 DIAMETERS=${DIAMETERS:-"120.0 60.0"}
 FLOW_THRESHOLDS=${FLOW_THRESHOLDS:-"0.4 0.4"}
 CELLPROB_THRESHOLDS=${CELLPROB_THRESHOLDS:-"-1.5 -1.2"}

@@ -7,7 +7,7 @@
 #SBATCH --error=/path/to/project/preprocess_%j.err
 #SBATCH --time=24:00:00         # Added time limit (24 hours)
 #SBATCH --mail-type=BEGIN,END,FAIL  # Optional: email notifications
-#SBATCH --mail-user=kriel.j@wehi.edu.au  # Optional: replace with your email
+#SBATCH --mail-user=you@example.org  # Optional: replace with your email
 
 # Load any required modules (if needed)
 # module load python

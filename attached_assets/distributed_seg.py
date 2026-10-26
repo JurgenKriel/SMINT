@@ -224,7 +224,7 @@ def process_large_image_distributed(image_path, output_zarr_path, csv_path, bloc
         # Define cellpose parameters
         model_kwargs = {
             'gpu': True,
-            'pretrained_model': "/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700"
+            'pretrained_model': "/path/to/models/your_cellpose_model"
         }
 
         eval_kwargs = {
@@ -340,7 +340,7 @@ def process_image_direct(image_path, output_zarr_path, csv_path, blocksize=(1024
 
         # Load Cellpose model
         from cellpose import models
-        model = models.Cellpose(pretrained_model="/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700", gpu=True)
+        model = models.Cellpose(pretrained_model="/path/to/models/your_cellpose_model", gpu=True)
         # Process in chunks
         max_cell_id = 0
         for i in range(0, processing_zarr.shape[0], blocksize[0]):

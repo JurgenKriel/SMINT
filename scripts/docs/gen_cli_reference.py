@@ -182,7 +182,7 @@ COMMANDS = [
         },
         "output": {
             "columns": (
-                "4 columns in sm.csv:\n"
+                "4 columns in sm_matrix.csv:\n"
                 "  x  <- auto-detected\n"
                 "  y  <- auto-detected\n"
                 "  72.0796\n"

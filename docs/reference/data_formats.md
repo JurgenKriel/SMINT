@@ -138,7 +138,9 @@ When read for registration ([`read_sm_matrix`](api/alignment.md#smint.alignment.
    pixel-to-micron factor for the MALDI data SMINT was developed on; set it for your
    own pixel size, or 1 if the grid is already in microns);
 3. with `rotate_left_90`, `(x, y) → (−y, x)`;
-4. coordinates are shifted so the minimum is at 0.
+4. with `keep_positive=True` (default), an axis with negative values is shifted
+   so its minimum is 0; non-negative coordinates are left unchanged
+   (`--no-keep-positive` turns this off).
 
 The registration output keeps these modified `x` / `y` and `X…` columns. Exports
 named `*information_matrix_tissue_only_full_with_xy.csv` under

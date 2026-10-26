@@ -84,8 +84,13 @@ def parse_args():
     
     return parser.parse_args()
 
-def build_config_from_args(args):
-    """Build a configuration dictionary from command-line arguments."""
+def build_config_from_args(args, base_config=None):
+    """Build a configuration dictionary from command-line arguments.
+
+    ``base_config`` is the configuration loaded from file. It is only read (to
+    keep the file's other ``model_paths`` entry when one model flag is given).
+    """
+    base_config = base_config or {}
     config = {}
     
     # Basic settings
@@ -99,7 +104,7 @@ def build_config_from_args(args):
     
     # Model paths: each flag overrides only its own entry of [cell, nuclei]
     if args.cell_model or args.nuclei_model:
-        model_paths = list(config.get('model_paths') or [])
+        model_paths = list(base_config.get('model_paths') or [])
         if args.cell_model:
             model_paths[0:1] = [args.cell_model]
         if args.nuclei_model:
@@ -160,7 +165,7 @@ def main():
         config = load_config()  # Try to load from default locations
     
     # Build configuration from command-line arguments
-    args_config = build_config_from_args(args)
+    args_config = build_config_from_args(args, config)
     
     # Merge configurations
     config = merge_configs(config, args_config)

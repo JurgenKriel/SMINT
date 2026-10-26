@@ -3,7 +3,7 @@ name = "smint"
 version = "0.1.0"
 description = "SMINT - Spatial Multi-Omics Integration Toolkit"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 # Table form rather than the PEP 639 string form: the string form requires
 # setuptools>=77, which excludes environments such as STalign_env (75.1.0).
 license = {text = "MIT"}

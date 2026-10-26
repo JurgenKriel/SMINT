@@ -262,7 +262,7 @@ def process_large_image(
     # Chunking
     chunk_size=(1024, 1024),
     # Cellpose model parameters
-    model_path="/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700",
+    model_path="/path/to/models/your_cellpose_model",
     diameter=80.0,
     flow_threshold=0.8,
     cellprob_threshold=-3.5,

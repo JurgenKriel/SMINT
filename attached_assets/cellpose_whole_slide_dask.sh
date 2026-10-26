@@ -8,7 +8,7 @@
 #SBATCH --error=/path/to/project/cellpose_dask_%j.err
 #SBATCH --time=24:00:00       
 #SBATCH --mail-type=BEGIN,END,FAIL 
-#SBATCH --mail-user=kriel.j@wehi.edu.au  
+#SBATCH --mail-user=you@example.org  
 
 # Activate the environment
 #source /path/to/project/cellpose_env/bin/activate

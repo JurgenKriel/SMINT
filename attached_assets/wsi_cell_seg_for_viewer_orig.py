@@ -198,7 +198,7 @@ def process_large_image(
     csv_base_path,
     chunk_size=(2048, 2048),
     # Cell Model parameters
-    cell_model_path="/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700",
+    cell_model_path="/path/to/models/your_cellpose_model",
     cells_diameter=120.0,
     cells_flow_threshold=0.4,
     cells_cellprob_threshold=-1.5,

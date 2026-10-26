@@ -8,8 +8,8 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
-  logo: assets/smint_logo.png
-  favicon: assets/smint_logo.png
+  logo: assets/smint_logo_small.png
+  favicon: assets/favicon.png
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -92,6 +92,7 @@ nav:
     - Same-section registration: tutorials/02_same_section_registration.ipynb
     - Sequential-section registration: tutorials/03_sequential_registration.ipynb
     - Distributed segmentation on SLURM: tutorials/04_distributed_segmentation.ipynb
+    - One table per cell: tutorials/05_integration.ipynb
     - Worked examples on real data: examples.md
   - User guide:
     - concepts/index.md

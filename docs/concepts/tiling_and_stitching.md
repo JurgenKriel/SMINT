@@ -174,9 +174,17 @@ The stitching functions work on any Shapely polygons in a consistent unit, so
 you can also use them on outlines from another tool:
 
 ```python
+import pandas as pd
 from smint.segmentation.distributed_seg import stitch_and_reconcile
 
-# outline dicts as SMINT writes them: {"x_coords": [...], "y_coords": [...]}
+# Outline dicts as segment_tile / get_cell_outlines return them:
+# {"x_coords": [...], "y_coords": [...]}. From vertex CSVs (global_cell_id, x, y):
+def outlines_from_csv(path):
+    return [{"x_coords": g.x.to_numpy(), "y_coords": g.y.to_numpy()}
+            for _, g in pd.read_csv(path).groupby("global_cell_id")]
+
+cell_outlines = outlines_from_csv("cells_outlines.csv")
+nuclei_outlines = outlines_from_csv("nuclei_outlines.csv")
 cells, nuclei, nucleus_cell = stitch_and_reconcile(cell_outlines, nuclei_outlines)
 # nucleus_cell[k] is the index in `cells` of the cell holding nucleus k
 ```

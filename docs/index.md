@@ -19,13 +19,16 @@ in napari, from the command line, or as SLURM jobs on a GPU cluster.
 pip install "git+https://github.com/JurgenKriel/SMINT.git"
 ```
 
+To run the quick start and tutorials, clone the repository instead: they use
+the example data in the checkout (see [Quick start](quickstart.md)).
+
 [Get started](quickstart.md){ .md-button .md-button--primary }
 [Tutorials](tutorials/index.md){ .md-button }
 
 </div>
 
 <p align="center" markdown>
-![SMINT combines H&E, spatial transcriptomics and spatial metabolomics](assets/smint_logo.png){ width="380" }
+![SMINT combines H&E, spatial transcriptomics and spatial metabolomics](assets/smint_logo_small.png){ width="380" }
 </p>
 
 </div>
@@ -41,11 +44,14 @@ flowchart LR
     D -- no --> F[Pre-register, landmarks<br/>STalign LDDMM]
     E --> G[One coordinate system:<br/>cells, transcripts, metabolites]
     F --> G
+    G --> H[Integrate per cell<br/>transcripts + metabolites]
 ```
 
 See [The SMINT workflow](concepts/workflow.md) for each step, and
 [Choosing a registration method](concepts/registration_methods.md) for the
-branch in the middle.
+branch in the middle. The last step, one table with a row per cell, is shown in
+[Tutorial 5](tutorials/05_integration.ipynb) and, in R, in
+[R integration](r_integration.md).
 
 ## Where to go next
 
