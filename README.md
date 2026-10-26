@@ -5,7 +5,7 @@
 SMINT is a Python package for Spatial Multi-Omics Integration with enhanced segmentation capabilities and streamlined workflow. It provides a comprehensive toolkit for processing, analyzing, and visualizing spatial multi-omics data.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://jurgenkriel.github.io/SMINT/)
 
 ## Features
@@ -25,8 +25,20 @@ Comprehensive documentation is available at [https://jurgenkriel.github.io/SMINT
 
 ## Installation
 
+SMINT is not published on PyPI. The `smint` name there is an unrelated
+placeholder, so `pip install smint` will **not** install this package. Install
+from GitHub instead (Python 3.10+):
+
 ```bash
-pip install smint
+pip install "git+https://github.com/JurgenKriel/SMINT.git"
+```
+
+Or from a source checkout, for development:
+
+```bash
+git clone https://github.com/JurgenKriel/SMINT.git
+cd SMINT
+pip install -e .
 ```
 
 ## Optional Dependencies
@@ -34,13 +46,21 @@ pip install smint
 SMINT is designed with graceful dependency handling to ensure robust operation across different environments.
 
 ```bash
-# Full installation with all dependencies
-pip install "smint[all]"
+# Full installation with all optional dependencies
+pip install "smint[all] @ git+https://github.com/JurgenKriel/SMINT.git"
 
-# Install specific feature sets
-pip install "smint[segmentation]"  # For segmentation functionality
-pip install "smint[visualization]"  # For visualization functionality
-pip install "smint[r_integration]"  # For R integration
+# Or specific feature sets, from a source checkout
+pip install -e ".[r_integration]"  # For R integration (rpy2)
+pip install -e ".[docs]"           # To build the documentation
+pip install -e ".[dev]"            # pytest, flake8, black
+```
+
+Registration with STalign needs STalign itself, installed separately in an
+environment with numpy < 2 (see the
+[Alignment documentation](https://jurgenkriel.github.io/SMINT/alignment/#environments)):
+
+```bash
+pip install --upgrade "git+https://github.com/JEFworks-Lab/STalign.git"
 ```
 
 For more information, see the [Dependency Handling Documentation](https://jurgenkriel.github.io/SMINT/dependency_handling/).
@@ -163,5 +183,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-
->>>>>>> e9fadf4d662d283dafd59ae756781bbe1e40863c
