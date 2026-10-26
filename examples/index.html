@@ -1263,7 +1263,7 @@
 
 
 <h1 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h1>
-<p>Worked examples on real data from the BCRL Venture cohort, run on the WEHI
+<p>Worked examples on real data from the two brain tumour samples, run on the WEHI
 Milton cluster. Timings and results are from those runs; your numbers will
 depend on the data and hardware.</p>
 <p>To try the API without any of these datasets, run the synthetic examples
@@ -1276,7 +1276,7 @@ shipped with the repository:</p>
 spatial transcriptomics (ST) section. The tissue differs between sections, so
 this uses STalign LDDMM guided by manual landmarks.</p>
 <p><img alt="Sequential-section registration: SM onto ST, before, landmarks and after LDDMM" src="../assets/registration_sequential.png" /></p>
-<p><em>Venture 5, Xenium section Z2 and MALDI section Ven5B. 459,969 SM pixels,
+<p><em>Sample 2, Xenium section Z2 and MALDI section B. 459,969 SM pixels,
 53,622 ST cells, 11 landmark pairs.</em></p>
 <p><strong>Inputs</strong></p>
 <table>
@@ -1288,15 +1288,15 @@ this uses STalign LDDMM guided by manual landmarks.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>Z2_final_aligned_annos.csv</code></td>
+<td><code>sample2_xenium_z2.csv</code></td>
 <td>Xenium cells; registration uses <code>x_final</code> / <code>y_final</code> (auto-detected)</td>
 </tr>
 <tr>
-<td><code>Ven5B_information_matrix_tissue_only_full_with_xy.csv</code></td>
+<td><code>sample2_maldi_section_B.csv</code></td>
 <td>MALDI pixels: <code>x</code>, <code>y</code> and one column per m/z (442 MB)</td>
 </tr>
 <tr>
-<td><code>ven5_z2_st_points_B_points.npy</code>, <code>ven5_z2_sm_points_B_points.npy</code></td>
+<td><code>sample2_z2_st_points.npy</code>, <code>sample2_z2_sm_points.npy</code></td>
 <td>11 paired landmarks</td>
 </tr>
 </tbody>
@@ -1305,9 +1305,9 @@ this uses STalign LDDMM guided by manual landmarks.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_landmark_inputs</span>
 
 <span class="n">out</span> <span class="o">=</span> <span class="n">prepare_landmark_inputs</span><span class="p">(</span>
-    <span class="n">st_file</span><span class="o">=</span><span class="s2">"Z2_final_aligned_annos.csv"</span><span class="p">,</span>
-    <span class="n">sm_file</span><span class="o">=</span><span class="s2">"Ven5B_information_matrix_tissue_only_full_with_xy.csv"</span><span class="p">,</span>
-    <span class="n">output_prefix</span><span class="o">=</span><span class="s2">"ven5_z2"</span><span class="p">,</span>
+    <span class="n">st_file</span><span class="o">=</span><span class="s2">"sample2_xenium_z2.csv"</span><span class="p">,</span>
+    <span class="n">sm_file</span><span class="o">=</span><span class="s2">"sample2_maldi_section_B.csv"</span><span class="p">,</span>
+    <span class="n">output_prefix</span><span class="o">=</span><span class="s2">"sample2_z2"</span><span class="p">,</span>
     <span class="n">sm_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">scale_xy</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">rotate_left_90</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>   <span class="c1"># MALDI pixels -&gt; microns</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -1318,18 +1318,18 @@ the two <code>.npz</code> files. Pick the <strong>same features in the same orde
 correspondence is positional.</p>
 <h3 id="step-3-register-on-a-gpu-node">Step 3 — register on a GPU node<a class="headerlink" href="#step-3-register-on-a-gpu-node" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>smint-alignment<span class="w"> </span>st-sm<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--st<span class="w"> </span>Z2_final_aligned_annos.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--sm<span class="w"> </span>Ven5B_information_matrix_tissue_only_full_with_xy.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--st-points<span class="w"> </span>ven5_z2_st_points_B_points.npy<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--sm-points<span class="w"> </span>ven5_z2_sm_points_B_points.npy<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--st<span class="w"> </span>sample2_xenium_z2.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--sm<span class="w"> </span>sample2_maldi_section_B.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--st-points<span class="w"> </span>sample2_z2_st_points.npy<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--sm-points<span class="w"> </span>sample2_z2_sm_points.npy<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--rotate-left-90<span class="w"> </span>--orientation<span class="w"> </span>stalign<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--output-dir<span class="w"> </span>/vast/scratch/<span class="nv">$USER</span>/ven5_z2<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-dir<span class="w"> </span>/vast/scratch/<span class="nv">$USER</span>/sample2_z2<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--submit<span class="w"> </span>--watch<span class="w"> </span>--partition<span class="w"> </span>gpuq<span class="w"> </span>--gpus<span class="w"> </span><span class="m">1</span><span class="w"> </span>--memory<span class="w"> </span>64G<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--worker-python<span class="w"> </span>/path/to/STalign_env/bin/python
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>submitted st_sm via sbatch (30527655)
 state: completed -- st_sm round finished
-{"transformed_csv": "/vast/scratch/.../ven5_z2/sm_transformed.csv"}
+{"transformed_csv": "/vast/scratch/.../sample2_z2/sm_transformed.csv"}
 </code></pre></div>
 <p>The worker ran LDDMM (1,000 iterations) on one A30; from submission to
 finished output, including queueing, took 72 s. The output keeps every m/z column and adds
@@ -1338,10 +1338,10 @@ finished output, including queueing, took 72 s. The output keeps every m/z colum
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.alignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_sm_to_st</span>
 
 <span class="n">sm</span> <span class="o">=</span> <span class="n">register_sm_to_st</span><span class="p">(</span>
-    <span class="n">st_file</span><span class="o">=</span><span class="s2">"Z2_final_aligned_annos.csv"</span><span class="p">,</span>
-    <span class="n">sm_file</span><span class="o">=</span><span class="s2">"Ven5B_information_matrix_tissue_only_full_with_xy.csv"</span><span class="p">,</span>
-    <span class="n">st_points_file</span><span class="o">=</span><span class="s2">"ven5_z2_st_points_B_points.npy"</span><span class="p">,</span>
-    <span class="n">sm_points_file</span><span class="o">=</span><span class="s2">"ven5_z2_sm_points_B_points.npy"</span><span class="p">,</span>
+    <span class="n">st_file</span><span class="o">=</span><span class="s2">"sample2_xenium_z2.csv"</span><span class="p">,</span>
+    <span class="n">sm_file</span><span class="o">=</span><span class="s2">"sample2_maldi_section_B.csv"</span><span class="p">,</span>
+    <span class="n">st_points_file</span><span class="o">=</span><span class="s2">"sample2_z2_st_points.npy"</span><span class="p">,</span>
+    <span class="n">sm_points_file</span><span class="o">=</span><span class="s2">"sample2_z2_sm_points.npy"</span><span class="p">,</span>
     <span class="n">sm_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">scale_xy</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">rotate_left_90</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
     <span class="n">orientation</span><span class="o">=</span><span class="s2">"stalign"</span><span class="p">,</span>
     <span class="n">output_path</span><span class="o">=</span><span class="s2">"sm_transformed.csv"</span><span class="p">,</span>
@@ -1357,7 +1357,7 @@ registration. See <a href="../alignment/#coordinate-orientation">Coordinate orie
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="o">,</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">cKDTree</span>
 
-<span class="n">st</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"Z2_final_aligned_annos.csv"</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">"x_final"</span><span class="p">,</span> <span class="s2">"y_final"</span><span class="p">])</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">st</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"sample2_xenium_z2.csv"</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">"x_final"</span><span class="p">,</span> <span class="s2">"y_final"</span><span class="p">])</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
 <span class="n">sm</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"sm_transformed.csv"</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">"x_transformed"</span><span class="p">,</span> <span class="s2">"y_transformed"</span><span class="p">])</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
 <span class="n">d</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">st</span><span class="p">)</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">sm</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"median distance to nearest ST cell: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> um"</span><span class="p">)</span>
@@ -1370,22 +1370,22 @@ practical checks.</p>
 <hr />
 <h2 id="2-coarse-pre-registration-with-an-orientation-search">2. Coarse pre-registration with an orientation search<a class="headerlink" href="#2-coarse-pre-registration-with-an-orientation-search" title="Permanent link">&para;</a></h2>
 <p>Before landmarking, bring a dataset roughly into the target frame. MALDI
-pixels from Ven5B (converted to microns) arrive rotated relative to the Z2
+pixels from MALDI section B (converted to microns) arrive rotated relative to the Z2
 Xenium cells:</p>
 <div class="highlight"><pre><span></span><code>smint-alignment<span class="w"> </span>pretransform<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--source<span class="w"> </span>ven5b_sm_xy.csv<span class="w"> </span>--target<span class="w"> </span>Z2_final_aligned_annos.csv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--search<span class="w"> </span>--output<span class="w"> </span>ven5b_pre.csv
+<span class="w">    </span>--source<span class="w"> </span>sample2_sm_xy.csv<span class="w"> </span>--target<span class="w"> </span>sample2_xenium_z2.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--search<span class="w"> </span>--output<span class="w"> </span>sample2_sm_pre.csv
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>INFO smint.cli.align: Best: rotation=90 flip_x=False flip_y=False
 scale        : 1.2161, 1.2161
 rotation     : 90.00 deg
 reflects     : False
 overlap      : 0.954
-wrote        : ven5b_pre.csv
-transform    : ven5b_pre.csv.transform.json
+wrote        : sample2_sm_pre.csv
+transform    : sample2_sm_pre.csv.transform.json
 </code></pre></div>
 <p><code>--search</code> tries every 15° rotation with and without each flip and keeps the
-best overlap score. Here it recovered the 90° rotation that the Ven5B
+best overlap score. Here it recovered the 90° rotation that the MALDI section B
 pipeline otherwise applies by hand (<code>rotate_left_90=True</code>), in 52 s for
 459,969 pixels. The matrix and its decomposition are saved next to the
 output, so the step can be reproduced exactly. The napari plugin's
@@ -1393,7 +1393,7 @@ output, so the step can be reproduced exactly. The napari plugin's
 <hr />
 <h2 id="3-same-section-registration-nuclei-onto-xenium-cells">3. Same-section registration: nuclei onto Xenium cells<a class="headerlink" href="#3-same-section-registration-nuclei-onto-xenium-cells" title="Permanent link">&para;</a></h2>
 <p>When a second modality is acquired on the <em>same</em> section — here, nuclei
-segmented from a post-Xenium stain of Venture 5 section z5 — centroids
+segmented from a post-Xenium stain of Sample 2 section z5 — centroids
 correspond one-to-one:</p>
 <div class="highlight"><pre><span></span><code>smint-alignment<span class="w"> </span>centroid<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--source<span class="w"> </span>transformed_nuc_points_in_global.csv<span class="w"> </span>--source-cols<span class="w"> </span>x_centroid<span class="w"> </span>y_centroid<span class="w"> </span><span class="se">\</span>
@@ -1419,7 +1419,7 @@ correspond one-to-one:</p>
   ]
 }
 </code></pre></div>
-<p><img alt="Post-stain nuclei registered to Xenium cells, before and after" src="../assets/registration_same_section.png" /></p>
+<p><img alt="Post-stain nuclei registered to Xenium cells, before and after" src="../assets/registration_same_section_sample2.png" /></p>
 <p><em>88,906 nuclei and 74,247 Xenium cells, about 17 µm apart; 3 s.</em></p>
 <p><strong>How to read this.</strong> <code>tre_validation</code> is measured on a quarter of the nuclei
 held out before any matching, and is the number to trust for the transform:
@@ -1432,7 +1432,7 @@ neighbourhood, and 8,266 more are assigned to the free cells around them —
 as much from their neighbourhood (8.5 µm against 4.1 µm), so treat them as
 unverified; the output CSV's <code>registration_status</code> and <code>neighbour_deviation</code>
 say which is which. See <a href="../alignment/#snapping-matched-nuclei-onto-their-cells">Snapping matched nuclei</a>.</p>
-<p><img alt="Before registration, after the smooth transform, and after snapping" src="../assets/registration_refinement.png" /></p>
+<p><img alt="Before registration, after the smooth transform, and after snapping" src="../assets/registration_refinement_sample2.png" /></p>
 <p>The single-round methods can't do this: they match each nucleus to its
 nearest cell before fitting, and with a starting offset close to the cell
 spacing most of those matches are wrong. <code>--method ransac+tps</code> only reaches
@@ -1460,7 +1460,7 @@ segments nuclei, chunk by chunk:</p>
 <div class="highlight"><pre><span></span><code>33 29
 </code></pre></div>
 <p><img alt="Nuclei, GFAP and phalloidin with cell and nucleus outlines on one 1024 px chunk" src="../assets/segmentation_gfap_phalloidin.jpg" /></p>
-<p><em>Venture 6, one 1024 px chunk of a 2048 × 2048 px crop; Cellpose 4 on one A30
+<p><em>Sample 3, one 1024 px chunk of a 2048 × 2048 px crop; Cellpose 4 on one A30
 took 23 s for the crop. Cyan: nuclei; green: GFAP; magenta: phalloidin. Right:
 cell outlines (white) and nucleus outlines (yellow).</em></p>
 <p><code>channels</code> follows Cellpose 3's convention (<code>[main, nuclear]</code>, 1-based, 0 =
@@ -1472,7 +1472,7 @@ through SLURM, then stitched and reconciled:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">smint.segmentation</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_distributed_segmentation</span>
 
 <span class="n">results</span> <span class="o">=</span> <span class="n">run_distributed_segmentation</span><span class="p">(</span>
-    <span class="n">image_path</span><span class="o">=</span><span class="s2">"Venture6_tile_scan_R6.ome.tif"</span><span class="p">,</span>       <span class="c1"># OME-TIFF or OME-Zarr, on shared storage</span>
+    <span class="n">image_path</span><span class="o">=</span><span class="s2">"sample3_tile_scan.ome.tif"</span><span class="p">,</span>       <span class="c1"># OME-TIFF or OME-Zarr, on shared storage</span>
     <span class="n">output_dir</span><span class="o">=</span><span class="s2">"/vast/scratch/me/r6_seg"</span><span class="p">,</span>
     <span class="n">cell_model</span><span class="o">=</span><span class="s2">"/path/to/models/cpsam_20260225_153049"</span><span class="p">,</span>
     <span class="n">nuclei_model</span><span class="o">=</span><span class="s2">"nuclei"</span><span class="p">,</span>
