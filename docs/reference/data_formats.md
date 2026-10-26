@@ -72,7 +72,7 @@ will pick with `smint-alignment columns my_table.csv`.
 | ST table in `st-sm` / `register_sm_to_st` (`--st-x-col` / `--st-y-col` override) | yes |
 | napari plugin loaders | yes |
 | SM matrix in `st-sm` / `read_sm_matrix` | no: the columns named `x` and `y` (override with `--sm-x-col` / `--sm-y-col`) |
-| `smint-alignment centroid` / `register_centroid_files` | **no**: `--source-cols` (default `centroid_x centroid_y`) and `--target-cols` (default `x_centroid y_centroid`) |
+| `smint-alignment centroid` / `register_centroid_files` | yes: the first pair present of `x_centroid y_centroid`, `centroid_x centroid_y`, `x y` (override with `--source-cols` / `--target-cols`) |
 
 !!! warning "Several coordinate pairs in one table"
     ST tables often carry several plausible pairs from successive processing

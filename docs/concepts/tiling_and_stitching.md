@@ -150,7 +150,7 @@ Rules of thumb:
 === "Command line"
 
     ```bash
-    python -m smint.segmentation.distributed_seg \
+    smint-segment-distributed \
         --image_path slide.ome.tif --output_dir seg_out/ \
         --config_path segmentation.yaml \
         --tile_size 2048 --tile_overlap 256

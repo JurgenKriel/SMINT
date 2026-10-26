@@ -184,7 +184,7 @@ so that a cell on a tile boundary is kept once, and whole.
     The module has its own command line:
 
     ```bash
-    python -m smint.segmentation.distributed_seg \
+    smint-segment-distributed \
         --image_path slide.ome.zarr \
         --output_dir results/seg_run \
         --config_path configs/segmentation_config.yaml \
@@ -307,11 +307,11 @@ nuc.to_csv("results/nuclei_um.csv", index=False)
 
 ```bash
 smint-alignment centroid --source results/nuclei_um.csv --target cells.csv \
-    --source-cols x_centroid y_centroid --output-dir results/reg
+    --output-dir results/reg
 ```
 
-`smint-alignment centroid` expects `centroid_x`/`centroid_y` in the source by
-default, hence `--source-cols`. If the image and the Xenium section are not in
+`smint-alignment centroid` finds `x_centroid`/`y_centroid` in both files; name
+other columns with `--source-cols` / `--target-cols`. If the image and the Xenium section are not in
 the same orientation, see [Coordinate frames](concepts/coordinate_frames.md).
 
 ## Troubleshooting

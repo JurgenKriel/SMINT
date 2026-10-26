@@ -49,13 +49,21 @@ def setup_logger(csv_base_path):
     log_dir = os.path.dirname(log_file)
     if log_dir:
         os.makedirs(log_dir, exist_ok=True)
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
-        handlers=[logging.FileHandler(log_file), logging.StreamHandler()]
-    )
-    return logging.getLogger(__name__)
+    # A dedicated logger rather than logging.basicConfig: basicConfig touches the
+    # root logger, so in any program that already configured logging every line
+    # was printed twice. Handlers are replaced on each call, so repeated runs in
+    # one session don't stack them either.
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+    for handler in list(logger.handlers):
+        logger.removeHandler(handler)
+        handler.close()
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    for handler in (logging.FileHandler(log_file), logging.StreamHandler()):
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    logger.propagate = False
+    return logger
 
 def create_rgb_roi(image_data_stack, y_start, y_end, x_start, x_end, vis_ch_indices=[0, 1]):
     """
@@ -232,7 +240,8 @@ def process_large_image(
     vis_bg_channel_indices=[0, 1],
     # Live update parameters
     live_update_image_path=None,
-    tile_info_file_for_viewer=None
+    tile_info_file_for_viewer=None,
+    use_gpu=None
 ):
     """
     Segment cells and nuclei in a large TIFF, chunk by chunk, in one process.
@@ -289,6 +298,8 @@ def process_large_image(
             the live viewer
         tile_info_file_for_viewer (str): Tile-info file rewritten after every
             chunk, for the live viewer
+        use_gpu (bool): Run Cellpose on the GPU. Default None: use it when
+            one is available.
     
     Returns:
         dict: ``cells_csv_path``, ``nuclei_csv_path`` (None when nothing was
@@ -444,8 +455,11 @@ def process_large_image(
         # Import locally to avoid circular imports
         from .cellpose_compat import cellpose_major_version, is_known_model, load_model, use_gpu as cellpose_use_gpu
         
-        use_gpu = cellpose_use_gpu()
-        logger.info(f"Cellpose {cellpose_major_version()}; GPU available and will be used: {use_gpu}")
+        gpu_available = cellpose_use_gpu()
+        if use_gpu and not gpu_available:
+            logger.warning("GPU requested but not available; running on the CPU")
+        use_gpu = gpu_available if use_gpu is None else bool(use_gpu and gpu_available)
+        logger.info(f"Cellpose {cellpose_major_version()}; GPU will be used: {use_gpu}")
     
         # Load cell model
         if is_known_model(cell_model_path):

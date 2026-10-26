@@ -123,7 +123,7 @@ interactive session or a small CPU job:
 === "Command line"
 
     ```bash
-    python -m smint.segmentation.distributed_seg \
+    smint-segment-distributed \
         --image_path /shared/project/slide.ome.zarr \
         --output_dir /shared/project/seg_run \
         --config_path configs/segmentation_config.yaml \

@@ -31,11 +31,10 @@ try:
             "functionality will be unavailable."
         )
 except Exception as exc:
-    logger.warning(
-        "STalign or torch not available (%r). Xenium-Metabolomics alignment "
-        "functionality will be limited. Note that numpy>=2 breaks STalign's "
-        "`nptyping` dependency; use an environment with numpy<2.", exc
-    )
+    # Only matters if this deprecated module is actually used; warning on every
+    # `import smint.alignment` in a numpy>=2 environment was just noise.
+    logger.debug("STalign or torch not available (%r).", exc)
+    _STALIGN_IMPORT_ERROR = exc
     STALIGN_AVAILABLE = False
 
 
@@ -460,7 +459,11 @@ def align_xenium_to_metabolomics(
         Metabolomics data with transformed coordinates added
     """
     if not STALIGN_AVAILABLE:
-        raise ImportError("STalign package is required for alignment")
+        raise ImportError(
+            "STalign and torch are required for this deprecated alignment path "
+            f"({globals().get('_STALIGN_IMPORT_ERROR')!r}). STalign needs numpy<2; "
+            "use an STalign environment, or the newer smint.alignment.register_sm_to_st."
+        )
     
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)

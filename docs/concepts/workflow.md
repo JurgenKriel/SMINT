@@ -59,7 +59,7 @@ each phase.
 |---|---|
 | **Inputs** | A multichannel whole-slide image (OME-TIFF, TIFF, Zarr or OME-Zarr) on storage every worker can read; a cell and/or nucleus Cellpose model (built-in name or path to a fine-tuned model); per-model `diameter`, `flow_threshold`, `cellprob_threshold`, `channels`, usually in a YAML config |
 | **Python** | `smint.segmentation.run_distributed_segmentation(image_path, output_dir, config_path=...)`; stitching on its own: `smint.segmentation.distributed_seg.stitch_and_reconcile` |
-| **Command line** | `python -m smint.segmentation.distributed_seg --image_path ... --output_dir ...` |
+| **Command line** | `smint-segment-distributed --image_path ... --output_dir ...` |
 | **napari** | — (segmentation runs as a job; the napari plugin covers registration) |
 | **Outputs** | `cells_outlines.csv`, `nuclei_outlines.csv` (one row per vertex: `global_cell_id, x, y`); `cells_summary.csv` (`global_cell_id, x_centroid, y_centroid, area, n_nuclei`); `nuclei_summary.csv` (`cell_id` in place of `n_nuclei`); raw label masks `cells.zarr`, `nuclei.zarr`. All in **full-image pixels**. |
 | **Typical runtime** | Sample 3, 4096 × 4096 px, 16 tiles on 4 A30 GPUs: 0.6 min (44 cells, 44 nuclei). A 2048 px crop with Cellpose 4 and a fine-tuned Cellpose-SAM model on one A30: 23 s. |
@@ -82,7 +82,7 @@ each phase.
 === "Command line"
 
     ```bash
-    python -m smint.segmentation.distributed_seg \
+    smint-segment-distributed \
         --image_path slide.ome.tif --output_dir seg_out/ \
         --config_path segmentation.yaml \
         --backend slurm --n_workers 4 --slurm_gpu_type A30 \

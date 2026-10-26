@@ -492,6 +492,7 @@ class RegistrationWidget(Container):
         self._niter = SpinBox(label="LDDMM iterations", value=1000, min=1, max=20000)
 
         self._partition = ComboBox(label="Partition", choices=self._partitions)
+        self._prefer_default_partition()
         self._cpus = SpinBox(label="CPUs", value=8, min=1, max=64)
         self._memory = ComboBox(
             label="Memory", choices=["16G", "32G", "64G", "128G", "256G"], value="64G"
@@ -532,6 +533,17 @@ class RegistrationWidget(Container):
 
         found = available_partitions()
         return found or ["regular", "gpuq", "long", "bigmem"]
+
+    def _prefer_default_partition(self):
+        """Select the cluster's default partition, not the first one alphabetically."""
+        from smint.alignment.jobs import default_partition
+
+        choices = list(self._partition.choices)
+        preferred = default_partition()
+        for name in (preferred, "regular"):
+            if name and name in choices:
+                self._partition.value = name
+                return
 
     def _gpu_types(self, _widget=None):
         """
@@ -625,10 +637,18 @@ class RegistrationWidget(Container):
                 "niter": int(self._niter.value),
                 "st_x_col": self._target_x.value or None,
                 "st_y_col": self._target_y.value or None,
+                # The landmarks were placed on the SM coordinates exactly as
+                # displayed, so the worker must read the SM file in that same
+                # frame: no x10 pixel scaling, no shift to non-negative. Bring
+                # raw MALDI pixels into microns with the pre-register widget first.
                 "sm_kwargs": {
                     "x_col": self._source_x.value or None,
                     "y_col": self._source_y.value or None,
+                    "scale_xy": 1.0,
+                    "keep_positive": False,
                 },
+                # True x/y in the ST frame, so the result layer overlays the target
+                "orientation": "stalign",
             }
         else:
             inputs = {"source_file": str(source), "target_file": str(target)}

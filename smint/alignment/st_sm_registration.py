@@ -695,6 +695,7 @@ def run_lddmm_alignment(
     niter: int = 1000,
     epV: float = 200.0,
     device: Optional[str] = None,
+    init_from_landmarks: bool = True,
     **params,
 ):
     """
@@ -707,16 +708,21 @@ def run_lddmm_alignment(
     source_image, target_image : numpy.ndarray
         Rasterized images from [`rasterize_coordinates`][smint.alignment.rasterize_coordinates].
     points_source, points_target : numpy.ndarray, optional
-        Landmark correspondences in row-col order. When supplied, LDDMM uses
-        them to initialise the affine, which is what makes registration
-        converge on ST/SM pairs; without them it starts from identity and
-        typically fails to find the tissue.
+        Landmark correspondences in row-col order. STalign's LDDMM uses them
+        only as a matching term and otherwise starts from the identity (it
+        also skips its own pre-alignment when landmarks are given), so on its
+        own a large offset barely moves. With ``init_from_landmarks`` the
+        affine is first initialised from the landmarks.
     niter : int, optional
         Optimisation iterations.
     epV : float, optional
         Velocity-field regularisation weight.
     device : str, optional
         Torch device; defaults to CUDA when available, else CPU.
+    init_from_landmarks : bool, optional
+        Initialise the affine (``L``, ``T``) from the landmarks with
+        ``STalign.L_T_from_points`` (default). Ignored when no landmarks are
+        given or when ``L``, ``T`` or ``A`` is passed explicitly.
     **params
         Forwarded to ``STalign.LDDMM``. Note that ``sigmaM``/``sigmaB``/
         ``sigmaA`` are best left at their defaults when landmarks are given.
@@ -746,6 +752,10 @@ def run_lddmm_alignment(
     if points_source is not None:
         call["pointsI"] = points_source
         call["pointsJ"] = points_target
+        if init_from_landmarks and not any(k in params for k in ("L", "T", "A")):
+            L, T = ST.L_T_from_points(np.asarray(points_source), np.asarray(points_target))
+            call["L"], call["T"] = L, T
+            logger.info("Initialised the affine from %d landmark pairs", len(points_source))
     call.update(params)
 
     logger.info(
@@ -845,8 +855,9 @@ def save_transformed_data(
     x_col, y_col : str, optional
         Output column names.
     orientation : str, optional
-        Recorded in ``df.attrs['orientation']`` so the convention travels with
-        the frame in-process.
+        Recorded in ``df.attrs['orientation']`` in-process and, when the table
+        is saved, in ``<output_path>.registration.json`` next to it, so the
+        frame of ``x_col``/``y_col`` is known later.
 
     Returns
     -------
@@ -871,6 +882,12 @@ def save_transformed_data(
             os.makedirs(parent, exist_ok=True)
         result.to_csv(output_path, index=False)
         logger.info("Saved transformed data to %s", output_path)
+        if orientation is not None:
+            import json
+            with open(f"{output_path}.registration.json", "w") as fh:
+                json.dump({"orientation": orientation, "x_col": x_col, "y_col": y_col,
+                           "frame": "ST target frame (x, y)" if orientation == "stalign"
+                           else "transposed relative to ST (historical layout)"}, fh, indent=2)
 
     return result
 

@@ -52,8 +52,11 @@ def parse_args():
     parser.add_argument('--distributed', action='store_true',
                         help='Run segmentation in distributed mode using Dask')
     
-    parser.add_argument('--use-gpu', action='store_true',
-                        help='Use GPU for computation')
+    gpu = parser.add_mutually_exclusive_group()
+    gpu.add_argument('--use-gpu', dest='use_gpu', action='store_true', default=None,
+                     help='Use the GPU (default: the config file, else use one if available)')
+    gpu.add_argument('--no-gpu', dest='use_gpu', action='store_false',
+                     help='Run on the CPU even if a GPU is available')
     
     parser.add_argument('--cell-model',
                         help='Path to cell segmentation model')
@@ -97,8 +100,8 @@ def build_config_from_args(args, base_config=None):
     config['output_dir'] = args.output_dir
     
     # Only flags the user actually passed override the config file
-    if args.use_gpu:
-        config['use_gpu'] = True
+    if args.use_gpu is not None:
+        config['use_gpu'] = args.use_gpu
     if args.chunk_size:
         config['chunk_size'] = args.chunk_size
     
@@ -189,9 +192,11 @@ def main():
         # Run distributed segmentation
         logger.info("Running distributed segmentation")
         
-        # Extract parameters from config
+        # Extract parameters from the merged config, so command-line flags
+        # (models, diameters, GPU) apply here as in single-process mode
         n_workers = config.get('n_workers')
         use_gpu = config.get('use_gpu', True)
+        model_paths = list(config.get('model_paths') or []) + [None, None]
         chunk_size = tuple(config.get('chunk_size', (2048, 2048)))
         tile_info_path = config.get('tile_info_path')
         live_update_image_path = config.get('live_update_image_path')
@@ -207,6 +212,10 @@ def main():
                 n_workers=n_workers,
                 use_gpu=use_gpu,
                 chunk_size=chunk_size,
+                cell_model=model_paths[0],
+                nuclei_model=model_paths[1],
+                cell_params=config.get('cell_model_params'),
+                nuclei_params=config.get('nuclei_model_params'),
                 tile_info_path=tile_info_path,
                 live_update_image_path=live_update_image_path
             )
@@ -300,7 +309,8 @@ def main():
                 vis_bg_channel_indices=vis_bg_channel_indices,
                 # Live update parameters
                 live_update_image_path=live_update_image_path,
-                tile_info_file_for_viewer=tile_info_file_for_viewer
+                tile_info_file_for_viewer=tile_info_file_for_viewer,
+                use_gpu=config.get('use_gpu')
             )
             
             if 'error' in results:

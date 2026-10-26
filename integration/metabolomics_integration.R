@@ -16,12 +16,12 @@ spe <- readRDS('path/to/ST_object.rds')
 #analysis column names of SM and determine number of metabolites
 colnames(SM)
 which(str_detect(colnames(SM), 'X'))
-num_metabs <- 451
+num_metabs <- sum(str_detect(colnames(SM), 'X'))
 
 #load and create spatial features objects of both modalities
 
 ST_sf <- readRDS('path/to/ST_polygons.rds')
-SM_sf <- sf_point(sm_section_c_out, x = 'x_new', y = 'y_new', keep =T)
+SM_sf <- sf_point(SM, x = 'x_transformed', y = 'y_transformed', keep = T)
 
 #join all metabolite gridpoints within 20 µm of polygon centroid to that polygon
 joint <- st_join(st_buffer(st_centroid(ST_sf), 20), SM_sf, left = F)

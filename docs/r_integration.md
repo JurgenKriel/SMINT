@@ -67,12 +67,9 @@ Joins registered spatial metabolomics pixels to the ST cells.
 | **Output** | One `SpatialExperiment` with genes and metabolites as rows and cells as columns, saved as `.rds` |
 
 !!! warning "Edit before running"
-    Besides the input paths, check three things in the script: the number of
-    metabolites (`num_metabs`, set to 451 in the template), the SM coordinate
-    column names it builds points from (`x_new`, `y_new`; SMINT writes
-    `x_transformed`, `y_transformed`), and the data frame it builds them from
-    (the template refers to `sm_section_c_out`; use the table you read in,
-    `SM`).
+    Set the input paths. The script counts metabolites as the SM columns whose
+    names contain `X` and builds points from `x_transformed` / `y_transformed`,
+    the columns SMINT writes; adjust both if your table differs.
 
 ## From SMINT outputs to R
 

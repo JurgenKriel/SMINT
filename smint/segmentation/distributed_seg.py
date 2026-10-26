@@ -704,7 +704,8 @@ def run_distributed_segmentation(image_path, output_dir, config_path=None,
     reconcile_nuclei = bool(pick(reconcile_nuclei, 'reconcile_nuclei', True))
     stitch_merge_thresh = float(pick(stitch_merge_thresh, 'stitch_merge_thresh', 0.5))
     stitch_trim_thresh = float(pick(stitch_trim_thresh, 'stitch_trim_thresh', 0.25))
-    slurm = pick(slurm, 'slurm', None)
+    # Command-line / keyword SLURM options add to the config's, not replace them
+    slurm = {**(dist.get('slurm') or {}), **(slurm or {})} or None
     worker_wait_timeout = int(pick(worker_wait_timeout, 'worker_wait_timeout', 600))
 
     image = open_image(image_path)
@@ -809,13 +810,14 @@ def main(argv=None):
     parser.add_argument("--scheduler_address", help="Connect to an existing Dask scheduler")
     parser.add_argument("--n_workers", type=int, help="Number of workers")
     gpu = parser.add_mutually_exclusive_group()
-    gpu.add_argument("--use_gpu", dest="use_gpu", action="store_true", default=None)
-    gpu.add_argument("--no_gpu", dest="use_gpu", action="store_false")
+    gpu.add_argument("--use_gpu", dest="use_gpu", action="store_true", default=None,
+                     help="Use GPU workers (default: the config file, else yes)")
+    gpu.add_argument("--no_gpu", dest="use_gpu", action="store_false", help="Use CPU workers")
     parser.add_argument("--tile_size", type=int, help="Core tile size in pixels (default 2048)")
     parser.add_argument("--tile_overlap", type=int, help="Tile overlap in pixels (default 256)")
     parser.add_argument("--cell_model", help="Cell model name or path")
     parser.add_argument("--nuclei_model", help="Nuclei model name or path")
-    parser.add_argument("--slurm_gpu_type", help="SLURM GPU type, e.g. A30")
+    parser.add_argument("--slurm_gpu_type", help="SLURM GPU type, e.g. A30; other SLURM options come from the config")
     parser.add_argument("--tile_info_path", help="Tile-info file for the live viewer")
     parser.add_argument("--live_update_image_path", help="PNG updated as tiles finish")
     args = parser.parse_args(argv)
