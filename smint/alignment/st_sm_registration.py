@@ -23,14 +23,15 @@ axes are transposed relative to the source dataset. ``transform_points``
 exposes this via the ``orientation`` argument:
 
 ``orientation="dataset"`` (default)
-    Assign ``out[:, 0] -> x`` and ``out[:, 1] -> y``. This restores the
-    original dataset's orientation and reproduces the historical Venture
-    outputs (``x_transformed`` / ``y_transformed`` in
-    ``venture_pt5/aligned_lddmm_2/``). Use this unless you know otherwise.
+    Assign ``out[:, 0] -> x`` and ``out[:, 1] -> y``. This reproduces the
+    historical Venture outputs (``x_transformed`` / ``y_transformed`` in
+    ``venture_pt5/aligned_lddmm_2/``), so existing downstream code keeps
+    working -- but these coordinates are transposed relative to the ST
+    cells and do not overlay them.
 
 ``orientation="stalign"``
     Assign ``out[:, 0] -> y`` and ``out[:, 1] -> x``, i.e. true xy in the ST
-    target frame. Provided for callers that want STalign's native frame.
+    target frame. Use this to overlay, compare with or join to the ST data.
 
 The two differ by a transpose. Mixing them silently produces a flipped
 overlay, so the choice is always explicit and always recorded in the output.

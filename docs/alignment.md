@@ -108,8 +108,11 @@ df = register_sm_to_st(
     sm_points_file=out["sm_points"],
     output_path="sm_transformed.csv",
     niter=1000, epV=200.0,
+    orientation="stalign",   # x/y in the ST frame; see below
 )
 ```
+
+![Sequential-section registration: before, landmarks and after LDDMM](assets/registration_sequential.png)
 
 ### Coordinate orientation
 
@@ -121,12 +124,16 @@ transpose.
 Registering through STalign therefore returns coordinates whose axes are
 transposed relative to the source dataset. `transform_points` exposes this:
 
-- **`orientation="dataset"`** (default) — restores the original dataset's
-  orientation. This is what you want, and it reproduces historical outputs.
-- **`orientation="stalign"`** — true xy in the ST target frame.
+- **`orientation="stalign"`** — true x/y in the ST target frame. Use this
+  whenever the result is overlaid on, compared with or joined to the ST data.
+- **`orientation="dataset"`** (default) — the transposed layout earlier
+  pipeline runs wrote. It reproduces historical outputs, so existing
+  downstream code keeps working, but these coordinates do **not** line up with
+  the ST cells.
 
-The two differ by a transpose. Mixing them silently produces a flipped overlay,
-so the choice is always explicit and is recorded on the output frame.
+The two differ by a transpose. Plotting `dataset` output over ST gives a
+mirrored, misaligned overlay that looks like a failed registration, so pass
+the orientation explicitly; it is recorded on the output frame.
 
 ---
 

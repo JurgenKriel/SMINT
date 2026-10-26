@@ -29,6 +29,10 @@ Two registration regimes, chosen by how the modalities were acquired:
 | **Sequential sections** — modalities from different physical sections | STalign LDDMM, guided by manual landmarks |
 | **Same section, post-staining** — a second modality on the exact same section | Correspondence fitting: affine, RANSAC or thin-plate spline |
 
+![Sequential-section registration: SM onto ST, before, landmarks and after LDDMM](assets/registration_sequential.png)
+
+*Spatial metabolomics (MALDI, pink) registered onto Xenium spatial transcriptomics (blue) from a neighbouring section: 11 paired landmarks guide STalign LDDMM. Venture 5, Z2 / Ven5B; rendered with `examples/registration_figures.py`.*
+
 - **napari plugin** — load datasets, pre-register by eye (scale, rotate, flip),
   place paired landmarks, and launch registration without leaving the viewer.
   Open **Plugins → SMINT Registration**. See [napari Plugin](napari_plugin.md).
