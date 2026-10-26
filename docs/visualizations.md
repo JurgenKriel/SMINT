@@ -1,40 +1,101 @@
-# Interactive Visualizations
+# Gallery
 
-This page showcases interactive 3D multi-omics data generated using SMINT.
+What SMINT output looks like on real tissue. Each figure links to the guide
+or tutorial that produces it.
 
-## Three Samples — 3D Spatial Transcriptomics
+## Segmentation and registration
 
-Interactive 3D plots comparing spatial transcriptomics across three brain tumour samples (Sample A, Sample B, Sample C). Use the selector to view one sample at a time or all side by side. Cell type annotations and spatial coordinates are rendered using Plotly, enabling rotation, zoom, and hover-based exploration of tumour microenvironment composition.
+<div class="grid cards" markdown>
 
-<div style="text-align: right; margin-bottom: 8px;">
-  <a href="../samples_3d_comparison.html" target="_blank" style="font-size: 0.9em;">
-    Open fullscreen ↗
-  </a>
+-   **Whole-slide segmentation**
+
+    ---
+
+    ![Nuclei, GFAP and phalloidin with cell and nucleus outlines](assets/segmentation_gfap_phalloidin.jpg)
+
+    Sample 3: cells (white) and nuclei (yellow) segmented with a fine-tuned
+    Cellpose-SAM model on nuclei (cyan), GFAP (green) and phalloidin
+    (magenta).
+
+    [:octicons-arrow-right-24: Segmentation guide](segmentation.md)
+
+-   **Same-section registration**
+
+    ---
+
+    ![Post-stain nuclei registered onto Xenium cells, before and after](assets/registration_same_section_sample2.png)
+
+    Sample 2, section z5: post-stain nuclei (pink) registered onto Xenium
+    cells (blue) with multiround centroid registration.
+
+    [:octicons-arrow-right-24: Same-section tutorial](tutorials/02_same_section_registration.ipynb)
+
+-   **How multiround registration works**
+
+    ---
+
+    ![Displacement voting, block peaks and the resulting fit](assets/registration_multiround_sample2.png)
+
+    Displacement votes within a tissue block, the field of block peaks across
+    the section, and the alignment before and after.
+
+    [:octicons-arrow-right-24: Choosing a registration method](concepts/registration_methods.md)
+
+-   **Snapping nuclei onto cells**
+
+    ---
+
+    ![Before registration, after the smooth transform, and after snapping](assets/registration_refinement_sample2.png)
+
+    After the smooth transform, matched nuclei are snapped exactly onto their
+    Xenium cells; 88% of cells receive a distinct nucleus on Sample 2 z5.
+
+    [:octicons-arrow-right-24: Alignment guide](alignment.md#snapping-nuclei-onto-their-cells)
+
 </div>
 
-<div style="position: relative; width: 100%; padding-top: 62%; border: 1px solid #ddd; border-radius: 4px; overflow: hidden;">
+<figure markdown>
+![Spatial metabolomics registered onto spatial transcriptomics with STalign LDDMM](assets/registration_sequential.png)
+<figcaption>Sequential-section registration on Sample 2: MALDI spatial
+metabolomics (pink) onto Xenium spatial transcriptomics (blue) from a
+neighbouring section, before registration, with 11 paired landmarks, and after
+STalign LDDMM.
+<a href="../alignment/#register-sequential-sections-with-stalign">Alignment guide</a>.</figcaption>
+</figure>
+
+## 3D cell-type maps of three samples
+
+Registered serial sections stacked into 3D. Each point is a cell, coloured by
+its annotated cell type; up to 3,000 cells per cell type are shown for each
+sample so the page stays responsive.
+
+<div style="text-align: right; margin-bottom: 8px;">
+  <a href="../samples_3d_comparison.html" target="_blank" rel="noopener">Open full screen ↗</a>
+</div>
+
+<div style="position: relative; width: 100%; padding-top: 62%; min-height: 440px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px; overflow: hidden;">
   <iframe
     src="../samples_3d_comparison.html"
     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
     loading="lazy"
-    title="Samples — 3D Spatial Transcriptomics Comparison">
+    title="3D cell-type maps of Samples A, B and C">
   </iframe>
 </div>
 
-!!! tip "Interaction tips"
-    - **Select sample**: use the buttons at the top of the plot
-    - **Rotate**: click and drag within a panel
-    - **Zoom**: scroll wheel or pinch
-    - **Pan**: right-click and drag
-    - **Toggle cell types**: click legend entries to show/hide groups
-    - **Isolate cell type**: double-click a legend entry
+!!! tip "Using the 3D view"
+    - **Choose a sample** with the Sample A / B / C buttons above the plot.
+    - **Rotate** by dragging, **zoom** with the scroll wheel, a pinch or the
+      + / − buttons, and **reset** the view with ↻.
+    - **Open the legend** with the *Legend* button to see which colour is
+      which cell type.
 
-## Data Details
+| Sample | Data | Shown as |
+|---|---|---|
+| Sample A | Spatial transcriptomics, cell centroids with a z coordinate | 3D scatter, coloured by cell type |
+| Sample B | Spatial transcriptomics, eight registered serial sections | Sections stacked by z position |
+| Sample C | Spatial transcriptomics, eight sections (layers z1–z8) | Sections stacked by layer |
 
-| Sample | Modality | Description |
-|---------|----------|-------------|
-| Sample A | Spatial Transcriptomics | Primary tumour section, 3D Z-stack alignment |
-| Sample B | Spatial Transcriptomics | Primary tumour section, 3D Z-stack alignment |
-| Sample C | Spatial Transcriptomics | Primary tumour section, 3D Z-stack alignment |
-
-Cell type labels follow the glioblastoma tumour microenvironment taxonomy (AC-like, MES-like, OPC-like, NPC-like, and immune populations).
+Cell-type labels follow the glioblastoma tumour-microenvironment taxonomy
+(AC-like, MES-like, OPC-like, NPC-like) plus normal brain and immune
+populations. The page is generated by
+`scripts/visualization/generate_3d_comparison.py` with Plotly.

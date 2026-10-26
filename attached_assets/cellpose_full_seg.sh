@@ -9,7 +9,7 @@
 #SBATCH --error=/path/to/project/slurm_logs/cellpose_dual_wsi_%j.err  # Log directory
 #SBATCH --time=24:00:00          # Adjust as needed
 #SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --mail-user=kriel.j@wehi.edu.au
+#SBATCH --mail-user=you@example.org
 
 # --- Load Modules & Activate Environment ---
 echo "Loading modules..."
@@ -34,7 +34,7 @@ echo "Setting up paths and parameters..."
 IMAGE_FILE="/path/to/sample2/ome/dapi_combined_af_merged_image.ome.tif"
 
 # --- Model Paths ---
-CELL_MODEL_PATH="/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700" # Your custom cell model
+CELL_MODEL_PATH="/path/to/models/your_cellpose_model" # Your custom cell model
 NUCLEI_MODEL_PATH="nuclei" # Use built-in 'nuclei' model (or provide a path)
 
 # --- Output Configuration ---

@@ -29,7 +29,7 @@ DEFAULT_IMAGE_PATH = "/path/to/sample2/ome/dapi_combined_af_merged_image.ome.tif
 DEFAULT_OUTPUT_DIR = "output_segmentation_combined"
 DEFAULT_CSV_BASE_PATH = "output_segmentation_combined/outlines" # Default base for CSV files
 # Default models and their corresponding parameters
-DEFAULT_MODEL_TYPES = ['/home/users/allstaff/kriel.j/.cellpose/models/CP_20240119_101700', 'nuclei']
+DEFAULT_MODEL_TYPES = ['/path/to/models/your_cellpose_model', 'nuclei']
 DEFAULT_DIAMETERS = [120.0, 60.0]
 DEFAULT_FLOW_THRESHOLDS = [0.4, 0.4]
 DEFAULT_CELLPROB_THRESHOLDS = [-1.5, -1.0]

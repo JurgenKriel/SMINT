@@ -27,7 +27,8 @@ def get_cell_outlines(masks):
         masks (numpy.ndarray): Segmentation mask with cell IDs
     
     Returns:
-        list: List of dictionaries containing cell outlines
+        list: One dict per label with ``cell_id`` and ``x_coords`` / ``y_coords``
+            (the longest contour, from ``skimage.measure.find_contours``).
     """
     cells = []
     cell_ids = np.unique(masks)[1:]  # Skip background (0)
@@ -55,7 +56,7 @@ def segment_chunk(chunk_data, model_instance, chunk_position=None, diameter=80,
     
     Args:
         chunk_data (numpy.ndarray): Chunk of image data to segment
-        model_instance: Cellpose model
+        model_instance (cellpose.models.CellposeModel): Loaded Cellpose model.
         chunk_position (tuple, optional): Position of chunk in the original image (y_start, x_start)
         diameter (float): Expected object diameter
         flow_threshold (float): Flow threshold for segmentation
@@ -64,9 +65,11 @@ def segment_chunk(chunk_data, model_instance, chunk_position=None, diameter=80,
         object_type (str): Type of object being segmented (for logging)
     
     Returns:
-        tuple: (masks, outlines_info)
-            - masks (numpy.ndarray): Segmentation mask
-            - outlines_info (list): List of dictionaries with contour information
+        tuple: ``(masks, outlines)``. ``masks`` is the ``uint16`` label mask of
+            the chunk; ``outlines`` is a list of dicts with ``cell_id``,
+            ``x_coords`` / ``y_coords`` (in full-image pixels when
+            ``chunk_position`` is given) and ``chunk_id`` (``"<y>_<x>"``, the
+            chunk's origin).
     """
     logger = logging.getLogger(__name__)
     

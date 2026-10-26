@@ -715,7 +715,12 @@ def _watch_job(viewer, output_dir: str, round_type: str) -> None:
         if not csv or not Path(csv).exists():
             return
         try:
-            coords, _ = load_points_table(csv, max_points=DISPLAY_POINT_CAP)
+            # Show the registered coordinates, not the source columns that
+            # auto-detection would pick first (x_centroid, centroid_x, ...).
+            coords, _ = load_points_table(
+                csv, x_col="x_transformed", y_col="y_transformed",
+                max_points=DISPLAY_POINT_CAP,
+            )
             viewer.add_points(
                 _points_to_napari(coords), name=f"{round_type} registered",
                 size=6, face_color="lime", opacity=0.5, blending="additive",

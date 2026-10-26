@@ -10,7 +10,7 @@ both neighbouring tiles:
 2. It extracts outlines from the full expanded mask, so each boundary cell is
    reported, complete, by both tiles.
 3. The coordinator stitches those duplicates and reconciles cells with nuclei
-   (:mod:`smint.segmentation.stitching`, a port of ``stitching/stitching.Rmd``),
+   (`smint.segmentation.stitching`, a port of ``stitching/stitching.Rmd``),
    then writes outline and summary CSVs per object type.
 
 Workers come from a local cluster (CPU, or one worker per GPU via dask_cuda),
@@ -77,7 +77,7 @@ def setup_logging(output_dir=None):
             None, log to the console only.
 
     Returns:
-        logging.Logger: Configured logger instance
+        logging.Logger: The ``smint.distributed_seg`` logger.
     """
     log = logging.getLogger('smint.distributed_seg')
     log.setLevel(logging.INFO)
@@ -321,8 +321,10 @@ def segment_tile(tile_id, tile_coords, image_path, image_shape, overlap,
         max_cells_per_tile (int): Label ID offset between tiles.
 
     Returns:
-        dict: ``success``, ``error``, ``n_cells``, ``n_nuclei`` and the tile's
-        ``cell_outlines`` / ``nuclei_outlines``.
+        dict: ``tile_id``, ``tile_coords``, ``success``, ``error``, ``n_cells``,
+            ``n_nuclei`` and the tile's ``cell_outlines`` / ``nuclei_outlines``
+            (dicts with ``global_id``, ``x_coords``, ``y_coords`` in full-image
+            pixels, covering the whole expanded tile).
     """
     y_start, x_start, y_end, x_end = tile_coords
     height, width = image_shape
@@ -407,7 +409,7 @@ def stitch_and_reconcile(cell_outlines, nuclei_outlines, merge_threshold=0.5,
 
     Nuclei are stitched first; cells are filtered to those touching a stitched
     nucleus, then stitched; finally cells and nuclei are reconciled so every
-    nucleus sits inside exactly one cell. See :mod:`smint.segmentation.stitching`.
+    nucleus sits inside exactly one cell. See `smint.segmentation.stitching`.
 
     Args:
         cell_outlines (list or None): Raw cell outline dicts, or None to skip cells.
@@ -418,7 +420,7 @@ def stitch_and_reconcile(cell_outlines, nuclei_outlines, merge_threshold=0.5,
 
     Returns:
         tuple: ``(cells, nuclei, nucleus_cell)``; ``nucleus_cell`` holds each
-        nucleus's index into ``cells``, or None when not reconciled.
+            nucleus's index into ``cells``, or None when not reconciled.
     """
     log = logging.getLogger('smint.distributed_seg')
     cells = nuclei = nucleus_cell = None
@@ -489,7 +491,8 @@ def setup_dask_client(backend='local', n_workers=None, use_gpu=True,
         worker_wait_timeout (int): Seconds to wait for the first worker.
 
     Returns:
-        tuple: ``(client, cluster)``; ``cluster`` is None for an external scheduler.
+        tuple: ``(client, cluster)``; ``cluster`` is None for an external
+            scheduler.
     """
     if not DISTRIBUTED_AVAILABLE:
         raise ImportError("Distributed segmentation requires 'distributed' "
@@ -604,6 +607,17 @@ def run_distributed_segmentation(image_path, output_dir, config_path=None,
     ``split_multinucleated``, ``reconcile_nuclei``, ``stitch_merge_thresh``,
     ``stitch_trim_thresh``, ``worker_wait_timeout`` and ``slurm``.
 
+    Writes to ``output_dir``:
+
+    - ``cells_outlines.csv`` / ``nuclei_outlines.csv``: one row per outline
+      vertex, ``global_cell_id, x, y``, IDs from 1 after stitching.
+    - ``cells_summary.csv``: ``global_cell_id, x_centroid, y_centroid, area,
+      n_nuclei``; ``nuclei_summary.csv``: the same with ``cell_id`` (the
+      containing cell's ``global_cell_id``) in place of ``n_nuclei``.
+    - ``cells.zarr`` / ``nuclei.zarr``: raw label masks. Their IDs are
+      per-tile and are not the stitched IDs.
+    - ``distributed_seg_<timestamp>.log``.
+
     Args:
         image_path (str): Zarr / OME-Zarr store or TIFF / OME-TIFF file. Must be
             readable by every worker (for SLURM, on shared storage).
@@ -631,28 +645,21 @@ def run_distributed_segmentation(image_path, output_dir, config_path=None,
         stitch_merge_thresh (float, optional): Merge above this overlap. Default 0.5.
         stitch_trim_thresh (float, optional): Trim below this overlap, remove
             the smaller object at or above it. Default 0.25.
-        slurm (dict, optional): SLURMCluster options, see :func:`setup_dask_client`.
+        slurm (dict, optional): SLURMCluster options, see [`setup_dask_client`][smint.segmentation.distributed_seg.setup_dask_client].
         worker_wait_timeout (int, optional): Seconds to wait for workers. Default 600.
 
     Returns:
         dict: ``cells_csv_path``, ``nuclei_csv_path``, ``cells_summary_path``,
-        ``nuclei_summary_path``, ``cells_zarr_path``, ``nuclei_zarr_path``,
-        ``total_cells``, ``total_nuclei``, ``n_tiles``, ``failed_tiles`` and
-        ``processing_time``.
+            ``nuclei_summary_path``, ``cells_zarr_path``, ``nuclei_zarr_path``,
+            ``total_cells``, ``total_nuclei``, ``n_tiles``, ``failed_tiles``
+            (core coordinates of tiles that failed) and ``processing_time``
+            (seconds).
 
     Raises:
         ImportError: A required package is missing.
+        ValueError: No model was given, a model is neither a file nor a
+            built-in name, or the tile grid would overflow ``uint32`` label IDs.
         RuntimeError: Every tile failed.
-
-    Outputs in ``output_dir``:
-
-    - ``cells_outlines.csv`` / ``nuclei_outlines.csv`` -- one row per outline
-      vertex: ``global_cell_id, x, y``, IDs from 1 after stitching.
-    - ``cells_summary.csv`` -- ``global_cell_id, x_centroid, y_centroid, area,
-      n_nuclei``; ``nuclei_summary.csv`` -- the same with ``cell_id`` (the
-      containing cell's ``global_cell_id``) in place of ``n_nuclei``.
-    - ``cells.zarr`` / ``nuclei.zarr`` -- raw label masks. Their IDs are
-      per-tile and are not the stitched IDs.
     """
     for ok, pkg in ((DISTRIBUTED_AVAILABLE, 'distributed'), (ZARR_AVAILABLE, 'zarr'),
                     (CELLPOSE_AVAILABLE, 'cellpose')):

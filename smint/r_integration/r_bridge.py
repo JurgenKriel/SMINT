@@ -40,7 +40,7 @@ def initialize_r(packages=None):
     """
     logger = logging.getLogger(__name__)
     
-    if not HAS_RPY2:
+    if not RPY2_AVAILABLE:
         logger.error("rpy2 is not installed. Install with 'pip install rpy2'")
         return False
     
@@ -130,7 +130,7 @@ def r_to_pandas(r_object):
     """
     logger = logging.getLogger(__name__)
     
-    if not HAS_RPY2:
+    if not RPY2_AVAILABLE:
         logger.error("rpy2 is not installed. Install with 'pip install rpy2'")
         return None
     
@@ -155,7 +155,7 @@ def pandas_to_r(pd_df):
     """
     logger = logging.getLogger(__name__)
     
-    if not HAS_RPY2:
+    if not RPY2_AVAILABLE:
         logger.error("rpy2 is not installed. Install with 'pip install rpy2'")
         return None
     
@@ -182,7 +182,7 @@ def exec_r_code(r_code, input_data=None, output_vars=None):
     """
     logger = logging.getLogger(__name__)
     
-    if not HAS_RPY2:
+    if not RPY2_AVAILABLE:
         logger.error("rpy2 is not installed. Install with 'pip install rpy2'")
         return None
     
@@ -227,7 +227,7 @@ def r_function_to_python(r_function_name, *args, **kwargs):
     """
     logger = logging.getLogger(__name__)
     
-    if not HAS_RPY2:
+    if not RPY2_AVAILABLE:
         logger.error("rpy2 is not installed. Install with 'pip install rpy2'")
         return None
     
@@ -291,7 +291,7 @@ def load_r_analysis_script(script_path):
     """
     logger = logging.getLogger(__name__)
     
-    if not HAS_RPY2:
+    if not RPY2_AVAILABLE:
         logger.error("rpy2 is not installed. Install with 'pip install rpy2'")
         return False
     

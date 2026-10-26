@@ -1,109 +1,142 @@
-# SMINT: Spatial Multi-Omics Integration
+---
+hide:
+  - navigation
+  - toc
+---
 
-SMINT brings spatial omics modalities into one coordinate system. It segments
-cells and nuclei across whole-slide images, then registers spatial
-transcriptomics, spatial metabolomics and post-stain imaging onto each other —
-interactively in napari, from the command line, or as SLURM jobs.
+<div class="grid" markdown>
 
-<p align="center">
-  <img src="assets/smint_logo.png" alt="SMINT combines H&amp;E, spatial transcriptomics and spatial metabolomics" width="420">
-</p>
+<div markdown>
 
-## Install
+# SMINT
 
-SMINT is installed from GitHub (it is not on PyPI). Python 3.10+:
+**Spatial Multi-Omics Integration Toolkit.** SMINT segments cells and nuclei
+across whole-slide images, then brings spatial transcriptomics, spatial
+metabolomics and post-stain imaging into one coordinate system — interactively
+in napari, from the command line, or as SLURM jobs on a GPU cluster.
 
 ```bash
 pip install "git+https://github.com/JurgenKriel/SMINT.git"
 ```
 
-STalign, used for sequential-section registration, and napari, for the
-interactive plugin, are installed separately — see [Installation](installation.md).
+To run the quick start and tutorials, clone the repository instead: they use
+the example data in the checkout (see [Quick start](quickstart.md)).
 
-## Registration
+[Get started](quickstart.md){ .md-button .md-button--primary }
+[Tutorials](tutorials/index.md){ .md-button }
 
-Two registration regimes, chosen by how the modalities were acquired:
+</div>
 
-| Situation | Method |
-|---|---|
-| **Sequential sections** — modalities from different physical sections | STalign LDDMM, guided by manual landmarks |
-| **Same section, post-staining** — a second modality on the exact same section | Correspondence fitting: affine, RANSAC or thin-plate spline |
+<p align="center" markdown>
+![SMINT combines H&E, spatial transcriptomics and spatial metabolomics](assets/smint_logo_small.png){ width="380" }
+</p>
 
-![Sequential-section registration: SM onto ST, before, landmarks and after LDDMM](assets/registration_sequential.png)
+</div>
 
-*Spatial metabolomics (MALDI, pink) registered onto Xenium spatial transcriptomics (blue) from a neighbouring section: 11 paired landmarks guide STalign LDDMM. Sample 2, Z2 / MALDI section B; rendered with `examples/registration_figures.py`.*
+## The workflow
 
-- **napari plugin** — load datasets, pre-register by eye (scale, rotate, flip),
-  place paired landmarks, and launch registration without leaving the viewer.
-  Open **Plugins → SMINT Registration**. See [napari Plugin](napari_plugin.md).
-- **`smint-alignment` CLI** — the same machinery from the shell:
+```mermaid
+flowchart LR
+    A[Whole-slide image<br/>OME-TIFF / OME-Zarr] --> B[Segment cells & nuclei<br/>Cellpose 3/4, one GPU or many]
+    B --> C[Stitch tiles<br/>reconcile cells & nuclei]
+    C --> D{Same section<br/>as the Xenium run?}
+    D -- yes --> E[Centroid registration<br/>multiround + snapping]
+    D -- no --> F[Pre-register, landmarks<br/>STalign LDDMM]
+    E --> G[One coordinate system:<br/>cells, transcripts, metabolites]
+    F --> G
+    G --> H[Integrate per cell<br/>transcripts + metabolites]
+```
 
-    ```bash
-    # Sequential sections: STalign LDDMM from saved landmarks
-    smint-alignment st-sm --st st.csv --sm sm.csv \
-        --st-points st_points.npy --sm-points sm_points.npy --output-dir run1
+See [The SMINT workflow](concepts/workflow.md) for each step, and
+[Choosing a registration method](concepts/registration_methods.md) for the
+branch in the middle. The last step, one table with a row per cell, is shown in
+[Tutorial 5](tutorials/05_integration.ipynb) and, in R, in
+[R integration](r_integration.md).
 
-    # Same section: fit nuclei centroids onto Xenium cells
-    smint-alignment centroid --source nuclei.csv --target xenium.csv --output-dir run2
+## Where to go next
 
-    # Coarse scale / rotate / flip, searching orientations by overlap
-    smint-alignment pretransform --source sm.csv --target xenium.csv --search --output sm_pre.csv
-    ```
+<div class="grid cards" markdown>
 
-- **Honest metrics** — Target Registration Error is reported on held-out pairs,
-  so a flexible transform cannot flatter itself by memorising correspondences.
-- **HPC native** — add `--submit` to run on SLURM (CPU or GPU) instead of
-  locally; napari submits the same jobs and polls them in the background.
+-   :material-rocket-launch:{ .lg .middle } **Getting started**
 
-See [Alignment](alignment.md) for the full workflow.
+    ---
 
-## Segmentation
+    Install SMINT and run a registration and a segmentation on example data
+    in ten minutes.
 
-- **Dual-model segmentation** — cells and nuclei with Cellpose, in chunks across
-  whole-slide images
-- **Adaptive nuclei** — retries nuclear segmentation with relaxed thresholds
-  when too few nuclei are found
-- **Distributed processing** — tiles spread across Dask workers on multiple GPUs
-- **Live monitoring** — watch segmentation progress tile by tile with
-  `smint-viewer`
+    [:octicons-arrow-right-24: Quick start](quickstart.md)
 
-See [Segmentation](segmentation.md).
+-   :material-notebook-outline:{ .lg .middle } **Tutorials**
 
-## Also in SMINT
+    ---
 
-- **R integration** — run existing R analysis scripts from Python
-  ([R Integration](r_integration.md))
-- **Visualization** — segmentation overlays, outline plots and RGB composites
-- **HPC** — SLURM submission scripts for preprocessing and segmentation
-  ([HPC Deployment](hpc_deployment.md))
-- **Interactive 3D plots** — multi-omics data from the three brain tumour samples
-  ([Visualizations](visualizations.md))
+    Executed notebooks with every output shown: segmentation, same-section
+    and sequential registration, distributed runs on SLURM.
 
-## Documentation
+    [:octicons-arrow-right-24: Tutorials](tutorials/index.md)
 
-- [Installation](installation.md) · [Configuration](configuration.md) ·
-  [Dependency Handling](dependency_handling.md)
-- [Alignment](alignment.md) · [napari Plugin](napari_plugin.md) ·
-  [Xenium–Metabolomics](xenium_metabolomics_alignment.md)
-- [Segmentation](segmentation.md) · [Examples](examples.md)
-- [R Integration](r_integration.md) · [HPC Deployment](hpc_deployment.md)
+-   :material-book-open-variant:{ .lg .middle } **User guide**
+
+    ---
+
+    How SMINT works: the workflow, coordinate frames, tiling and stitching,
+    and how to choose a registration method.
+
+    [:octicons-arrow-right-24: User guide](concepts/index.md)
+
+-   :material-cursor-default-click-outline:{ .lg .middle } **napari plugin**
+
+    ---
+
+    Load datasets, pre-register by eye, place landmarks and launch
+    registration jobs without leaving the viewer.
+
+    [:octicons-arrow-right-24: napari plugin](napari_plugin.md)
+
+-   :material-console:{ .lg .middle } **Reference**
+
+    ---
+
+    Command-line options, input and output formats, configuration keys and
+    the Python API.
+
+    [:octicons-arrow-right-24: Reference](reference/index.md)
+
+-   :material-server-network:{ .lg .middle } **Running on HPC**
+
+    ---
+
+    Submit segmentation and registration to SLURM, on CPU or GPU, from
+    Python, the command line or napari.
+
+    [:octicons-arrow-right-24: Running on HPC](hpc_deployment.md)
+
+</div>
+
+## What it looks like
+
+<div class="grid" markdown>
+
+<figure markdown>
+![Nuclei, GFAP and phalloidin with cell and nucleus outlines](assets/segmentation_gfap_phalloidin.jpg)
+<figcaption>Whole-slide segmentation: cells (white) and nuclei (yellow) on
+nuclei, GFAP and phalloidin.</figcaption>
+</figure>
+
+<figure markdown>
+![Post-stain nuclei snapped onto Xenium cells](assets/registration_refinement_sample2.png)
+<figcaption>Same-section registration: post-stain nuclei placed onto Xenium
+cells.</figcaption>
+</figure>
+
+</div>
+
+<figure markdown>
+![Spatial metabolomics registered onto spatial transcriptomics](assets/registration_sequential.png)
+<figcaption>Sequential-section registration: MALDI spatial metabolomics
+registered onto Xenium spatial transcriptomics with STalign LDDMM.</figcaption>
+</figure>
 
 ## Citation
 
-If you use SMINT in your research, please cite:
-
-> Kriel, J. *SMINT — Spatial Multi-Omics Integration Toolkit* (v0.1.0).
-> [https://github.com/JurgenKriel/SMINT](https://github.com/JurgenKriel/SMINT)
-
-```bibtex
-@software{kriel_smint,
-  author  = {Kriel, Jurgen},
-  title   = {SMINT - Spatial Multi-Omics Integration Toolkit},
-  version = {0.1.0},
-  url     = {https://github.com/JurgenKriel/SMINT},
-  license = {MIT}
-}
-```
-
-GitHub's **Cite this repository** button provides the same citation from
-`CITATION.cff`.
+If you use SMINT in your research, please [cite it](citation.md).

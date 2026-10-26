@@ -6,7 +6,7 @@ Two regimes, with different correct answers:
 **Sequential sections** -- the two modalities come from different physical
 sections, so the tissue genuinely differs and there is no true one-to-one
 correspondence between cells. Use the STalign LDDMM path in
-:mod:`smint.alignment.st_sm_registration`.
+`smint.alignment.st_sm_registration`.
 
 **Same section, post-staining** -- the second modality is acquired on the
 *exact same* section, so centroids do correspond one-to-one and registration
@@ -30,7 +30,7 @@ cell, and no fit to them can recover -- nearest-neighbour refinement then pulls
 each nucleus toward whichever cell happens to be closest. ``multiround``
 avoids committing to matches: within each block, every nucleus votes for the
 displacements to several nearby cells, and the true offset -- shared by the
-whole block -- is the peak of those votes (:func:`vote_block_displacements`).
+whole block -- is the peak of those votes ([`vote_block_displacements`][smint.alignment.vote_block_displacements]).
 Round 1 fits an affine through the block peaks; later rounds vote again in
 smaller blocks on the result and add a smooth TPS through those peaks, to
 follow local warps. A round is kept only if it improves the alignment of the
@@ -57,7 +57,7 @@ validation TRE means the transform is memorising correspondences.
 Coordinate conventions
 ----------------------
 Everything in this module is plain ``(x, y)``. The row-col ordering and the
-transposed output frame described in :mod:`smint.alignment.st_sm_registration`
+transposed output frame described in `smint.alignment.st_sm_registration`
 are artefacts of STalign specifically and do **not** apply here.
 """
 
@@ -102,8 +102,10 @@ def match_centroids(
 
     Returns
     -------
-    source_idx, target_idx : numpy.ndarray
-        Indices of matched pairs.
+    source_idx : numpy.ndarray
+        Source index of each matched pair.
+    target_idx : numpy.ndarray
+        Target index of each matched pair.
     distances : numpy.ndarray
         Distance for each matched pair.
     """
@@ -147,9 +149,21 @@ def split_pairs(
     """
     Split matched pairs into fit and held-out validation index sets.
 
+    Parameters
+    ----------
+    n_pairs : int
+        Number of matched pairs.
+    validation_fraction : float, optional
+        Fraction held out, in ``[0, 1)``.
+    random_state : int, optional
+        Seed for the permutation.
+
     Returns
     -------
-    fit_idx, val_idx : numpy.ndarray
+    fit_idx : numpy.ndarray
+        Indices of the pairs to fit.
+    val_idx : numpy.ndarray
+        Indices of the held-out pairs.
     """
     if not 0.0 <= validation_fraction < 1.0:
         raise ValueError(
@@ -178,16 +192,19 @@ def target_registration_error(
 
     Returns
     -------
-    mean, std : float
-        Mean and standard deviation of the per-pair distance.
+    mean : float
+        Mean per-pair distance.
+    std : float
+        Standard deviation of the per-pair distance.
     per_pair : numpy.ndarray
         The per-pair distances.
 
     Notes
     -----
-    Interpret with care on points used for fitting -- see the module
-    docstring. Prefer the held-out value reported by
-    :func:`register_centroids`.
+    On the points used for fitting, TRE is circular: correspondences come from
+    nearest neighbours, so a flexible enough transform drives it towards zero
+    whether or not the pairs are right. Prefer the held-out value reported by
+    [`register_centroids`][smint.alignment.register_centroids].
     """
     source_xy = np.asarray(source_xy, dtype=float)
     target_xy = np.asarray(target_xy, dtype=float)
@@ -363,7 +380,7 @@ def fit_tps(
     regularization : float, optional
         Ridge term added to the TPS system. ``0`` gives exact interpolation
         of every control point -- which drives fitted-point TRE to zero and
-        tells you nothing (see module docstring). Larger values trade exact
+        tells you nothing. Larger values trade exact
         control-point fit for smoothness. Default 1.0.
     n_control : int, optional
         Number of control points to subsample. TPS solves an
@@ -434,7 +451,7 @@ def apply_tps(points_xy: np.ndarray, model: Optional[dict], chunk_size: int = 50
     points_xy : numpy.ndarray
         ``(N, 2)`` points to warp.
     model : dict or None
-        Output of :func:`fit_tps`. ``None`` returns the input unchanged.
+        Output of [`fit_tps`][smint.alignment.fit_tps]. ``None`` returns the input unchanged.
     chunk_size : int, optional
         Points processed per block. The kernel is ``(chunk x n_control)``
         dense, so this bounds peak memory rather than materialising
@@ -519,9 +536,11 @@ def vote_block_displacements(
 
     Returns
     -------
-    centres, displacements : numpy.ndarray
-        ``(B, 2)`` block centroids and their modal displacements, for blocks
-        holding at least ``min_points`` source points.
+    centres : numpy.ndarray
+        ``(B, 2)`` centroids of the blocks holding at least ``min_points``
+        source points.
+    displacements : numpy.ndarray
+        ``(B, 2)`` modal source -> target displacement of each block.
     """
     from scipy.ndimage import gaussian_filter
 
@@ -559,7 +578,7 @@ def _register_multiround(
     source_xy, target_xy, max_distance, validation_fraction, max_trials,
     tps_regularization, random_state, schedule, min_improvement,
 ) -> dict:
-    """Coarse-to-fine displacement voting; see :func:`register_centroids`."""
+    """Coarse-to-fine displacement voting; see [`register_centroids`][smint.alignment.register_centroids]."""
     rng = np.random.default_rng(random_state)
     held_out = rng.random(len(source_xy)) < validation_fraction
     fit_points = np.flatnonzero(~held_out)
@@ -661,7 +680,12 @@ def register_centroids(
         ``(N, 2)`` / ``(M, 2)`` ``(x, y)`` centroids. The source is moved onto
         the target.
     method : {'multiround', 'affine', 'ransac', 'tps', 'ransac+tps'}, optional
-        Registration model. See the module docstring.
+        Registration model: ``affine`` (least squares on all matched
+        pairs), ``ransac`` (outlier-robust affine), ``tps`` (affine, then a
+        thin-plate spline), ``ransac+tps`` (RANSAC affine, then TPS on the
+        inliers) or ``multiround`` (coarse-to-fine displacement voting: an
+        affine through per-block displacement peaks, then a smooth TPS through
+        finer blocks; recommended).
     max_distance : float, optional
         Correspondence cutoff, in coordinate units.
     mutual : bool, optional
@@ -699,7 +723,7 @@ def register_centroids(
         ``tre_initial``, ``tre_fit``, ``tre_validation`` -- each a
         ``(mean, std)`` tuple, with ``tre_validation`` the one to trust.
         ``multiround`` adds ``rounds`` (a per-round log) and ``validation``,
-        :func:`alignment_quality` of the held-out points ``before`` and
+        [`alignment_quality`][smint.alignment.alignment_quality] of the held-out points ``before`` and
         ``after`` -- a correspondence-free check alongside TRE.
     """
     if method not in VALID_METHODS:
@@ -1144,20 +1168,20 @@ def register_centroid_files(
         Output column names.
     refine : bool, optional
         After registering, snap confidently matched points onto their targets
-        with :func:`refine_by_assignment` (default). ``x_col`` / ``y_col`` then
+        with [`refine_by_assignment`][smint.alignment.refine_by_assignment] (default). ``x_col`` / ``y_col`` then
         hold the refined positions, ``x_col + "_smooth"`` the transform-only
         ones, and ``registration_status`` says how each point was placed.
     refine_kwargs : dict, optional
-        Forwarded to :func:`refine_by_assignment`.
+        Forwarded to [`refine_by_assignment`][smint.alignment.refine_by_assignment].
     **kwargs
-        Forwarded to :func:`register_centroids`.
+        Forwarded to [`register_centroids`][smint.alignment.register_centroids].
 
     Returns
     -------
     result_df : pandas.DataFrame
         Source table with transformed coordinates appended.
     result : dict
-        The :func:`register_centroids` result.
+        The [`register_centroids`][smint.alignment.register_centroids] result.
     """
     source_df = pd.read_csv(source_file)
     target_df = pd.read_csv(target_file, usecols=list(target_cols))

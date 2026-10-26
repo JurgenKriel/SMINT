@@ -5,7 +5,7 @@ A Python port of ``stitching/stitching.Rmd`` (Joel Moffet), which resolves the
 artefacts left when an image is segmented in overlapping tiles or fields of
 view. It runs in two stages.
 
-**Stage 1 -- stitch each object type** (:func:`stitch_polygons`). For every
+**Stage 1 -- stitch each object type** ([`stitch_polygons`][smint.segmentation.stitching.stitch_polygons]). For every
 intersecting pair, the *maximum overlap* is the intersection area divided by
 the smaller polygon's area (the larger of the two fractions).
 
@@ -19,9 +19,9 @@ the smaller polygon's area (the larger of the two fractions).
    the smaller polygon.
 
 The phases run in this order, each on the result of the last. Cells are first
-filtered to those touching a stitched nucleus (:func:`filter_by_nuclei`).
+filtered to those touching a stitched nucleus ([`filter_by_nuclei`][smint.segmentation.stitching.filter_by_nuclei]).
 
-**Stage 2 -- reconcile cells and nuclei** (:func:`reconcile_cells_and_nuclei`):
+**Stage 2 -- reconcile cells and nuclei** ([`reconcile_cells_and_nuclei`][smint.segmentation.stitching.reconcile_cells_and_nuclei]):
 drop cells without a credible nucleus, grow cells over nuclei they mostly
 contain, split nuclei straddling several cells, remove duplicate and contained
 objects, then assign every nucleus to exactly one cell.
@@ -223,7 +223,16 @@ def stitch_polygons(geoms, merge_threshold=0.5, trim_threshold=0.25,
     """
     Resolve duplicate and colliding polygons from overlapping tiles.
 
-    Runs merge, trim and remove in order; see the module docstring.
+    Runs three phases in order, each on the result of the last. The *maximum
+    overlap* of a pair is their intersection area divided by the smaller
+    polygon's area.
+
+    1. Merge: union pairs whose maximum overlap exceeds ``merge_threshold``
+       (the same object seen by two tiles), repeating until nothing merges.
+    2. Trim: for pairs below ``trim_threshold`` (a minor collision), remove
+       the overlap from both.
+    3. Remove: for pairs at or above ``trim_threshold``, drop the smaller
+       polygon.
 
     Args:
         geoms (sequence): Shapely polygons.
@@ -318,8 +327,8 @@ def reconcile_cells_and_nuclei(cells, nuclei, min_overlap_area=1.0,
         split_keep_fraction_3plus (float): Step 3 threshold, nucleus in 3+ cells.
 
     Returns:
-        tuple: ``(cells, nuclei, nucleus_cell)`` where ``nucleus_cell[k]`` is the
-        index into ``cells`` of the cell containing nucleus ``k``.
+        tuple: ``(cells, nuclei, nucleus_cell)`` where ``nucleus_cell[k]`` is
+            the index into ``cells`` of the cell containing nucleus ``k``.
     """
     cells, nuclei = clean_polygons(cells), clean_polygons(nuclei)
     n_cells_in, n_nuclei_in = len(cells), len(nuclei)
