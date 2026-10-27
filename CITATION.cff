@@ -1,9 +1,46 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+message: "If you use SMINT, please cite the paper below."
 authors:
 - family-names: "Kriel"
   given-names: "Jurgen"
 title: "SMINT - Spatial Multi-Omics Integration Toolkit"
 version: 0.1.0
 url: "https://github.com/JurgenKriel/SMINT"
+repository-code: "https://github.com/JurgenKriel/SMINT"
 license: MIT
+preferred-citation:
+  type: article
+  title: "An integrative spatial multi-omic workflow for unified analysis of tumor tissue"
+  authors:
+  - family-names: "Kriel"
+    given-names: "Jurgen"
+  - family-names: "Moffet"
+    given-names: "Joel J. D."
+  - family-names: "Lu"
+    given-names: "Tianyao"
+  - family-names: "Fatunla"
+    given-names: "Oluwaseun E."
+  - family-names: "Narayana"
+    given-names: "Vinod K."
+  - family-names: "Valkovic"
+    given-names: "Adam"
+  - family-names: "Maluenda"
+    given-names: "Ana"
+  - family-names: "McConville"
+    given-names: "Malcolm J."
+  - family-names: "Tsui"
+    given-names: "Ellen"
+  - family-names: "Whittle"
+    given-names: "James R."
+  - family-names: "Best"
+    given-names: "Sarah A."
+  - family-names: "Freytag"
+    given-names: "Saskia"
+  journal: "Cell Reports Methods"
+  volume: 6
+  issue: 2
+  start: 101306
+  year: 2026
+  month: 2
+  doi: "10.1016/j.crmeth.2026.101306"
+  url: "https://www.cell.com/cell-reports-methods/fulltext/S2667-2375(26)00006-8"
