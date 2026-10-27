@@ -147,9 +147,15 @@ code and documentation conventions.
 
 ## Citation
 
-If you use SMINT in your research, please cite it — use GitHub's **Cite this
-repository** button (from `CITATION.cff`) or see the
-[citation page](https://jurgenkriel.github.io/SMINT/citation/).
+SMINT is described in:
+
+> Kriel J, Moffet JJD, Lu T, *et al.* An integrative spatial multi-omic workflow
+> for unified analysis of tumor tissue. *Cell Reports Methods* 6(2), 101306
+> (2026). [doi:10.1016/j.crmeth.2026.101306](https://doi.org/10.1016/j.crmeth.2026.101306)
+
+If you use SMINT in your research, please cite this paper. GitHub's **Cite this
+repository** button (from `CITATION.cff`) gives it in APA and BibTeX; the
+[citation page](https://jurgenkriel.github.io/SMINT/citation/) has both too.
 
 ## License
 

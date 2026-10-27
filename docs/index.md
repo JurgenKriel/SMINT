@@ -147,4 +147,5 @@ The full before-and-after figures are in the [Gallery](visualizations.md).
 
 ## Citation
 
-If you use SMINT in your research, please [cite it](citation.md).
+SMINT is described in [Kriel *et al.*, *Cell Reports Methods* (2026)](https://doi.org/10.1016/j.crmeth.2026.101306). If you use it in your research, please
+[cite the paper](citation.md).
