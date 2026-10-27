@@ -5,11 +5,6 @@ and how to check that it worked. SMINT runs on Python 3.10 or newer (it is
 developed and tested on 3.11 on Linux). A CUDA GPU speeds up segmentation
 and LDDMM registration but is not required.
 
-!!! warning "Install from GitHub, not PyPI"
-    SMINT is not published on PyPI. The `smint` name there belongs to an
-    unrelated placeholder, so `pip install smint` will **not** install this
-    package.
-
 ```bash
 pip install "git+https://github.com/JurgenKriel/SMINT.git"
 ```
