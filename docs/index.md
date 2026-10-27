@@ -115,27 +115,35 @@ branch in the middle. The last step, one table with a row per cell, is shown in
 
 ## What it looks like
 
-<div class="grid" markdown>
+<div class="grid cards" markdown>
 
-<figure markdown>
-![Nuclei, GFAP and phalloidin with cell and nucleus outlines](assets/segmentation_gfap_phalloidin.jpg)
-<figcaption>Whole-slide segmentation: cells (white) and nuclei (yellow) on
-nuclei, GFAP and phalloidin.</figcaption>
-</figure>
+-   ![Cell and nucleus outlines on nuclei, GFAP and phalloidin](assets/landing/segmentation.png)
 
-<figure markdown>
-![Post-stain nuclei snapped onto Xenium cells](assets/registration_refinement_sample2.png)
-<figcaption>Same-section registration: post-stain nuclei placed onto Xenium
-cells.</figcaption>
-</figure>
+    **Segment cells and nuclei**
+
+    Cells (white) and nuclei (yellow) on nuclei, GFAP and phalloidin.
+
+    [:octicons-arrow-right-24: Segmentation](segmentation.md)
+
+-   ![Post-stain nuclei placed onto Xenium cells](assets/landing/same_section.png)
+
+    **Register the same section**
+
+    Post-stain nuclei (pink) placed onto Xenium cells (blue rings).
+
+    [:octicons-arrow-right-24: Same-section registration](tutorials/02_same_section_registration.ipynb)
+
+-   ![MALDI pixels registered onto Xenium cells](assets/landing/sequential.png)
+
+    **Register a neighbouring section**
+
+    MALDI metabolomics (pink) on Xenium cells (blue) after STalign LDDMM.
+
+    [:octicons-arrow-right-24: Sequential-section registration](tutorials/03_sequential_registration.ipynb)
 
 </div>
 
-<figure markdown>
-![Spatial metabolomics registered onto spatial transcriptomics](assets/registration_sequential.png)
-<figcaption>Sequential-section registration: MALDI spatial metabolomics
-registered onto Xenium spatial transcriptomics with STalign LDDMM.</figcaption>
-</figure>
+The full before-and-after figures are in the [Gallery](visualizations.md).
 
 ## Citation
 
