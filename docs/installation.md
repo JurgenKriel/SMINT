@@ -171,7 +171,7 @@ print("held-out TRE (mean, sd):", np.round(result["tre_validation"], 2))
 In the STalign worker environment it prints:
 
 ```text
-SMINT 0.2.0
+SMINT 2.0.0
       cellpose: not installed
          torch: 2.6.0+cu124
    distributed: not installed
