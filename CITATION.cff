@@ -4,7 +4,7 @@ authors:
 - family-names: "Kriel"
   given-names: "Jurgen"
 title: "SMINT - Spatial Multi-Omics Integration Toolkit"
-version: 0.2.0
+version: 2.0.0
 date-released: 2026-10-27
 url: "https://github.com/JurgenKriel/SMINT"
 repository-code: "https://github.com/JurgenKriel/SMINT"

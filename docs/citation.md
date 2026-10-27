@@ -43,7 +43,7 @@ page) gives it in APA and BibTeX.
     *6*(2), 101306. https://doi.org/10.1016/j.crmeth.2026.101306
 
 To cite a specific version of the software as well, use
-`Kriel, J. SMINT - Spatial Multi-Omics Integration Toolkit (Version 0.2.0)
+`Kriel, J. SMINT - Spatial Multi-Omics Integration Toolkit (Version 2.0.0)
 [Computer software]. https://github.com/JurgenKriel/SMINT`.
 
 When you use a specific method, please also cite the tools SMINT builds on:

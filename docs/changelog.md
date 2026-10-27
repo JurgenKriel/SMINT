@@ -5,13 +5,13 @@ User-visible changes to SMINT, newest first, compiled from the
 are listed on [GitHub](https://github.com/JurgenKriel/SMINT/releases); changes
 within a release are grouped by topic or month.
 
-## 0.2.0 (2026-10-27)
+## 2.0.0 (2026-10-27)
 
 SMINT is described in [Kriel *et al.*, *Cell Reports Methods*
 (2026)](https://doi.org/10.1016/j.crmeth.2026.101306); see
 [Citation](citation.md).
 
-### Upgrading from 0.1.0
+### Upgrading from 1.0.0
 
 - `register_centroids`, `register_centroid_files`, `smint-alignment centroid`
   and the napari plugin now default to `method="multiround"` followed by
@@ -141,9 +141,10 @@ SMINT is described in [Kriel *et al.*, *Cell Reports Methods*
   [Gallery](visualizations.md), with a sample selector, zoom buttons for touch
   screens and a toggleable legend.
 
-## 0.1.0 (2025-12-18)
+## 1.0.0 (2025-12-18)
 
-The release archived on Zenodo (GitHub tag `smint`).
+The first GitHub release, "v.1.0.0" (tag `smint`), prepared for Zenodo
+archiving. The package metadata of that release still read 0.1.0.
 
 ### December 2025
 
