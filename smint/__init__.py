@@ -5,7 +5,7 @@ A Python package for Spatial Multi-Omics Integration with enhanced segmentation 
 and streamlined workflow.
 """
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 import importlib
 
