@@ -154,6 +154,13 @@ follows registration with `refine_by_assignment`:
 On Sample 2 z5, 57,083 nuclei were snapped and 8,266 assigned: 88% of Xenium
 cells received a distinct nucleus.
 
+The same run, animated in a 160 µm window. Grey dots mark where each nucleus
+started. On this section the affine round brought the median distance to the
+nearest cell from 12.4 to 5.4 µm; the smooth-warp round that follows was
+tried and not kept, because it did not improve on that.
+
+![Animation: nuclei move with the affine round, then snap onto their cells](assets/registration_snapping_sample2.gif){ width="480" }
+
 !!! warning "`assigned` pairs are not verified"
     Each placed nucleus has a `neighbour_deviation`: how far its offset is
     from the median offset of the snapped nuclei around it. On z5 the median

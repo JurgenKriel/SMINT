@@ -52,6 +52,17 @@ or tutorial that produces it.
 
     [:octicons-arrow-right-24: Alignment guide](alignment.md#snapping-nuclei-onto-their-cells)
 
+-   **Registration, animated**
+
+    ---
+
+    ![Animation: nuclei move with the affine round, then snap onto their cells](assets/registration_snapping_sample2.gif)
+
+    A 160 µm window of Sample 2 z5: nuclei leave their starting positions
+    (grey), move with the affine round and snap onto their Xenium cells.
+
+    [:octicons-arrow-right-24: Alignment guide](alignment.md#snapping-nuclei-onto-their-cells)
+
 </div>
 
 <figure markdown>
