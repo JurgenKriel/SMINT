@@ -2011,6 +2011,11 @@ follows registration with <code>refine_by_assignment</code>:</p>
 <p><img alt="Before registration, after the smooth transform, and after snapping" src="../assets/registration_refinement_sample2.png" /></p>
 <p>On Sample 2 z5, 57,083 nuclei were snapped and 8,266 assigned: 88% of Xenium
 cells received a distinct nucleus.</p>
+<p>The same run, animated in a 160 µm window. Grey dots mark where each nucleus
+started. On this section the affine round brought the median distance to the
+nearest cell from 12.4 to 5.4 µm; the smooth-warp round that follows was
+tried and not kept, because it did not improve on that.</p>
+<p><img alt="Animation: nuclei move with the affine round, then snap onto their cells" src="../assets/registration_snapping_sample2.gif" width="480" /></p>
 <div class="admonition warning">
 <p class="admonition-title"><code>assigned</code> pairs are not verified</p>
 <p>Each placed nucleus has a <code>neighbour_deviation</code>: how far its offset is
